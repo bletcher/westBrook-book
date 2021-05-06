@@ -1,0 +1,29 @@
+---
+title: "Untitled"
+author: "Ben Letcher"
+date: "5/6/2021"
+output: html_document
+---
+
+```{r}
+library(getWBData)
+```
+
+```{r}
+#conDplyr to show tables
+
+# default values for createCoreData()
+# function (sampleType = "electrofishing", baseColumns = T, 
+#    columnsToAdd = NULL, includeUntagged = F, whichDrainage = "west") 
+
+coreData <- createCoreData(sampleType="electrofishing",
+                         columnsToAdd=c("sampleNumber","river",
+                                        'observedLength','observedWeight')) %>% 
+  addTagProperties() %>%
+  dplyr::filter( species %in% c( "bkt","bnt","ats" ) ) %>%
+#  createCmrData( maxAgeInSamples=20 ) %>%
+  addSampleProperties() %>%
+  addEnvironmental()
+
+```
+
