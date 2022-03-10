@@ -1,51 +1,67 @@
----
-title: "Untitled"
-author: "Ben Letcher"
-date: "5/6/2021"
-output: html_document
----
+# Get data from the server {#getData}
 
-```{r}
-# library(devtools)
-# devtools::install_github('Conte-Ecology/westBrookData/getWBData')
+Server is named osensei and is at UMass. It can be accessed using functions in the 'getWBData' package. Use
+`devtools::install_github('Conte-Ecology/westBrookData/getWBData')` to install. Most of the functions will run reconnect() to connect to the server with your username and password. Run `reconnect()` from the console to connect if necessary. Use `conDplyr` to see the list of available tables on the server.
+```{r libraries, echo = FALSE}
 library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(validate)
+```
 
-# devtools::install_github('bletcher/getPrepareWBData')
-library(getPrepareWBData) # this has functions for preparing West Brook data
-
+```{r switches}
+getNew_cdWB0 <- FALSE
+getNew_cdWB_CMR0 <- FALSE
+getNew_cdWB_Wanding0 <- FALSE
 ```
 
 West Brook electrofishing data, all salmonids (tagged and untagged)
-```{r}
-cdWB <- createCoreData(
-      sampleType = "electrofishing",  #"stationaryAntenna","portableAntenna"
-      columnsToAdd = c("sampleNumber",
-                       "river",
-                       "survey",
-                       "observedLength",
-                       "observedWeight"),
-      includeUntagged = TRUE,
-      whichDrainage = "west"
-    ) %>%
-    addTagProperties(
-      columnsToAdd = c("cohort",
-                       "species",
-                       "dateEmigrated",
-                       "sex",
-                       "species"
-      )
-    ) %>%
-    dplyr::filter(species %in% c( "bkt","bnt","ats"),
-                  area %in% c("trib","inside","below","above"),
-                  !is.na(sampleNumber)) %>%
-    addSampleProperties() %>%
-    addEnvironmental()
+```{r create or load cdWB0, cache=TRUE}
 
+# default values for createCoreData()
+# function (sampleType = "electrofishing", baseColumns = T, 
+#    columnsToAdd = NULL, includeUntagged = F, whichDrainage = "west") 
+
+if(getNew_cdWB0) {
+  cdWB0 <- createCoreData(
+        sampleType = "electrofishing",  #"stationaryAntenna","portableAntenna"
+        columnsToAdd = c("sampleNumber",
+                         "river",
+                         "survey",
+                         "pass",
+                         "observedLength",
+                         "observedWeight",
+                         "comments"),
+        includeUntagged = TRUE,
+        whichDrainage = "west"
+      ) %>%
+      addTagProperties(
+        columnsToAdd = c("cohort",
+                         "species",
+                         "dateEmigrated",
+                         "sex",
+                         "species"
+        )
+      ) %>%
+      dplyr::filter(species %in% c( "bkt","bnt","ats"),
+                    area %in% c("trib","inside","below","above"),
+                    !is.na(sampleNumber)) %>%
+      addSampleProperties() %>%
+      addEnvironmental()
+  
+  save(cdWB0, file = './data/cdWB0.RData')
+  
+} else {
+  load(file = './data/cdWB0.RData')
+}
+str(cdWB0)
 ```
 
 West Brook electrofishing data with Capture-Mark-Recapture data added for tagged individuals
-```{r}
-  cdWB_CMR <- 
+```{r include=FALSE}
+
+if(getNew_cdWB_CMR0) {
+  cdWB_CMR0 <- 
     createCoreData(
       sampleType = "electrofishing", #"stationaryAntenna","portableAntenna"),
       whichDrainage = "west",
@@ -54,6 +70,7 @@ West Brook electrofishing data with Capture-Mark-Recapture data added for tagged
           "river",
           "riverMeter",
           "survey",
+          "pass",
           'observedLength',
           'observedWeight')
     ) %>%
@@ -77,43 +94,47 @@ West Brook electrofishing data with Capture-Mark-Recapture data added for tagged
     addEnvironmental() %>%
     addKnownZ() %>%
     fillSizeLocation(size = F) #assumes fish stay in same location until observed elsewhere
+
+  save(cdWB_CMR0, file = './data/cdWB_CMR0.RData')
+  
+} else {
+  load(file = './data/cdWB_CMR0.RData')
+}
+str(cdWB_CMR0)
 ```
 
 West Brook wanding data, all salmonids (tagged)
-```{r}
+```{r include=FALSE}
+
+if(getNew_cdWB_Wanding0) {
 # from wandingDataWB project in d:/ben/github/wandingData/
-cdWB_Wanding <- createCoreData(
-  sampleType = "portableAntenna",
-  columnsToAdd = c("tag", 
-                   "detectionDate", 
-                   "river", 
-                   "area", 
-                   "section", 
-                   "survey", 
-                   "sampleName", 
-                   "readerId", 
-                   "aliveOrDead", 
-                   "instance", 
-                   "pass", 
-                   "quarter", 
-                   "leftOrRight", 
-                   "habitat", 
-                   "cover", 
-                   "justification", 
-                   "comment")
-  ) %>% 
-  addTagProperties() %>%
-  dplyr::filter( species %in% c( "bkt","bnt","ats" ) )
-```
-
-
-
-```{r}
-#conDplyr to show tables
-
-# default values for createCoreData()
-# function (sampleType = "electrofishing", baseColumns = T, 
-#    columnsToAdd = NULL, includeUntagged = F, whichDrainage = "west") 
-
-cd <- getCoreData("west")
+  cdWB_Wanding0 <- createCoreData(
+    sampleType = "portableAntenna",
+    columnsToAdd = c("tag", 
+                     "detectionDate", 
+                     "river", 
+                     "area", 
+                     "section", 
+                     "survey", 
+                     "sampleName", 
+                     "readerId", 
+                     "aliveOrDead", 
+                     "instance", 
+                     "pass", 
+                     "quarter", 
+                     "leftOrRight", 
+                     "habitat", 
+                     "cover", 
+                     "justification", 
+                     "comment")
+    ) %>% 
+    addTagProperties() %>%
+    dplyr::filter( species %in% c( "bkt","bnt","ats" ) )
+  
+    save(cdWB_Wanding0, file = './data/cdWB_Wanding0.RData')
+    
+  } else {
+    load(file = './data/cdWB_Wanding0.RData')
+  }
+str(cdWB_Wanding0)
 ```

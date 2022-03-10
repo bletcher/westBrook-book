@@ -1,0 +1,83 @@
+# Young-of-year Growth Model {#yoyGrowthModel}
+
+```{r}
+library(tidyverse)
+load(file = './data/cdWB.RData')
+```
+
+Focus on ageInSample == 1 fish for yoy growth model
+
+```{r AIS1}
+
+  cdWB1 <- cdWB %>% filter(ageInSamples == 1, species != 'ats', riverOrdered == "west brook")
+  cd1 <- cdWB %>% filter(ageInSamples == 1, species != 'ats')
+  
+  ggplot(cdWB1, aes(observedLength)) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60, color = 'orange') +
+    facet_grid(species ~ year)
+  
+  ggplot(cdWB1, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60) +
+    facet_grid(species ~ year)
+  
+  ggplot(cd1, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60) +
+    facet_grid(species + riverOrdered ~ year, scales = "free_y")
+```
+
+Why are there untagged fish bigger than 60mm? Check 2002/bkt/WB, as an
+example
+
+```{r 2002 untagged}
+
+  cdWB12002BKT <- cdWB1 %>% filter(year == 2002, species == "bkt")
+  table(is.na(cdWB12002BKT$tag))
+  
+  ggplot(cdWB12002BKT, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60)
+  
+  cdWB12002BKT %>% filter(observedLength > 60, is.na(tag)) %>% data.frame()
+  
+  # looks like untagged area=inside fish wee morts, the rest were above or below
+  ggplot(cdWB12002BKT, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60) +
+    facet_grid(~area)
+  
+  # check 2003
+  ggplot(cdWB1 %>% filter(year == 2003, species == "bkt"), aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60) +
+    facet_grid(~area)
+  # same story as 2002
+```
+
+Why no untagged fish at all for 2000 and 2001?
+
+```{r untagged 2000, 2001}
+
+  cdWB12000_2001BKT <- cdWB1 %>% filter(year %in% 2000:2001, species == "bkt")
+  table(is.na(cdWB12000_2001BKT$tag))
+  table(cdWB12000_2001BKT$observedLength)
+
+  cdWB12000_2001BKT %>% filter(observedLength < 60)
+  
+  ggplot(cdWB12000_2001BKT, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60)
+```
+
+means \<- cdWB1 %\>% group_by(species, year) %\>% summarize(meanLength =
+mean(observedLength, na.rm = TRUE), meanYday = mean(yday, na.rm = TRUE))
+
+ggplot(means, aes(year, meanLength, color = species)) + geom_point() +
+geom_line()
+
+ggplot(means, aes(meanYday, meanLength, color = species)) +
+geom_point() + geom_smooth(method = "lm")
+
+\`\`\`

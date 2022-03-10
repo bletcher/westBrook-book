@@ -1,0 +1,75 @@
+# Wrangle the data {#wrangle}
+
+This section takes cdWB0 and cleans it to create cdWB
+```{r}
+library(tidyverse)
+
+# devtools::install_github('bletcher/getPrepareWBData')
+library(getPrepareWBData) # this has functions for preparing West Brook data
+
+```
+
+
+```{r wrangleMain, cache = TRUE}
+  drainage <- 'west'
+
+  # functions in getPrepareWBData library
+  cdWB <- cdWB0 %>%
+    cleanData(drainage) %>%
+    mergeSites(drainage) %>%
+    addNPasses(drainage) %>%
+    mutate(drainage = drainage)
+  
+  save(cdWB, file = './data/cdWB.RData')
+```
+
+```{r include=FALSE}
+
+  # tests??
+  # length(unique(cdWB$tag)) == length(unique(cdWB0$tag))
+  # any(cdWB$observedLength <= 0, na.rm = TRUE)
+  # any(cdWB$observedWeight <= -9999, na.rm = TRUE)
+  # 
+  # 
+  # cdWB1 <- cdWB %>% filter(ageInSamples == 1, species != 'ats', riverOrdered == "west brook")
+  # 
+  # ggplot(cdWB1) +
+  #   geom_freqpoly() +
+  #   geom_vline(xintercept = 60) +
+  #   facet_grid(species ~ year)
+  # 
+  # ggplot(cdWB1 %>% filter(year == 2005), aes(observedLength, color = )) +
+  #   geom_freqpoly() +
+  #   geom_vline(xintercept = 60) +
+  #   facet_grid(~species)
+  # 
+  # means <- cdWB %>% 
+  #   filter(ageInSamples == 1, species != 'ats', 
+  #          riverOrdered == "west brook", season == 3) %>%
+  #   group_by(species, year) %>%
+  #   summarize(meanLength = mean(observedLength, na.rm = TRUE),
+  #             meanYday = mean(yday, na.rm = TRUE))
+  #  
+  # ggplot(means, aes(year, meanLength, color = species)) +
+  #   geom_point() +
+  #   geom_line()
+  #  
+  # ggplot(means, aes(meanYday, meanLength, color = species)) +
+  #   geom_point() +
+  #   geom_smooth(method = "lm")
+  # 
+  # ggplot(cdWB1, aes(detectionDate, observedLength, color = species)) +
+  #   geom_point(alpha = 0.3) +
+  #   geom_smooth(method = "lm") +
+  #   facet_grid(~species)
+  # 
+  # 
+  # table(cdWB0$year)
+  # table((cdWB$ageInSamples), cdWB$year)
+  # table(cdWB$cohort, cdWB$species)
+  # 
+  # cdWB %>% count(is.na(cohort))
+```
+
+
+

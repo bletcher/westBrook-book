@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Get data from the server | The WEst Brook Story</title>
+  <meta name="description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in westen MA, USA" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Get data from the server | The WEst Brook Story" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in westen MA, USA" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Get data from the server | The WEst Brook Story" />
+  
+  <meta name="twitter:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in westen MA, USA" />
+  
+
+<meta name="author" content="Ben Letcher" />
+
+
+<meta name="date" content="2022-03-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="wrangle.html"/>
+<script src="libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The West Brook Story</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction<span></span></a></li>
+<li class="chapter" data-level="2" data-path="getData.html"><a href="getData.html"><i class="fa fa-check"></i><b>2</b> Get data from the server<span></span></a></li>
+<li class="chapter" data-level="3" data-path="wrangle.html"><a href="wrangle.html"><i class="fa fa-check"></i><b>3</b> Wrangle the data<span></span></a></li>
+<li class="chapter" data-level="4" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html"><i class="fa fa-check"></i><b>4</b> Young-of-year Growth Model<span></span></a></li>
+<li class="chapter" data-level="5" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>5</b> Introduction<span></span></a></li>
+<li class="chapter" data-level="6" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>6</b> Literature<span></span></a></li>
+<li class="chapter" data-level="7" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>7</b> Methods<span></span></a></li>
+<li class="chapter" data-level="8" data-path="applications.html"><a href="applications.html"><i class="fa fa-check"></i><b>8</b> Applications<span></span></a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="applications.html"><a href="applications.html#example-one"><i class="fa fa-check"></i><b>8.1</b> Example one<span></span></a></li>
+<li class="chapter" data-level="8.2" data-path="applications.html"><a href="applications.html#example-two"><i class="fa fa-check"></i><b>8.2</b> Example two<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>9</b> Final Words<span></span></a></li>
+<li><a href="references.html#references">References<span></span></a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The WEst Brook Story</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="getData" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Get data from the server<a href="getData.html#getData" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Server is named osensei and is at UMass. It can be accessed using functions in the ‘getWBData’ package. Use
+<code>devtools::install_github('Conte-Ecology/westBrookData/getWBData')</code> to install. Most of the functions will run reconnect() to connect to the server with your username and password. Run <code>reconnect()</code> from the console to connect if necessary. Use <code>conDplyr</code> to see the list of available tables on the server.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="getData.html#cb1-1" aria-hidden="true" tabindex="-1"></a>getNew_cdWB0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb1-2"><a href="getData.html#cb1-2" aria-hidden="true" tabindex="-1"></a>getNew_cdWB_CMR0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb1-3"><a href="getData.html#cb1-3" aria-hidden="true" tabindex="-1"></a>getNew_cdWB_Wanding0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
+<p>West Brook electrofishing data, all salmonids (tagged and untagged)</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="getData.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB0) {</span>
+<span id="cb2-2"><a href="getData.html#cb2-2" aria-hidden="true" tabindex="-1"></a>  cdWB0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
+<span id="cb2-3"><a href="getData.html#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">sampleType =</span> <span class="st">&quot;electrofishing&quot;</span>,  <span class="co">#&quot;stationaryAntenna&quot;,&quot;portableAntenna&quot;</span></span>
+<span id="cb2-4"><a href="getData.html#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;sampleNumber&quot;</span>,</span>
+<span id="cb2-5"><a href="getData.html#cb2-5" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;river&quot;</span>,</span>
+<span id="cb2-6"><a href="getData.html#cb2-6" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;survey&quot;</span>,</span>
+<span id="cb2-7"><a href="getData.html#cb2-7" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;pass&quot;</span>,</span>
+<span id="cb2-8"><a href="getData.html#cb2-8" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;observedLength&quot;</span>,</span>
+<span id="cb2-9"><a href="getData.html#cb2-9" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;observedWeight&quot;</span>,</span>
+<span id="cb2-10"><a href="getData.html#cb2-10" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;comments&quot;</span>),</span>
+<span id="cb2-11"><a href="getData.html#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">includeUntagged =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-12"><a href="getData.html#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">whichDrainage =</span> <span class="st">&quot;west&quot;</span></span>
+<span id="cb2-13"><a href="getData.html#cb2-13" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-14"><a href="getData.html#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addTagProperties</span>(</span>
+<span id="cb2-15"><a href="getData.html#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;cohort&quot;</span>,</span>
+<span id="cb2-16"><a href="getData.html#cb2-16" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;species&quot;</span>,</span>
+<span id="cb2-17"><a href="getData.html#cb2-17" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;dateEmigrated&quot;</span>,</span>
+<span id="cb2-18"><a href="getData.html#cb2-18" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;sex&quot;</span>,</span>
+<span id="cb2-19"><a href="getData.html#cb2-19" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;species&quot;</span></span>
+<span id="cb2-20"><a href="getData.html#cb2-20" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-21"><a href="getData.html#cb2-21" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-22"><a href="getData.html#cb2-22" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(species <span class="sc">%in%</span> <span class="fu">c</span>( <span class="st">&quot;bkt&quot;</span>,<span class="st">&quot;bnt&quot;</span>,<span class="st">&quot;ats&quot;</span>),</span>
+<span id="cb2-23"><a href="getData.html#cb2-23" aria-hidden="true" tabindex="-1"></a>                    area <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;trib&quot;</span>,<span class="st">&quot;inside&quot;</span>,<span class="st">&quot;below&quot;</span>,<span class="st">&quot;above&quot;</span>),</span>
+<span id="cb2-24"><a href="getData.html#cb2-24" aria-hidden="true" tabindex="-1"></a>                    <span class="sc">!</span><span class="fu">is.na</span>(sampleNumber)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-25"><a href="getData.html#cb2-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addSampleProperties</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-26"><a href="getData.html#cb2-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addEnvironmental</span>()</span>
+<span id="cb2-27"><a href="getData.html#cb2-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-28"><a href="getData.html#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB0.RData&#39;</span>)</span>
+<span id="cb2-29"><a href="getData.html#cb2-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-30"><a href="getData.html#cb2-30" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb2-31"><a href="getData.html#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB0.RData&#39;</span>)</span>
+<span id="cb2-32"><a href="getData.html#cb2-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-33"><a href="getData.html#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB0)</span></code></pre></div>
+<pre><code>## tibble [91,103 x 22] (S3: tbl_df/tbl/data.frame)
+##  $ tag              : chr [1:91103] &quot;00088cbed0&quot; &quot;00088cbed3&quot; &quot;00088cbed4&quot; &quot;00088cbed4&quot; ...
+##  $ detectionDate    : POSIXct[1:91103], format: &quot;2013-03-25 00:00:00&quot; &quot;2012-06-07 09:03:00&quot; &quot;2013-03-29 10:08:00&quot; &quot;2013-06-25 14:51:00&quot; ...
+##  $ sampleName       : chr [1:91103] &quot;84&quot; &quot;81&quot; &quot;84&quot; &quot;85&quot; ...
+##  $ sampleNumber     : num [1:91103] 73 70 73 74 70 71 73 79 80 71 ...
+##  $ river            : chr [1:91103] &quot;wb obear&quot; &quot;west brook&quot; &quot;west brook&quot; &quot;west brook&quot; ...
+##  $ section          : chr [1:91103] &quot;7&quot; &quot;1&quot; &quot;40&quot; &quot;44&quot; ...
+##  $ area             : chr [1:91103] &quot;trib&quot; &quot;inside&quot; &quot;inside&quot; &quot;inside&quot; ...
+##  $ observedLength   : num [1:91103] 62 62 109 154 113 120 147 70 74 86 ...
+##  $ survey           : chr [1:91103] &quot;shock&quot; &quot;shock&quot; &quot;shock&quot; &quot;shock&quot; ...
+##  $ pass             : num [1:91103] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ observedWeight   : num [1:91103] 1.9 2.7 12.6 41.3 15.5 18.3 30.4 3.5 4.8 6.7 ...
+##  $ comments         : chr [1:91103] &quot;additional genetic sample&quot; NA NA NA ...
+##  $ cohort           : num [1:91103] 2012 2012 2012 2012 2011 ...
+##  $ species          : chr [1:91103] &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; ...
+##  $ dateEmigrated    : Date[1:91103], format: NA NA NA NA ...
+##  $ sex              : chr [1:91103] NA NA NA NA ...
+##  $ year             : num [1:91103] 2013 2012 2013 2013 2012 ...
+##  $ season           : num [1:91103] 1 2 1 2 2 3 1 3 4 3 ...
+##  $ proportionSampled: num [1:91103] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ lagDetectionDate : POSIXct[1:91103], format: NA NA &quot;2013-06-25 14:51:00&quot; NA ...
+##  $ meanTemperature  : num [1:91103] NaN NaN 10.7 NaN 16.5 ...
+##  $ meanFlow         : num [1:91103] NaN NaN 0.5247 NaN 0.0338 ...</code></pre>
+<p>West Brook electrofishing data with Capture-Mark-Recapture data added for tagged individuals</p>
+<p>West Brook wanding data, all salmonids (tagged)</p>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="wrangle.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["westBrook-book.pdf", "westBrook-book.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

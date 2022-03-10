@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Young-of-year Growth Model | The WEst Brook Story</title>
+  <meta name="description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in westen MA, USA" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Young-of-year Growth Model | The WEst Brook Story" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in westen MA, USA" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Young-of-year Growth Model | The WEst Brook Story" />
+  
+  <meta name="twitter:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in westen MA, USA" />
+  
+
+<meta name="author" content="Ben Letcher" />
+
+
+<meta name="date" content="2022-03-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="wrangle.html"/>
+<link rel="next" href="intro.html"/>
+<script src="libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The West Brook Story</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction<span></span></a></li>
+<li class="chapter" data-level="2" data-path="getData.html"><a href="getData.html"><i class="fa fa-check"></i><b>2</b> Get data from the server<span></span></a></li>
+<li class="chapter" data-level="3" data-path="wrangle.html"><a href="wrangle.html"><i class="fa fa-check"></i><b>3</b> Wrangle the data<span></span></a></li>
+<li class="chapter" data-level="4" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html"><i class="fa fa-check"></i><b>4</b> Young-of-year Growth Model<span></span></a></li>
+<li class="chapter" data-level="5" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>5</b> Introduction<span></span></a></li>
+<li class="chapter" data-level="6" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>6</b> Literature<span></span></a></li>
+<li class="chapter" data-level="7" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>7</b> Methods<span></span></a></li>
+<li class="chapter" data-level="8" data-path="applications.html"><a href="applications.html"><i class="fa fa-check"></i><b>8</b> Applications<span></span></a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="applications.html"><a href="applications.html#example-one"><i class="fa fa-check"></i><b>8.1</b> Example one<span></span></a></li>
+<li class="chapter" data-level="8.2" data-path="applications.html"><a href="applications.html#example-two"><i class="fa fa-check"></i><b>8.2</b> Example two<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>9</b> Final Words<span></span></a></li>
+<li><a href="references.html#references">References<span></span></a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The WEst Brook Story</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="yoyGrowthModel" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Young-of-year Growth Model<a href="yoyGrowthModel.html#yoyGrowthModel" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="yoyGrowthModel.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb11-2"><a href="yoyGrowthModel.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB.RData&#39;</span>)</span></code></pre></div>
+<p>Focus on ageInSample == 1 fish for yoy growth model</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="yoyGrowthModel.html#cb12-1" aria-hidden="true" tabindex="-1"></a>  cdWB1 <span class="ot">&lt;-</span> cdWB <span class="sc">%&gt;%</span> <span class="fu">filter</span>(ageInSamples <span class="sc">==</span> <span class="dv">1</span>, species <span class="sc">!=</span> <span class="st">&#39;ats&#39;</span>, riverOrdered <span class="sc">==</span> <span class="st">&quot;west brook&quot;</span>)</span>
+<span id="cb12-2"><a href="yoyGrowthModel.html#cb12-2" aria-hidden="true" tabindex="-1"></a>  cd1 <span class="ot">&lt;-</span> cdWB <span class="sc">%&gt;%</span> <span class="fu">filter</span>(ageInSamples <span class="sc">==</span> <span class="dv">1</span>, species <span class="sc">!=</span> <span class="st">&#39;ats&#39;</span>)</span>
+<span id="cb12-3"><a href="yoyGrowthModel.html#cb12-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-4"><a href="yoyGrowthModel.html#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB1, <span class="fu">aes</span>(observedLength)) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="yoyGrowthModel.html#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb12-6"><a href="yoyGrowthModel.html#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>, <span class="at">color =</span> <span class="st">&#39;orange&#39;</span>) <span class="sc">+</span></span>
+<span id="cb12-7"><a href="yoyGrowthModel.html#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(species <span class="sc">~</span> year)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 6 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="westBrook-book_files/figure-html/AIS1-1.png" width="672" /></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="yoyGrowthModel.html#cb15-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB1, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="yoyGrowthModel.html#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb15-3"><a href="yoyGrowthModel.html#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="yoyGrowthModel.html#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(species <span class="sc">~</span> year)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 6 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="westBrook-book_files/figure-html/AIS1-2.png" width="672" /></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="yoyGrowthModel.html#cb18-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cd1, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb18-2"><a href="yoyGrowthModel.html#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb18-3"><a href="yoyGrowthModel.html#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
+<span id="cb18-4"><a href="yoyGrowthModel.html#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(species <span class="sc">+</span> riverOrdered <span class="sc">~</span> year, <span class="at">scales =</span> <span class="st">&quot;free_y&quot;</span>)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 7 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="westBrook-book_files/figure-html/AIS1-3.png" width="672" /></p>
+<p>Why are there untagged fish bigger than 60mm? Check 2002/bkt/WB, as an
+example</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="yoyGrowthModel.html#cb21-1" aria-hidden="true" tabindex="-1"></a>  cdWB12002BKT <span class="ot">&lt;-</span> cdWB1 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2002</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>)</span>
+<span id="cb21-2"><a href="yoyGrowthModel.html#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(<span class="fu">is.na</span>(cdWB12002BKT<span class="sc">$</span>tag))</span></code></pre></div>
+<pre><code>## 
+## FALSE  TRUE 
+##   213   132</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="yoyGrowthModel.html#cb23-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB12002BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb23-2"><a href="yoyGrowthModel.html#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb23-3"><a href="yoyGrowthModel.html#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="westBrook-book_files/figure-html/2002%20untagged-1.png" width="672" /></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="yoyGrowthModel.html#cb25-1" aria-hidden="true" tabindex="-1"></a>  cdWB12002BKT <span class="sc">%&gt;%</span> <span class="fu">filter</span>(observedLength <span class="sc">&gt;</span> <span class="dv">60</span>, <span class="fu">is.na</span>(tag)) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>()</span></code></pre></div>
+<pre><code>##     tag detectionDate sampleName sampleNumber      river section   area observedLength survey pass observedWeight         comments
+## 1  &lt;NA&gt;    2002-09-18         41           31 west brook       8 inside             68  shock    1            3.5 shock scars/mort
+## 2  &lt;NA&gt;    2002-09-19         41           31 west brook      13 inside             62  shock    1            2.8 shock scars/mort
+## 3  &lt;NA&gt;    2002-09-23         41           31 west brook      15 inside             61  shock    1            2.4     tagging mort
+## 4  &lt;NA&gt;    2002-09-23         41           31 west brook      16 inside             64  shock    1            2.6             slow
+## 5  &lt;NA&gt;    2002-09-23         41           31 west brook      17 inside             68  shock    1            3.1 shock scars/mort
+## 6  &lt;NA&gt;    2002-09-24         41           31 west brook      23 inside             68  shock    1            3.2 shock scars/mort
+## 7  &lt;NA&gt;    2002-09-30         41           31 west brook      31 inside             62  shock    2            2.4 shock scars/mort
+## 8  &lt;NA&gt;    2002-09-30         41           31 west brook      32 inside             61  shock    2            2.5 shock scars/mort
+## 9  &lt;NA&gt;    2002-10-01         41           31 west brook      35 inside             69  shock    1            3.4             &lt;NA&gt;
+## 10 &lt;NA&gt;    2002-10-04         41           31 west brook      80  below             74  shock    1            4.2             &lt;NA&gt;
+## 11 &lt;NA&gt;    2002-10-04         41           31 west brook      80  below             71  shock    1            4.0             &lt;NA&gt;
+## 12 &lt;NA&gt;    2002-10-04         41           31 west brook       0  below             69  shock    1            3.4             &lt;NA&gt;
+## 13 &lt;NA&gt;    2002-10-04         41           31 west brook      60  above             70  shock    1            3.6             &lt;NA&gt;
+## 14 &lt;NA&gt;    2002-10-04         41           31 west brook      60  above             68  shock    1            3.1             &lt;NA&gt;
+## 15 &lt;NA&gt;    2002-10-04         41           31 west brook     100  below             71  shock    1            4.1             &lt;NA&gt;
+## 16 &lt;NA&gt;    2002-10-04         41           31 west brook      60  below             71  shock    1            3.8             &lt;NA&gt;
+## 17 &lt;NA&gt;    2002-10-04         41           31 west brook      60  below             71  shock    1            3.6             &lt;NA&gt;
+## 18 &lt;NA&gt;    2002-10-04         41           31 west brook      40  below             77  shock    1            5.2             &lt;NA&gt;
+## 19 &lt;NA&gt;    2002-10-04         41           31 west brook      40  below             78  shock    1            4.7             &lt;NA&gt;
+## 20 &lt;NA&gt;    2002-10-04         41           31 west brook      40  below             71  shock    1            3.8             &lt;NA&gt;
+## 21 &lt;NA&gt;    2002-10-04         41           31 west brook      20  below             70  shock    1            3.8             &lt;NA&gt;
+## 22 &lt;NA&gt;    2002-10-04         41           31 west brook      20  below             68  shock    1            3.3             &lt;NA&gt;
+##    cohort species dateEmigrated  sex year season proportionSampled lagDetectionDate meanTemperature    meanFlow sectionOriginal
+## 1    2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-09-18        15.00319 -0.04960486               8
+## 2    2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-09-19        14.68938 -0.05461786              13
+## 3    2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-09-23        16.77944 -0.06006055              15
+## 4    2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-09-23        16.77944 -0.06006055              16
+## 5    2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-09-23        16.77944 -0.06006055              17
+## 6    2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-09-24        14.72569 -0.06281770              23
+## 7    2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-09-30        11.86201 -0.03975789              31
+## 8    2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-09-30        11.86201 -0.03975789              32
+## 9    2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-01        13.36111 -0.03438682              35
+## 10   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              80
+## 11   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              80
+## 12   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296               0
+## 13   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              60
+## 14   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              60
+## 15   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296             100
+## 16   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              60
+## 17   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              60
+## 18   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              40
+## 19   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              40
+## 20   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              40
+## 21   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              20
+## 22   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3                 1       2002-10-04        13.41424 -0.03510296              20
+##    riverOrdered inside yday ageInSamples isYOY lagSection distMoved lagObservedWeight lagObservedLength grWeight grLength
+## 1    west brook   TRUE  261            1  TRUE         NA        NA                NA                NA       NA       NA
+## 2    west brook   TRUE  262            1  TRUE         NA        NA                NA                NA       NA       NA
+## 3    west brook   TRUE  266            1  TRUE         NA        NA                NA                NA       NA       NA
+## 4    west brook   TRUE  266            1  TRUE         NA        NA                NA                NA       NA       NA
+## 5    west brook   TRUE  266            1  TRUE         NA        NA                NA                NA       NA       NA
+## 6    west brook   TRUE  267            1  TRUE         NA        NA                NA                NA       NA       NA
+## 7    west brook   TRUE  273            1  TRUE         NA        NA                NA                NA       NA       NA
+## 8    west brook   TRUE  273            1  TRUE         NA        NA                NA                NA       NA       NA
+## 9    west brook   TRUE  274            1  TRUE         NA        NA                NA                NA       NA       NA
+## 10   west brook  FALSE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 11   west brook  FALSE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 12   west brook  FALSE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 13   west brook  FALSE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 14   west brook  FALSE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 15   west brook  FALSE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 16   west brook  FALSE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 17   west brook  FALSE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 18   west brook   TRUE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 19   west brook   TRUE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 20   west brook   TRUE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 21   west brook   TRUE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+## 22   west brook   TRUE  277            1  TRUE         NA        NA                NA                NA       NA       NA
+##    minSample maxSample minYear moveDir sampleInterval drainage quarter_length river_meter confluence_river_meter riverMeter
+## 1         10        92    1997       0              0     west          5.400     4542.85                      0    4542.85
+## 2         10        92    1997       0              0     west          4.850     4647.75                      0    4647.75
+## 3         10        92    1997       0              0     west          6.100     4692.05                      0    4692.05
+## 4         10        92    1997       0              0     west          4.900     4714.05                      0    4714.05
+## 5         10        92    1997       0              0     west          5.100     4734.05                      0    4734.05
+## 6         10        92    1997       0              0     west          5.375     4861.40                      0    4861.40
+## 7         10        92    1997       0              0     west          5.025     5026.00                      0    5026.00
+## 8         10        92    1997       0              0     west          5.000     5046.05                      0    5046.05
+## 9         10        92    1997       0              0     west          5.250     5108.65                      0    5108.65
+## 10        10        92    1997       0              0     west          5.475     4281.50                      0    4281.50
+## 11        10        92    1997       0              0     west          5.475     4281.50                      0    4281.50
+## 12        10        92    1997       0              0     west          6.675     4369.90                      0    4369.90
+## 13        10        92    1997       0              0     west          4.925     5432.70                      0    5432.70
+## 14        10        92    1997       0              0     west          4.925     5432.70                      0    5432.70
+## 15        10        92    1997       0              0     west          4.400     4261.75                      0    4261.75
+## 16        10        92    1997       0              0     west          4.550     4301.55                      0    4301.55
+## 17        10        92    1997       0              0     west          4.550     4301.55                      0    4301.55
+## 18        10        92    1997       0              0     west          5.975     4322.60                      0    4322.60
+## 19        10        92    1997       0              0     west          5.975     4322.60                      0    4322.60
+## 20        10        92    1997       0              0     west          5.975     4322.60                      0    4322.60
+## 21        10        92    1997       0              0     west          5.500     4345.55                      0    4345.55
+## 22        10        92    1997       0              0     west          5.500     4345.55                      0    4345.55
+##    nPasses
+## 1        2
+## 2        2
+## 3        2
+## 4        2
+## 5        2
+## 6        2
+## 7        2
+## 8        2
+## 9        2
+## 10       2
+## 11       2
+## 12       2
+## 13       2
+## 14       2
+## 15       2
+## 16       2
+## 17       2
+## 18       2
+## 19       2
+## 20       2
+## 21       2
+## 22       2
+##  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 46 rows ]</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="yoyGrowthModel.html#cb27-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># looks like untagged area=inside fish wee morts, the rest were above or below</span></span>
+<span id="cb27-2"><a href="yoyGrowthModel.html#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB12002BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="yoyGrowthModel.html#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb27-4"><a href="yoyGrowthModel.html#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="yoyGrowthModel.html#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span>area)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="westBrook-book_files/figure-html/2002%20untagged-2.png" width="672" /></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="yoyGrowthModel.html#cb29-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># check 2003</span></span>
+<span id="cb29-2"><a href="yoyGrowthModel.html#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB1 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2003</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>), <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb29-3"><a href="yoyGrowthModel.html#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb29-4"><a href="yoyGrowthModel.html#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
+<span id="cb29-5"><a href="yoyGrowthModel.html#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span>area)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="westBrook-book_files/figure-html/2002%20untagged-3.png" width="672" /></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="yoyGrowthModel.html#cb31-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># same story as 2002</span></span></code></pre></div>
+<p>Why no untagged fish at all for 2000 and 2001?</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="yoyGrowthModel.html#cb32-1" aria-hidden="true" tabindex="-1"></a>  cdWB12000_2001BKT <span class="ot">&lt;-</span> cdWB1 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="dv">2000</span><span class="sc">:</span><span class="dv">2001</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>)</span>
+<span id="cb32-2"><a href="yoyGrowthModel.html#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(<span class="fu">is.na</span>(cdWB12000_2001BKT<span class="sc">$</span>tag))</span></code></pre></div>
+<pre><code>## 
+## FALSE 
+##   343</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="yoyGrowthModel.html#cb34-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(cdWB12000_2001BKT<span class="sc">$</span>observedLength)</span></code></pre></div>
+<pre><code>## 
+## 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 85 90 
+## 18 23 23 26 20 28 19 14 28 23 20 21  9 14  8 11  3  8  4  5  6  5  1  3  2  1</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="yoyGrowthModel.html#cb36-1" aria-hidden="true" tabindex="-1"></a>  cdWB12000_2001BKT <span class="sc">%&gt;%</span> <span class="fu">filter</span>(observedLength <span class="sc">&lt;</span> <span class="dv">60</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 64 x 45
+##    tag   detectionDate       sampleName sampleNumber river section area  observedLength survey  pass observedWeight comments cohort
+##    &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
+##  1 1bf0~ 2001-09-10 12:00:00 36                   27 west~      25 insi~             58 shock      1            1.9 fish #1~   2001
+##  2 1bf0~ 2001-09-07 12:00:00 36                   27 west~      20 insi~             57 shock      1            1.9 0          2001
+##  3 1bf0~ 2001-09-07 12:00:00 36                   27 west~      19 insi~             59 shock      1            2.1 0          2001
+##  4 1bf0~ 2001-09-07 12:00:00 36                   27 west~      20 insi~             59 shock      1            2.1 0          2001
+##  5 1bf0~ 2001-09-06 12:00:00 36                   27 west~      17 insi~             59 shock      2            2.2 0          2001
+##  6 1bf0~ 2001-09-10 12:00:00 36                   27 west~      25 insi~             57 shock      1            1.9 0          2001
+##  7 1bf0~ 2001-09-07 12:00:00 36                   27 west~      22 insi~             58 shock      1            2   0          2001
+##  8 1bf0~ 2001-09-10 12:00:00 36                   27 west~      30 insi~             58 shock      1            2.1 0          2001
+##  9 1bf0~ 2001-09-06 12:00:00 36                   27 west~      18 insi~             58 shock      2            2   0          2001
+## 10 1bf0~ 2001-09-07 12:00:00 36                   27 west~      22 insi~             58 shock      1            1.8 0          2001
+## # ... with 54 more rows, and 32 more variables: species &lt;chr&gt;, dateEmigrated &lt;date&gt;, sex &lt;chr&gt;, year &lt;dbl&gt;, season &lt;dbl&gt;,
+## #   proportionSampled &lt;dbl&gt;, lagDetectionDate &lt;dttm&gt;, meanTemperature &lt;dbl&gt;, meanFlow &lt;dbl&gt;, sectionOriginal &lt;chr&gt;,
+## #   riverOrdered &lt;ord&gt;, inside &lt;lgl&gt;, yday &lt;dbl&gt;, ageInSamples &lt;dbl&gt;, isYOY &lt;lgl&gt;, lagSection &lt;dbl&gt;, distMoved &lt;dbl&gt;,
+## #   lagObservedWeight &lt;dbl&gt;, lagObservedLength &lt;dbl&gt;, grWeight &lt;dbl&gt;, grLength &lt;dbl&gt;, minSample &lt;dbl&gt;, maxSample &lt;dbl&gt;,
+## #   minYear &lt;dbl&gt;, moveDir &lt;dbl&gt;, sampleInterval &lt;dbl&gt;, drainage &lt;chr&gt;, quarter_length &lt;dbl&gt;, river_meter &lt;dbl&gt;,
+## #   confluence_river_meter &lt;dbl&gt;, riverMeter &lt;dbl&gt;, nPasses &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="yoyGrowthModel.html#cb38-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB12000_2001BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb38-2"><a href="yoyGrowthModel.html#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb38-3"><a href="yoyGrowthModel.html#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="westBrook-book_files/figure-html/untagged%202000,%202001-1.png" width="672" /></p>
+<p>means &lt;- cdWB1 %&gt;% group_by(species, year) %&gt;% summarize(meanLength =
+mean(observedLength, na.rm = TRUE), meanYday = mean(yday, na.rm = TRUE))</p>
+<p>ggplot(means, aes(year, meanLength, color = species)) + geom_point() +
+geom_line()</p>
+<p>ggplot(means, aes(meanYday, meanLength, color = species)) +
+geom_point() + geom_smooth(method = “lm”)</p>
+<p>```</p>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="wrangle.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="intro.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["westBrook-book.pdf", "westBrook-book.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+fig:nice-fig
+tab:nice-tab
+introduction
+getData
+wrangle
+yoyGrowthModel
+intro
+literature
+methods
+applications
+example-one
+example-two
+final-words
