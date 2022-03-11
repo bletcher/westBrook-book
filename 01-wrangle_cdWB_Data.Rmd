@@ -1,7 +1,8 @@
 # Wrangle the data {#wrangle}
 
-This section takes cdWB0 and cleans it to create cdWB
-```{r}
+This section takes cdWB_electro0 and cleans it to create cdWB.  
+Will add additional cleaning steps for cdWB_electro0 and for the other data frames.
+```{r librariesWrangle}
 library(tidyverse)
 
 # devtools::install_github('bletcher/getPrepareWBData')
@@ -14,13 +15,13 @@ library(getPrepareWBData) # this has functions for preparing West Brook data
   drainage <- 'west'
 
   # functions in getPrepareWBData library
-  cdWB <- cdWB0 %>%
+  cdWB_electro <- cdWB_electro0 %>%
     cleanData(drainage) %>%
     mergeSites(drainage) %>%
     addNPasses(drainage) %>%
     mutate(drainage = drainage)
   
-  save(cdWB, file = './data/cdWB.RData')
+  save(cdWB_electro, file = './data/cdWB_electro.RData')
 ```
 
 ```{r include=FALSE}

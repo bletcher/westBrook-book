@@ -1,16 +1,16 @@
 # Young-of-year Growth Model {#yoyGrowthModel}
 
-```{r}
+```{r librariesYOY, echo = FALSE}
 library(tidyverse)
-load(file = './data/cdWB.RData')
+load(file = './data/cdWB_electro.RData')
 ```
 
-Focus on ageInSample == 1 fish for yoy growth model
+Focus on ageInSamples == 1 (age-0 fish in the fall sample) fish for yoy growth model
+## Raw data
+```{r AIS1, warning = FALSE, message = FALSE}
 
-```{r AIS1}
-
-  cdWB1 <- cdWB %>% filter(ageInSamples == 1, species != 'ats', riverOrdered == "west brook")
-  cd1 <- cdWB %>% filter(ageInSamples == 1, species != 'ats')
+  cdWB1 <- cdWB_electro %>% filter(ageInSamples == 1, species != 'ats', riverOrdered == "west brook")
+  cd1 <-   cdWB_electro %>% filter(ageInSamples == 1, species != 'ats')
   
   ggplot(cdWB1, aes(observedLength)) +
     geom_freqpoly() +
@@ -28,8 +28,8 @@ Focus on ageInSample == 1 fish for yoy growth model
     facet_grid(species + riverOrdered ~ year, scales = "free_y")
 ```
 
-Why are there untagged fish bigger than 60mm? Check 2002/bkt/WB, as an
-example
+## Why are there untagged fish bigger than 60mm?  
+Check 2002/bkt/WB, as an example
 
 ```{r 2002 untagged}
 
@@ -56,7 +56,7 @@ example
   # same story as 2002
 ```
 
-Why no untagged fish at all for 2000 and 2001?
+## Why no untagged fish at all for 2000 and 2001?
 
 ```{r untagged 2000, 2001}
 
@@ -80,4 +80,4 @@ geom_line()
 ggplot(means, aes(meanYday, meanLength, color = species)) +
 geom_point() + geom_smooth(method = "lm")
 
-\`\`\`
+

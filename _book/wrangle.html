@@ -144,7 +144,6 @@ div.csl-indent {
 }
 </style>
 
-<link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 
 <body>
@@ -157,13 +156,14 @@ div.csl-indent {
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="./">The West Brook Story</a></li>
-
-<li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction<span></span></a></li>
 <li class="chapter" data-level="2" data-path="getData.html"><a href="getData.html"><i class="fa fa-check"></i><b>2</b> Get data from the server<span></span></a></li>
 <li class="chapter" data-level="3" data-path="wrangle.html"><a href="wrangle.html"><i class="fa fa-check"></i><b>3</b> Wrangle the data<span></span></a></li>
-<li class="chapter" data-level="4" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html"><i class="fa fa-check"></i><b>4</b> Young-of-year Growth Model<span></span></a></li>
+<li class="chapter" data-level="4" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html"><i class="fa fa-check"></i><b>4</b> Young-of-year Growth Model<span></span></a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#why-are-there-untagged-fish-bigger-than-60mm"><i class="fa fa-check"></i><b>4.1</b> Why are there untagged fish bigger than 60mm?<span></span></a></li>
+<li class="chapter" data-level="4.2" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#why-no-untagged-fish-at-all-for-2000-and-2001"><i class="fa fa-check"></i><b>4.2</b> Why no untagged fish at all for 2000 and 2001?<span></span></a></li>
+</ul></li>
 <li class="chapter" data-level="5" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>5</b> Introduction<span></span></a></li>
 <li class="chapter" data-level="6" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>6</b> Literature<span></span></a></li>
 <li class="chapter" data-level="7" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>7</b> Methods<span></span></a></li>
@@ -174,9 +174,6 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="9" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>9</b> Final Words<span></span></a></li>
 <li><a href="references.html#references">References<span></span></a></li>
-<li class="divider"></li>
-<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
-
 </ul>
 
       </nav>
@@ -196,26 +193,27 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="wrangle" class="section level1 hasAnchor" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Wrangle the data<a href="wrangle.html#wrangle" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>This section takes cdWB0 and cleans it to create cdWB</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="wrangle.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb8-2"><a href="wrangle.html#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="wrangle.html#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># devtools::install_github(&#39;bletcher/getPrepareWBData&#39;)</span></span>
-<span id="cb8-4"><a href="wrangle.html#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(getPrepareWBData) <span class="co"># this has functions for preparing West Brook data</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="wrangle.html#cb9-1" aria-hidden="true" tabindex="-1"></a>  drainage <span class="ot">&lt;-</span> <span class="st">&#39;west&#39;</span></span>
-<span id="cb9-2"><a href="wrangle.html#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="wrangle.html#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># functions in getPrepareWBData library</span></span>
-<span id="cb9-4"><a href="wrangle.html#cb9-4" aria-hidden="true" tabindex="-1"></a>  cdWB <span class="ot">&lt;-</span> cdWB0 <span class="sc">%&gt;%</span></span>
-<span id="cb9-5"><a href="wrangle.html#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cleanData</span>(drainage) <span class="sc">%&gt;%</span></span>
-<span id="cb9-6"><a href="wrangle.html#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mergeSites</span>(drainage) <span class="sc">%&gt;%</span></span>
-<span id="cb9-7"><a href="wrangle.html#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addNPasses</span>(drainage) <span class="sc">%&gt;%</span></span>
-<span id="cb9-8"><a href="wrangle.html#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">drainage =</span> drainage)</span></code></pre></div>
+<p>This section takes cdWB_electro0 and cleans it to create cdWB.<br />
+Will add additional cleaning steps for cdWB_electro0 and for the other data frames.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="wrangle.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb10-2"><a href="wrangle.html#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="wrangle.html#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># devtools::install_github(&#39;bletcher/getPrepareWBData&#39;)</span></span>
+<span id="cb10-4"><a href="wrangle.html#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(getPrepareWBData) <span class="co"># this has functions for preparing West Brook data</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="wrangle.html#cb11-1" aria-hidden="true" tabindex="-1"></a>  drainage <span class="ot">&lt;-</span> <span class="st">&#39;west&#39;</span></span>
+<span id="cb11-2"><a href="wrangle.html#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="wrangle.html#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># functions in getPrepareWBData library</span></span>
+<span id="cb11-4"><a href="wrangle.html#cb11-4" aria-hidden="true" tabindex="-1"></a>  cdWB_electro <span class="ot">&lt;-</span> cdWB_electro0 <span class="sc">%&gt;%</span></span>
+<span id="cb11-5"><a href="wrangle.html#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cleanData</span>(drainage) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="wrangle.html#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mergeSites</span>(drainage) <span class="sc">%&gt;%</span></span>
+<span id="cb11-7"><a href="wrangle.html#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addNPasses</span>(drainage) <span class="sc">%&gt;%</span></span>
+<span id="cb11-8"><a href="wrangle.html#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">drainage =</span> drainage)</span></code></pre></div>
 <pre><code>## Error in postgresqlExecStatement(conn, statement, ...) : 
 ##   RS-DBI driver: (q)</code></pre>
 <pre><code>## Warning in postgresqlQuickSQL(conn, statement, ...): Could not create execute:</code></pre>
 <div style="page-break-after: always;"></div>
 <pre><code>## Warning in max(pass, na.rm = T): no non-missing arguments to max; returning -Inf</code></pre>
 <pre><code>## Warning in getSites(drainageIn): NAs introduced by coercion</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="wrangle.html#cb14-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB, <span class="at">file =</span> <span class="st">&#39;./data/cdWB.RData&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="wrangle.html#cb16-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_electro, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro.RData&#39;</span>)</span></code></pre></div>
 
 </div>
             </section>
@@ -266,7 +264,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["westBrook-book.pdf", "westBrook-book.epub"],
+"download": ["westBrook-book.pdf"],
 "search": {
 "engine": "fuse",
 "options": null

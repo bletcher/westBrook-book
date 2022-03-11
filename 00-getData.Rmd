@@ -1,29 +1,34 @@
 # Get data from the server {#getData}
 
-The server hosting the data is named osensei and is at UMass. It can be accessed using functions in the 'getWBData' package. Use
-`devtools::install_github('Conte-Ecology/westBrookData/getWBData')` to install. Most of the functions will run reconnect() to connect to the server with your username and password. Run `reconnect()` from the console to connect if necessary. Use `conDplyr` to see the list of available tables on the server.
-```{r libraries, echo = FALSE}
+The server hosting the data is named osensei and is at UMass (osensei.cns.umass.edu). It can be accessed using functions in the 'getWBData' package. Use
+`devtools::install_github('Conte-Ecology/westBrookData/getWBData')` to install. Most of the functions will run reconnect() to connect to the server with your username and password. Run `reconnect()` from the console to connect if necessary. Use `conDplyr` to see the list of available tables on the server. Details about the 'getWBData' package are 
+[here](https://github.com/Conte-Ecology/westBrookData/blob/master/getWBData/vignettes/getWBDataTutorial.pdf).     
+
+
+```{r librariesGetData, echo = FALSE}
 library(getWBData)
 library(tidyverse)
 library(lubridate)
 library(validate)
 ```
 
-There are three main databases we want to create:    
+There are four main databases we want to create:    
 1. **cdWB_electro0** West Brook electrofishing data, 3 species (brook trout, brown trout and Atlantic salmon), tagged and untagged fish  
 2. **cdWB_CMR0** West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals  
 3. **cdWB_wanding0** West Brook wanding (portable antenna) data, all tagged salmonids  
 4. **cdWB_antenna0** West Brook stationary antenna data, all tagged salmonids  
-The `0` at the end of these file names indicates that they are the initial files that will be wrangled in the next step (chapter)
+
+The "0" at the end of these file names indicates that they are the initial files that will be wrangled in the next step (next chapter). "cd" stands for "core data".
+
 ```{r switches}
 getNew_cdWB_electro0 <- FALSE
 getNew_cdWB_CMR0 <- FALSE
-getNew_cdWB_Wanding0 <- FALSE
+getNew_cdWB_wanding0 <- FALSE
 getNew_cdWB_antenna0 <- FALSE
 ```
 
 1. West Brook electrofishing data, all salmonids (tagged and untagged)
-```{r create or load cdWB_electro0, cache=TRUE}
+```{r cdWB_electro0}
 
 # default values for createCoreData()
 # function (sampleType = "electrofishing", baseColumns = T, 
@@ -65,7 +70,7 @@ str(cdWB_electro0)
 ```
 
 2. West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals
-```{r include=TRUE}
+```{r CJS}
 
 if(getNew_cdWB_CMR0) {
   cdWB_CMR0 <- 
@@ -111,11 +116,11 @@ str(cdWB_CMR0)
 ```
 
 3. West Brook wanding data, all salmonids (tagged)
-```{r include = TRUE}
+```{r wanding}
 
-if(getNew_cdWB_Wanding0) {
+if(getNew_cdWB_wanding0) {
 # from wandingDataWB project in d:/ben/github/wandingData/
-  cdWB_Wanding0 <- createCoreData(
+  cdWB_wanding0 <- createCoreData(
     sampleType = "portableAntenna",
     columnsToAdd = c("tag", 
                      "detectionDate", 
@@ -138,16 +143,16 @@ if(getNew_cdWB_Wanding0) {
     addTagProperties() %>%
     dplyr::filter( species %in% c( "bkt","bnt","ats" ) )
   
-    save(cdWB_Wanding0, file = './data/cdWB_Wanding0.RData')
+    save(cdWB_wanding0, file = './data/cdWB_wanding0.RData')
     
   } else {
-    load(file = './data/cdWB_Wanding0.RData')
+    load(file = './data/cdWB_wanding0.RData')
   }
-str(cdWB_Wanding0)
+str(cdWB_wanding0)
 ```
 
 4. West Brook antenna data, all tagged salmonids
-Some pitAntenna code at https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R
+Note: some pitAntenna code at https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R
 ```{r stationary antenna}
 
 if(getNew_cdWB_antenna0) {
@@ -155,14 +160,11 @@ if(getNew_cdWB_antenna0) {
     sampleType=c("stationaryAntenna"), 
     whichDrainage = "west",
     columnsToAdd=c(
-      "sampleNumber",
       "river",
       "riverMeter",
       "survey",
       "readerID",
-      "comment",
-      'observedLength',
-      'observedWeight'
+      "comment"
       )
   ) %>%  
   filter(!is.na(tag)) %>% # for now
