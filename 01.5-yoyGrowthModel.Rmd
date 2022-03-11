@@ -12,7 +12,7 @@ The question here is what is driving _body size variation_ across years in brook
 
 We focus on ageInSamples == 1 (age-0 fish in the fall sample) fish for growth model. This is the first sampling occasion that most fish are big enough to tag. Not all fish are big enough, however, and there is a number of untagged fish each year. We need to include both tagged and untagged fish in our age-0 size model.
 
-Factors to include in the model are 
+Factors to include in the model are   
 1. Sample date  
 2. Cumulative temperature prior to sampling  
 3. Cumulative flow prior to sampling  
@@ -22,7 +22,9 @@ Factors to include in the model are
 ## Raw data
 test
 
-### Brook Trout, West brook  
+### Frequcny ploty by species and river
+
+#### Brook Trout, West brook  
 ```{r raw data plots1}
   cd1 <- cdWB_electro %>% filter(ageInSamples == 1, species != 'ats')
 
@@ -41,7 +43,7 @@ test
   plotSppRiv(species, riverOrdered)
 ```  
 
-### Brook Trout, wb jimmy 
+#### Brook Trout, wb jimmy 
 ```{r raw data plots2, echo = FALSE}
   species = 'bkt'
   riverOrdered = "wb jimmy"
@@ -49,7 +51,7 @@ test
   plotSppRiv(species, riverOrdered)
 ```  
 
-### Brook Trout, wb mitchell  
+#### Brook Trout, wb mitchell  
 ```{r raw data plots3, echo = FALSE}
   species = 'bkt'
   riverOrdered = "wb mitchell"
@@ -57,7 +59,7 @@ test
   plotSppRiv(species, riverOrdered)
 ```  
 
-### Brook Trout, wb obear  
+#### Brook Trout, wb obear  
 ```{r raw data plots4, echo = FALSE}
   species = 'bkt'
   riverOrdered = "wb obear"
@@ -65,7 +67,7 @@ test
   plotSppRiv(species, riverOrdered)
 ```  
 
-### Brown Trout, West brook  
+#### Brown Trout, West brook  
 ```{r raw data plots5, echo = FALSE}
   species = 'bnt'
   riverOrdered = "west brook"
@@ -73,7 +75,7 @@ test
   plotSppRiv(species, riverOrdered)
 ```  
 
-### Brown Trout, wb jimmy 
+#### Brown Trout, wb jimmy 
 ```{r raw data plots6, echo = FALSE}
   species = 'bnt'
   riverOrdered = "wb jimmy"
@@ -81,7 +83,7 @@ test
   plotSppRiv(species, riverOrdered)
 ```  
 
-### Brown Trout, wb mitchell  
+#### Brown Trout, wb mitchell  
 ```{r raw data plots7, echo = FALSE}
   species = 'bnt'
   riverOrdered = "wb mitchell"
@@ -89,7 +91,7 @@ test
   plotSppRiv(species, riverOrdered)
 ```  
 
-### Brown Trout, wb obear - there are no Brown trout in O'Bear  
+#### Brown Trout, wb obear - there are no Brown trout in O'Bear  
 
 ### Trout, in the WB mainstem only
 ```{r}

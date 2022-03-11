@@ -1,10 +1,10 @@
-fig:nice-fig
 tab:nice-tab
 introduction
 getData
 wrangle
 yoyGrowthModel
 raw-data
+frequcny-ploty-by-species-and-river
 brook-trout-west-brook
 brook-trout-wb-jimmy
 brook-trout-wb-mitchell
