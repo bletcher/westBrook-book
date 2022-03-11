@@ -1,5 +1,5 @@
 --- 
-title: "The WEst Brook Story"
+title: "The West Brook Story"
 author: "Ben Letcher"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
@@ -9,12 +9,12 @@ bibliography:
 - packages.bib
 biblio-style: apalike
 link-citations: yes
-description: This book describes accessing, cleaning, and analyzing data from the West Brook Study in westen MA, USA
+description: This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA
 ---
 
 # Introduction
 
-This book describes accessing, cleaning, and analyzing data from the West Brook Study in westen MA, USA.
+This book describes accessing, cleaning, and analyzing data from the West Brook Study in Whateley MA, USA.
 
 Use bookdown::render_book() to render the book (not showing up in the 'Build' tab like the bookdown book (https://bookdown.org/yihui/bookdown/usage.html) says it should.
 
