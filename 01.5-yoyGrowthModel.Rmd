@@ -22,20 +22,74 @@ Factors to include in the model are
 ## Raw data
 test
 
-### Trout, all locations  
-```{r raw data plots}
-  cd1 <-   cdWB_electro %>% filter(ageInSamples == 1, species != 'ats')
+### Brook Trout, West brook  
+```{r raw data plots1}
+  cd1 <- cdWB_electro %>% filter(ageInSamples == 1, species != 'ats')
 
-  ggplot(cd1 %>% filter(species == 'bkt'), aes(observedLength, color = is.na(tag))) +
-    geom_freqpoly() +
-    geom_vline(xintercept = 60) +
-    facet_grid(species + riverOrdered ~ year, scales = "free_y")
+  plotSppRiv = function(s, r) { 
+    ggplot(cd1 %>% filter(species == s, riverOrdered == r), aes(observedLength, color = is.na(tag))) +
+      geom_freqpoly() +
+      geom_vline(xintercept = 60) +
+      ggtitle(paste(s, r, sep = ', ')) +
+      xlim(c(30,125)) +
+      facet_wrap(~ year, scales = "free_y")
+  }
   
-  ggplot(cd1 %>% filter(species == 'bnt'), aes(observedLength, color = is.na(tag))) +
-    geom_freqpoly() +
-    geom_vline(xintercept = 60) +
-    facet_grid(species + riverOrdered ~ year, scales = "free_y")
-```
+  species = 'bkt'
+  riverOrdered = "west brook"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+### Brook Trout, wb jimmy 
+```{r raw data plots2, echo = FALSE}
+  species = 'bkt'
+  riverOrdered = "wb jimmy"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+### Brook Trout, wb mitchell  
+```{r raw data plots3, echo = FALSE}
+  species = 'bkt'
+  riverOrdered = "wb mitchell"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+### Brook Trout, wb obear  
+```{r raw data plots4, echo = FALSE}
+  species = 'bkt'
+  riverOrdered = "wb obear"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+### Brown Trout, West brook  
+```{r raw data plots5, echo = FALSE}
+  species = 'bnt'
+  riverOrdered = "west brook"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+### Brown Trout, wb jimmy 
+```{r raw data plots6, echo = FALSE}
+  species = 'bnt'
+  riverOrdered = "wb jimmy"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+### Brown Trout, wb mitchell  
+```{r raw data plots7, echo = FALSE}
+  species = 'bnt'
+  riverOrdered = "wb mitchell"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+### Brown Trout, wb obear - there are no Brown trout in O'Bear  
 
 ### Trout, in the WB mainstem only
 ```{r}
@@ -53,7 +107,7 @@ test
 ```
   
 
-## Why are there untagged fish bigger than 60mm?  
+### Why are there untagged fish bigger than 60mm?  
 Check 2002/bkt/WB, as an example
 
 ```{r 2002 untagged}
@@ -81,7 +135,7 @@ Check 2002/bkt/WB, as an example
   # same story as 2002
 ```
 
-## Why no untagged fish at all for 2000 and 2001?
+### Why no untagged fish at all for 2000 and 2001?
 
 ```{r untagged 2000, 2001}
 
@@ -96,7 +150,10 @@ Check 2002/bkt/WB, as an example
     geom_vline(xintercept = 60)
 ```
 
-means \<- cdWB1 %\>% group_by(species, year) %\>% summarize(meanLength =
+## Yearly means
+```{r means}
+
+means <- cdWB1 %>% group_by(species, year) %>% summarize(meanLength =
 mean(observedLength, na.rm = TRUE), meanYday = mean(yday, na.rm = TRUE))
 
 ggplot(means, aes(year, meanLength, color = species)) + geom_point() +
@@ -104,5 +161,9 @@ geom_line()
 
 ggplot(means, aes(meanYday, meanLength, color = species)) +
 geom_point() + geom_smooth(method = "lm")
+```
+
+
+
 
 
