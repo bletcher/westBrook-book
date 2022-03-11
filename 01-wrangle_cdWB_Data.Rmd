@@ -1,5 +1,9 @@
 # Wrangle the data {#wrangle}
 
+```{r globalWrangle, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
 This section takes cdWB_electro0 and cleans it to create cdWB.  
 Will add additional cleaning steps for cdWB_electro0 and for the other data frames.
 ```{r librariesWrangle}
@@ -10,8 +14,14 @@ library(getPrepareWBData) # this has functions for preparing West Brook data
 
 ```
 
+```{r}
+reclean_cdWB_electro <- FALSE
+```
+
 
 ```{r wrangleMain, cache = TRUE}
+
+if(reclean_cdWB_electro){
   drainage <- 'west'
 
   # functions in getPrepareWBData library
@@ -22,6 +32,10 @@ library(getPrepareWBData) # this has functions for preparing West Brook data
     mutate(drainage = drainage)
   
   save(cdWB_electro, file = './data/cdWB_electro.RData')
+  
+} else {
+  load(file = './data/cdWB_electro.RData')
+}
 ```
 
 ```{r include=FALSE}

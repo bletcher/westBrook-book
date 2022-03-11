@@ -1,17 +1,46 @@
 # Young-of-year Growth Model {#yoyGrowthModel}
+```{r globalYOY, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, out.width = '100%')
+```
 
 ```{r librariesYOY, echo = FALSE}
 library(tidyverse)
 load(file = './data/cdWB_electro.RData')
 ```
 
-Focus on ageInSamples == 1 (age-0 fish in the fall sample) fish for yoy growth model
-## Raw data
-```{r AIS1, warning = FALSE, message = FALSE}
+The question here is what is driving _body size variation_ across years in brook trout and brown trout in the WB?  
 
-  cdWB1 <- cdWB_electro %>% filter(ageInSamples == 1, species != 'ats', riverOrdered == "west brook")
+We focus on ageInSamples == 1 (age-0 fish in the fall sample) fish for growth model. This is the first sampling occasion that most fish are big enough to tag. Not all fish are big enough, however, and there is a number of untagged fish each year. We need to include both tagged and untagged fish in our age-0 size model.
+
+Factors to include in the model are 
+1. Sample date  
+2. Cumulative temperature prior to sampling  
+3. Cumulative flow prior to sampling  
+4. Extreme flow events?  
+5. Fish density, maybe total and age-0 across all three salmonids  
+
+## Raw data
+test
+
+### Trout, all locations  
+```{r raw data plots}
   cd1 <-   cdWB_electro %>% filter(ageInSamples == 1, species != 'ats')
+
+  ggplot(cd1 %>% filter(species == 'bkt'), aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60) +
+    facet_grid(species + riverOrdered ~ year, scales = "free_y")
   
+  ggplot(cd1 %>% filter(species == 'bnt'), aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60) +
+    facet_grid(species + riverOrdered ~ year, scales = "free_y")
+```
+
+### Trout, in the WB mainstem only
+```{r}
+  cdWB1 <- cdWB_electro %>% filter(ageInSamples == 1, species != 'ats', riverOrdered == "west brook")
+
   ggplot(cdWB1, aes(observedLength)) +
     geom_freqpoly() +
     geom_vline(xintercept = 60, color = 'orange') +
@@ -21,12 +50,8 @@ Focus on ageInSamples == 1 (age-0 fish in the fall sample) fish for yoy growth m
     geom_freqpoly() +
     geom_vline(xintercept = 60) +
     facet_grid(species ~ year)
-  
-  ggplot(cd1, aes(observedLength, color = is.na(tag))) +
-    geom_freqpoly() +
-    geom_vline(xintercept = 60) +
-    facet_grid(species + riverOrdered ~ year, scales = "free_y")
 ```
+  
 
 ## Why are there untagged fish bigger than 60mm?  
 Check 2002/bkt/WB, as an example
