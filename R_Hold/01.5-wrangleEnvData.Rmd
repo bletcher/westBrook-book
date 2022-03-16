@@ -1,0 +1,93 @@
+# Wrangle environmental data from the server {#wrangleEnvData}
+
+```{r globalGetData, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r librariesGetData, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(validate)
+```
+
+
+```{r switches}
+
+```
+
+1. Filter cdWB_electro for first observations in the autumn for age-0 fish (ageInsamples == 0). Both tagged and untagged fish.
+```{r firstObs0}
+
+firstObs_noTag <- cdWB_electro %>%
+  filter(is.na(tag), ageInSamples == 1) %>%
+  mutate(n = 1) %>%
+  select(tag, species, river, detectionDate, sampleNumber, n) 
+
+firstObs_tag <- cdWB_electro %>%
+  group_by(tag) %>%
+  mutate(isFirstObs = detectionDate == min(detectionDate),
+         n = n()) %>%
+  filter(isFirstObs, ageInSamples == 1) %>%
+  select(tag, species, river, detectionDate, sampleNumber, n) %>%
+  ungroup()
+
+firstObs0 <- add_row(firstObs_tag, firstObs_noTag) %>%
+  mutate(date = as_date(detectionDate))
+
+
+```
+
+Add environmental data (flow, temp) to firstObs0.
+```{r firstObs}
+
+# Day of year for events (incubation period)
+inc0 <- yday(as.Date("2022-11-15"))
+inc1_em0 <- yday(as.Date("2022-02-15"))
+em1 <- yday(as.Date("2022-04-15"))
+
+inc0_month <- "11" # spawning
+inc0_day <- "15"
+inc1_month <- "02" # emergence
+inc1_day <- "15"
+
+firstObsDates <- firstObs %>% distinct(date = date(detectionDate), river)
+
+# move to getPrepareWBData
+getEnvMeans <- function(riverIn, start, end) { 
+  out <- envData %>% 
+    filter(river == riverIn, dateDate >= start, dateDate <= end) %>%
+    summarize(meanT = mean(temperature, na.rm = TRUE),
+              sdT = sd(temperature, na.rm = TRUE), 
+              cvT = sdT/meanT,
+              meanF = mean(flow, na.rm = TRUE),
+              sdF = sd(flow, na.rm = TRUE),
+              cvF = sdF/meanF,
+              n = n()
+    )
+  #message(paste(river, start, end,tag))
+  return(out)
+}
+
+firstObs_Env <- firstObsDates %>%
+  rowwise() %>%
+  mutate(
+    year = year(date),
+    incubationDate0 = ymd(paste0(year,inc0_month,inc0_day)) - years(1),
+    incubationDate1 = ymd(paste0(year,inc1_month,inc1_day)),
+    a0_incubation = list(getEnvMeans(river, incubationDate0, incubationDate1)),
+    incubation_detect = list(getEnvMeans(river, incubationDate1, date)),
+    a0_detect = list(getEnvMeans(river, incubationDate0, date))
+  )
+
+# merge env data into firstObs0
+firstObs <- firstObs0 %>%
+  left_join(firstObs_Env)
+
+```
+
+
+```{r}
+
+```
+

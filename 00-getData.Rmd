@@ -1,4 +1,4 @@
-# Get data from the server {#getData}
+# Get fish data from the server {#getData}
 
 ```{r globalGetData, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
@@ -24,7 +24,7 @@ There are four main databases we want to create:
 
 The "0" at the end of these file names indicates that they are the initial files that will be wrangled in the next step (next chapter). "cd" stands for "core data".
 
-```{r switches}
+```{r switchesCD}
 getNew_cdWB_electro0 <- FALSE
 getNew_cdWB_CMR0 <- FALSE
 getNew_cdWB_wanding0 <- FALSE

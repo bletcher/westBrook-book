@@ -1,0 +1,38 @@
+# Get environmental data from the server {#getEnvData}
+
+```{r globalGetData, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r librariesGetData, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+
+```
+
+
+```{r switches}
+getNew_envDataWB <- FALSE
+```
+
+1. West Brook environmental data (flow and temperature)
+```{r cdWB_electro0}
+
+if(getNew_envDataWB) {
+  reconnect()
+  envDataWB <- tbl(conDplyr, "data_daily_temperature") %>% 
+    collect(n = Inf) %>% 
+    full_join(tbl(conDplyr, "data_flow_extension") %>% 
+    collect(n = Inf), by = c("river", "date")) %>% 
+    select(-source) %>% 
+    rename(temperature = daily_mean_temp, flow = qPredicted) %>%
+    mutate(dateDate = as_date(date))
+
+  save(envDataWB, file = './data/envDataWB.RData')
+  
+} else {
+  load(file = './data/envData.RData')
+}
+str(envDataWB)
+```

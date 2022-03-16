@@ -24,14 +24,14 @@
 <meta name="author" content="Ben Letcher" />
 
 
-<meta name="date" content="2022-03-11" />
+<meta name="date" content="2022-03-16" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="wrangle.html"/>
+<link rel="prev" href="getData.html"/>
 <link rel="next" href="intro.html"/>
 <script src="libs/header-attrs-2.13/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -157,18 +157,25 @@ div.csl-indent {
 
 <ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction<span></span></a></li>
-<li class="chapter" data-level="2" data-path="getData.html"><a href="getData.html"><i class="fa fa-check"></i><b>2</b> Get data from the server<span></span></a></li>
-<li class="chapter" data-level="3" data-path="wrangle.html"><a href="wrangle.html"><i class="fa fa-check"></i><b>3</b> Wrangle the data<span></span></a></li>
+<li class="chapter" data-level="2" data-path="wrangle.html"><a href="wrangle.html"><i class="fa fa-check"></i><b>2</b> Wrangle the data<span></span></a></li>
+<li class="chapter" data-level="3" data-path="getData.html"><a href="getData.html"><i class="fa fa-check"></i><b>3</b> Get fish data from the server<span></span></a></li>
 <li class="chapter" data-level="4" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html"><i class="fa fa-check"></i><b>4</b> Young-of-year Growth Model<span></span></a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#raw-data"><i class="fa fa-check"></i><b>4.1</b> Raw data<span></span></a>
 <ul>
-<li class="chapter" data-level="4.1.1" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#frequcny-ploty-by-species-and-river"><i class="fa fa-check"></i><b>4.1.1</b> Frequcny ploty by species and river<span></span></a></li>
-<li class="chapter" data-level="4.1.2" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#trout-in-the-wb-mainstem-only"><i class="fa fa-check"></i><b>4.1.2</b> Trout, in the WB mainstem only<span></span></a></li>
-<li class="chapter" data-level="4.1.3" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#why-are-there-untagged-fish-bigger-than-60mm"><i class="fa fa-check"></i><b>4.1.3</b> Why are there untagged fish bigger than 60mm?<span></span></a></li>
-<li class="chapter" data-level="4.1.4" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#why-no-untagged-fish-at-all-for-2000-and-2001"><i class="fa fa-check"></i><b>4.1.4</b> Why no untagged fish at all for 2000 and 2001?<span></span></a></li>
+<li class="chapter" data-level="4.1.1" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#get-environmental-data"><i class="fa fa-check"></i><b>4.1.1</b> Get environmental data<span></span></a></li>
+<li class="chapter" data-level="4.1.2" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#get-first-observations"><i class="fa fa-check"></i><b>4.1.2</b> Get first observations<span></span></a></li>
+<li class="chapter" data-level="4.1.3" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#get-environmental-data-flow-temp-from-the-server."><i class="fa fa-check"></i><b>4.1.3</b> Get environmental data (flow, temp) from the server.<span></span></a></li>
+<li class="chapter" data-level="4.1.4" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#counts-of-captured-fish"><i class="fa fa-check"></i><b>4.1.4</b> Counts of captured fish<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="4.2" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#yearly-means"><i class="fa fa-check"></i><b>4.2</b> Yearly means<span></span></a></li>
+<li class="chapter" data-level="4.2" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#raw-data-plots"><i class="fa fa-check"></i><b>4.2</b> Raw data plots<span></span></a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#frequency-plots-by-species-and-river"><i class="fa fa-check"></i><b>4.2.1</b> Frequency plots by species and river<span></span></a></li>
+<li class="chapter" data-level="4.2.2" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#trout-in-the-wb-mainstem-only"><i class="fa fa-check"></i><b>4.2.2</b> Trout, in the WB mainstem only<span></span></a></li>
+<li class="chapter" data-level="4.2.3" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#why-are-there-untagged-fish-bigger-than-60mm"><i class="fa fa-check"></i><b>4.2.3</b> Why are there untagged fish bigger than 60mm?<span></span></a></li>
+<li class="chapter" data-level="4.2.4" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#why-no-untagged-fish-at-all-for-2000-and-2001"><i class="fa fa-check"></i><b>4.2.4</b> Why no untagged fish at all for 2000 and 2001?<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#yearly-means"><i class="fa fa-check"></i><b>4.3</b> Yearly means<span></span></a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>5</b> Introduction<span></span></a></li>
 <li class="chapter" data-level="6" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>6</b> Literature<span></span></a></li>
@@ -205,289 +212,336 @@ div.csl-indent {
 1. Sample date<br />
 2. Cumulative temperature prior to sampling<br />
 3. Cumulative flow prior to sampling<br />
-4. Extreme flow events?<br />
-5. Fish density, maybe total and age-0 across all three salmonids</p>
+4. Extreme flow events??<br />
+5. Fish density, maybe total and age-0 across all three salmonids??</p>
 <div id="raw-data" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Raw data<a href="yoyGrowthModel.html#raw-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>test</p>
-<div id="frequcny-ploty-by-species-and-river" class="section level3 hasAnchor" number="4.1.1">
-<h3><span class="header-section-number">4.1.1</span> Frequcny ploty by species and river<a href="yoyGrowthModel.html#frequcny-ploty-by-species-and-river" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div id="brook-trout-west-brook" class="section level4 hasAnchor" number="4.1.1.1">
-<h4><span class="header-section-number">4.1.1.1</span> Brook Trout, West brook<a href="yoyGrowthModel.html#brook-trout-west-brook" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="yoyGrowthModel.html#cb13-1" aria-hidden="true" tabindex="-1"></a>  cd1 <span class="ot">&lt;-</span> cdWB_electro <span class="sc">%&gt;%</span> <span class="fu">filter</span>(ageInSamples <span class="sc">==</span> <span class="dv">1</span>, species <span class="sc">!=</span> <span class="st">&#39;ats&#39;</span>)</span>
-<span id="cb13-2"><a href="yoyGrowthModel.html#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="yoyGrowthModel.html#cb13-3" aria-hidden="true" tabindex="-1"></a>  plotSppRiv <span class="ot">=</span> <span class="cf">function</span>(s, r) { </span>
-<span id="cb13-4"><a href="yoyGrowthModel.html#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(cd1 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">==</span> s, riverOrdered <span class="sc">==</span> r), <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
-<span id="cb13-5"><a href="yoyGrowthModel.html#cb13-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
-<span id="cb13-6"><a href="yoyGrowthModel.html#cb13-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
-<span id="cb13-7"><a href="yoyGrowthModel.html#cb13-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="fu">paste</span>(s, r, <span class="at">sep =</span> <span class="st">&#39;, &#39;</span>)) <span class="sc">+</span></span>
-<span id="cb13-8"><a href="yoyGrowthModel.html#cb13-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">125</span>)) <span class="sc">+</span></span>
-<span id="cb13-9"><a href="yoyGrowthModel.html#cb13-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(<span class="sc">~</span> year, <span class="at">scales =</span> <span class="st">&quot;free_y&quot;</span>)</span>
-<span id="cb13-10"><a href="yoyGrowthModel.html#cb13-10" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb13-11"><a href="yoyGrowthModel.html#cb13-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-12"><a href="yoyGrowthModel.html#cb13-12" aria-hidden="true" tabindex="-1"></a>  species <span class="ot">=</span> <span class="st">&#39;bkt&#39;</span></span>
-<span id="cb13-13"><a href="yoyGrowthModel.html#cb13-13" aria-hidden="true" tabindex="-1"></a>  riverOrdered <span class="ot">=</span> <span class="st">&quot;west brook&quot;</span></span>
-<span id="cb13-14"><a href="yoyGrowthModel.html#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="yoyGrowthModel.html#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plotSppRiv</span>(species, riverOrdered)</span></code></pre></div>
+<ol style="list-style-type: decimal">
+<li>Environmental data (flow, temperature) are from assumed spawning dates, assumed emergence dates and actual observation (sample) dates.</li>
+<li>All fish data are from age-0 in autumn.</li>
+<li>Abundance data…?</li>
+</ol>
+<div id="get-environmental-data" class="section level3 hasAnchor" number="4.1.1">
+<h3><span class="header-section-number">4.1.1</span> Get environmental data<a href="yoyGrowthModel.html#get-environmental-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="yoyGrowthModel.html#cb13-1" aria-hidden="true" tabindex="-1"></a>getNew_envDataWB <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
+<p>West Brook environmental data (flow and temperature)</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="yoyGrowthModel.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_envDataWB) {</span>
+<span id="cb14-2"><a href="yoyGrowthModel.html#cb14-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-3"><a href="yoyGrowthModel.html#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reconnect</span>()</span>
+<span id="cb14-4"><a href="yoyGrowthModel.html#cb14-4" aria-hidden="true" tabindex="-1"></a>  envDataWB <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conDplyr, <span class="st">&quot;data_daily_temperature&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-5"><a href="yoyGrowthModel.html#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect</span>(<span class="at">n =</span> <span class="cn">Inf</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-6"><a href="yoyGrowthModel.html#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">full_join</span>(<span class="fu">tbl</span>(conDplyr, <span class="st">&quot;data_flow_extension&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-7"><a href="yoyGrowthModel.html#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect</span>(<span class="at">n =</span> <span class="cn">Inf</span>), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;river&quot;</span>, <span class="st">&quot;date&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-8"><a href="yoyGrowthModel.html#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>source) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-9"><a href="yoyGrowthModel.html#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">temperature =</span> daily_mean_temp, <span class="at">flow =</span> qPredicted) <span class="sc">%&gt;%</span></span>
+<span id="cb14-10"><a href="yoyGrowthModel.html#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">dateDate =</span> <span class="fu">as_date</span>(date))</span>
+<span id="cb14-11"><a href="yoyGrowthModel.html#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="yoyGrowthModel.html#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(envDataWB, <span class="at">file =</span> <span class="st">&#39;./data/envDataWB.RData&#39;</span>)</span>
+<span id="cb14-13"><a href="yoyGrowthModel.html#cb14-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-14"><a href="yoyGrowthModel.html#cb14-14" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb14-15"><a href="yoyGrowthModel.html#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/envDataWB.RData&#39;</span>)</span>
+<span id="cb14-16"><a href="yoyGrowthModel.html#cb14-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-17"><a href="yoyGrowthModel.html#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(envDataWB)</span></code></pre></div>
+<pre><code>## tibble [32,189 x 7] (S3: tbl_df/tbl/data.frame)
+##  $ river         : chr [1:32189] &quot;wb jimmy&quot; &quot;wb jimmy&quot; &quot;wb jimmy&quot; &quot;wb jimmy&quot; ...
+##  $ date          : POSIXct[1:32189], format: &quot;1997-05-14&quot; &quot;1997-05-15&quot; &quot;1997-05-16&quot; &quot;1997-05-17&quot; ...
+##  $ temperature   : num [1:32189] 11.57 10.4 10.55 8.84 9.09 ...
+##  $ daily_max_temp: num [1:32189] 11.6 12.3 11.9 10.2 11.6 ...
+##  $ daily_min_temp: num [1:32189] 11.57 8.96 9.73 7.74 7.45 ...
+##  $ flow          : num [1:32189] NA NA NA NA NA NA NA NA NA NA ...
+##  $ dateDate      : Date[1:32189], format: &quot;1997-05-14&quot; &quot;1997-05-15&quot; &quot;1997-05-16&quot; &quot;1997-05-17&quot; ...</code></pre>
+</div>
+<div id="get-first-observations" class="section level3 hasAnchor" number="4.1.2">
+<h3><span class="header-section-number">4.1.2</span> Get first observations<a href="yoyGrowthModel.html#get-first-observations" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ol style="list-style-type: decimal">
+<li>Filter cdWB_electro for first observations in the autumn for age-0 fish (ageInsamples == 0). Including both tagged and untagged fish.</li>
+</ol>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="yoyGrowthModel.html#cb16-1" aria-hidden="true" tabindex="-1"></a>selectedVariables <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;tag&quot;</span>, <span class="st">&quot;species&quot;</span>, <span class="st">&quot;river&quot;</span>, <span class="st">&quot;detectionDate&quot;</span>, <span class="st">&quot;sampleNumber&quot;</span>, <span class="st">&quot;n&quot;</span>, <span class="st">&quot;proportionSampled&quot;</span>, <span class="st">&quot;observedLength&quot;</span>, <span class="st">&quot;observedWeight&quot;</span>, <span class="st">&quot;area&quot;</span>)</span>
+<span id="cb16-2"><a href="yoyGrowthModel.html#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="yoyGrowthModel.html#cb16-3" aria-hidden="true" tabindex="-1"></a>firstObs_noTag <span class="ot">&lt;-</span> cdWB_electro <span class="sc">%&gt;%</span></span>
+<span id="cb16-4"><a href="yoyGrowthModel.html#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(tag), ageInSamples <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-5"><a href="yoyGrowthModel.html#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-6"><a href="yoyGrowthModel.html#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(selectedVariables)) </span>
+<span id="cb16-7"><a href="yoyGrowthModel.html#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="yoyGrowthModel.html#cb16-8" aria-hidden="true" tabindex="-1"></a>firstObs_tag <span class="ot">&lt;-</span> cdWB_electro <span class="sc">%&gt;%</span></span>
+<span id="cb16-9"><a href="yoyGrowthModel.html#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(tag) <span class="sc">%&gt;%</span></span>
+<span id="cb16-10"><a href="yoyGrowthModel.html#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">isFirstObs =</span> detectionDate <span class="sc">==</span> <span class="fu">min</span>(detectionDate),</span>
+<span id="cb16-11"><a href="yoyGrowthModel.html#cb16-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb16-12"><a href="yoyGrowthModel.html#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(isFirstObs, ageInSamples <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-13"><a href="yoyGrowthModel.html#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(selectedVariables)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-14"><a href="yoyGrowthModel.html#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb16-15"><a href="yoyGrowthModel.html#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="yoyGrowthModel.html#cb16-16" aria-hidden="true" tabindex="-1"></a>firstObs0 <span class="ot">&lt;-</span> <span class="fu">add_row</span>(firstObs_tag, firstObs_noTag) <span class="sc">%&gt;%</span></span>
+<span id="cb16-17"><a href="yoyGrowthModel.html#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">as_date</span>(detectionDate),</span>
+<span id="cb16-18"><a href="yoyGrowthModel.html#cb16-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">yday =</span> <span class="fu">yday</span>(date))</span></code></pre></div>
+</div>
+<div id="get-environmental-data-flow-temp-from-the-server." class="section level3 hasAnchor" number="4.1.3">
+<h3><span class="header-section-number">4.1.3</span> Get environmental data (flow, temp) from the server.<a href="yoyGrowthModel.html#get-environmental-data-flow-temp-from-the-server." class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For each captured fish in firstObs0, calculate summary stats for flow and temperature for different time periods:<br />
+1. Assumed spawning to capture
+2. Assumed spawning to assumed emergence
+3. Assumed emergence to capture</p>
+<p>Then merge results with firstObs0 to create firstObs.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="yoyGrowthModel.html#cb17-1" aria-hidden="true" tabindex="-1"></a>spawn_month <span class="ot">&lt;-</span> <span class="st">&quot;11&quot;</span> <span class="co"># spawning</span></span>
+<span id="cb17-2"><a href="yoyGrowthModel.html#cb17-2" aria-hidden="true" tabindex="-1"></a>spawn_day <span class="ot">&lt;-</span> <span class="st">&quot;15&quot;</span></span>
+<span id="cb17-3"><a href="yoyGrowthModel.html#cb17-3" aria-hidden="true" tabindex="-1"></a>emerge_month <span class="ot">&lt;-</span> <span class="st">&quot;03&quot;</span> <span class="co"># emergence</span></span>
+<span id="cb17-4"><a href="yoyGrowthModel.html#cb17-4" aria-hidden="true" tabindex="-1"></a>emerge_day <span class="ot">&lt;-</span> <span class="st">&quot;01&quot;</span></span>
+<span id="cb17-5"><a href="yoyGrowthModel.html#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="yoyGrowthModel.html#cb17-6" aria-hidden="true" tabindex="-1"></a>firstObsDates <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span> <span class="fu">distinct</span>(<span class="at">date =</span> <span class="fu">date</span>(detectionDate), river)</span>
+<span id="cb17-7"><a href="yoyGrowthModel.html#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="yoyGrowthModel.html#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># move to getPrepareWBData</span></span>
+<span id="cb17-9"><a href="yoyGrowthModel.html#cb17-9" aria-hidden="true" tabindex="-1"></a>getEnvMeans <span class="ot">&lt;-</span> <span class="cf">function</span>(riverIn, start, end) { </span>
+<span id="cb17-10"><a href="yoyGrowthModel.html#cb17-10" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> envData <span class="sc">%&gt;%</span> </span>
+<span id="cb17-11"><a href="yoyGrowthModel.html#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(river <span class="sc">==</span> riverIn, dateDate <span class="sc">&gt;=</span> start, dateDate <span class="sc">&lt;=</span> end) <span class="sc">%&gt;%</span></span>
+<span id="cb17-12"><a href="yoyGrowthModel.html#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
+<span id="cb17-13"><a href="yoyGrowthModel.html#cb17-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">sumT =</span> <span class="fu">sum</span>(temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-14"><a href="yoyGrowthModel.html#cb17-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">meanT =</span> <span class="fu">mean</span>(temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-15"><a href="yoyGrowthModel.html#cb17-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">sdT =</span> <span class="fu">sd</span>(temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb17-16"><a href="yoyGrowthModel.html#cb17-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">cvT =</span> sdT<span class="sc">/</span>meanT,</span>
+<span id="cb17-17"><a href="yoyGrowthModel.html#cb17-17" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb17-18"><a href="yoyGrowthModel.html#cb17-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">sumF =</span> <span class="fu">sum</span>(flow, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-19"><a href="yoyGrowthModel.html#cb17-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">meanF =</span> <span class="fu">mean</span>(flow, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-20"><a href="yoyGrowthModel.html#cb17-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">sdF =</span> <span class="fu">sd</span>(flow, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-21"><a href="yoyGrowthModel.html#cb17-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">cvF =</span> sdF<span class="sc">/</span>meanF,</span>
+<span id="cb17-22"><a href="yoyGrowthModel.html#cb17-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb17-23"><a href="yoyGrowthModel.html#cb17-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb17-24"><a href="yoyGrowthModel.html#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="yoyGrowthModel.html#cb17-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">#message(paste(river, start, end,tag))</span></span>
+<span id="cb17-26"><a href="yoyGrowthModel.html#cb17-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
+<span id="cb17-27"><a href="yoyGrowthModel.html#cb17-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-28"><a href="yoyGrowthModel.html#cb17-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-29"><a href="yoyGrowthModel.html#cb17-29" aria-hidden="true" tabindex="-1"></a>firstObs_Env <span class="ot">&lt;-</span> firstObsDates <span class="sc">%&gt;%</span></span>
+<span id="cb17-30"><a href="yoyGrowthModel.html#cb17-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb17-31"><a href="yoyGrowthModel.html#cb17-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb17-32"><a href="yoyGrowthModel.html#cb17-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(date),</span>
+<span id="cb17-33"><a href="yoyGrowthModel.html#cb17-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">spawnDate =</span> <span class="fu">ymd</span>(<span class="fu">paste0</span>(year,spawn_month,spawn_day)) <span class="sc">-</span> <span class="fu">years</span>(<span class="dv">1</span>),</span>
+<span id="cb17-34"><a href="yoyGrowthModel.html#cb17-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">emergeDate =</span> <span class="fu">ymd</span>(<span class="fu">paste0</span>(year,emerge_month,emerge_day)),</span>
+<span id="cb17-35"><a href="yoyGrowthModel.html#cb17-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">spawn_emerge =</span> <span class="fu">list</span>(<span class="fu">getEnvMeans</span>(river, spawnDate, emergeDate)),</span>
+<span id="cb17-36"><a href="yoyGrowthModel.html#cb17-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">emerge_detect =</span> <span class="fu">list</span>(<span class="fu">getEnvMeans</span>(river, emergeDate, date)),</span>
+<span id="cb17-37"><a href="yoyGrowthModel.html#cb17-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">spawn_detect =</span> <span class="fu">list</span>(<span class="fu">getEnvMeans</span>(river, spawnDate, date))</span>
+<span id="cb17-38"><a href="yoyGrowthModel.html#cb17-38" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-39"><a href="yoyGrowthModel.html#cb17-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-40"><a href="yoyGrowthModel.html#cb17-40" aria-hidden="true" tabindex="-1"></a><span class="co"># merge env data into firstObs0</span></span>
+<span id="cb17-41"><a href="yoyGrowthModel.html#cb17-41" aria-hidden="true" tabindex="-1"></a>firstObs <span class="ot">&lt;-</span> firstObs0 <span class="sc">%&gt;%</span></span>
+<span id="cb17-42"><a href="yoyGrowthModel.html#cb17-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(firstObs_Env)</span>
+<span id="cb17-43"><a href="yoyGrowthModel.html#cb17-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-44"><a href="yoyGrowthModel.html#cb17-44" aria-hidden="true" tabindex="-1"></a><span class="co">#str(firstObs)</span></span></code></pre></div>
+<p>Unnest firstObs so environmental summary stats are available as data frame with the name of the time interval as the prefix to the statisticVariable name</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="yoyGrowthModel.html#cb18-1" aria-hidden="true" tabindex="-1"></a>firstObsUnnested <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span> <span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">c</span>(spawn_emerge, emerge_detect, spawn_detect), <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>)</span>
+<span id="cb18-2"><a href="yoyGrowthModel.html#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="yoyGrowthModel.html#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(firstObsUnnested)</span></code></pre></div>
+<pre><code>## tibble [20,783 x 42] (S3: tbl_df/tbl/data.frame)
+##  $ tag                : chr [1:20783] &quot;00088cbed7&quot; &quot;00088cbed8&quot; &quot;00088cbedb&quot; &quot;00088cbedd&quot; ...
+##  $ species            : chr [1:20783] &quot;bkt&quot; &quot;bnt&quot; &quot;bkt&quot; &quot;bkt&quot; ...
+##  $ river              : chr [1:20783] &quot;wb obear&quot; &quot;west brook&quot; &quot;west brook&quot; &quot;wb obear&quot; ...
+##  $ detectionDate      : POSIXct[1:20783], format: &quot;2014-09-17 00:00:00&quot; &quot;2012-09-26 11:01:00&quot; &quot;2014-09-24 11:45:00&quot; &quot;2012-09-21 00:00:00&quot; ...
+##  $ sampleNumber       : num [1:20783] 79 71 79 71 79 71 71 79 71 79 ...
+##  $ n                  : num [1:20783] 2 3 1 3 1 1 4 2 1 1 ...
+##  $ proportionSampled  : num [1:20783] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ observedLength     : num [1:20783] 70 86 89 61 60 64 70 62 87 73 ...
+##  $ observedWeight     : num [1:20783] 3.5 6.7 8.3 2.4 2.4 2.8 4.6 2.3 7.5 4.2 ...
+##  $ area               : chr [1:20783] &quot;trib&quot; &quot;inside&quot; &quot;inside&quot; &quot;trib&quot; ...
+##  $ date               : Date[1:20783], format: &quot;2014-09-17&quot; &quot;2012-09-26&quot; &quot;2014-09-24&quot; &quot;2012-09-21&quot; ...
+##  $ yday               : num [1:20783] 260 270 267 265 269 270 264 260 270 258 ...
+##  $ year               : num [1:20783] 2014 2012 2014 2012 2014 ...
+##  $ spawnDate          : Date[1:20783], format: &quot;2013-11-15&quot; &quot;2011-11-15&quot; &quot;2013-11-15&quot; &quot;2011-11-15&quot; ...
+##  $ emergeDate         : Date[1:20783], format: &quot;2014-03-01&quot; &quot;2012-03-01&quot; &quot;2014-03-01&quot; &quot;2012-03-01&quot; ...
+##  $ spawn_emerge_sumT  : num [1:20783] 110 358 131 313 131 ...
+##  $ spawn_emerge_meanT : num [1:20783] 1.03 3.32 1.22 2.9 1.22 ...
+##  $ spawn_emerge_sdT   : num [1:20783] 1.36 2.3 1.56 2.43 1.56 ...
+##  $ spawn_emerge_cvT   : num [1:20783] 1.321 0.695 1.274 0.838 1.274 ...
+##  $ spawn_emerge_sumF  : num [1:20783] 0 48.7 25.7 0 25.7 ...
+##  $ spawn_emerge_meanF : num [1:20783] NaN 0.451 0.24 NaN 0.24 ...
+##  $ spawn_emerge_sdF   : num [1:20783] NA 0.457 0.352 NA 0.352 ...
+##  $ spawn_emerge_cvF   : num [1:20783] NA 1.01 1.47 NA 1.47 ...
+##  $ spawn_emerge_n     : int [1:20783] 107 108 107 108 107 108 108 107 108 107 ...
+##  $ emerge_detect_sumT : num [1:20783] 2191 2791 2597 2602 2622 ...
+##  $ emerge_detect_meanT: num [1:20783] 10.9 13.3 12.5 12.7 12.5 ...
+##  $ emerge_detect_sdT  : num [1:20783] 5.74 4.82 6.36 5 6.33 ...
+##  $ emerge_detect_cvT  : num [1:20783] 0.527 0.362 0.51 0.394 0.507 ...
+##  $ emerge_detect_sumF : num [1:20783] 0 28.6 71.6 0 71.6 ...
+##  $ emerge_detect_meanF: num [1:20783] NaN 0.136 0.344 NaN 0.341 ...
+##  $ emerge_detect_sdF  : num [1:20783] NA 0.246 0.533 NA 0.532 ...
+##  $ emerge_detect_cvF  : num [1:20783] NA 1.81 1.55 NA 1.56 ...
+##  $ emerge_detect_n    : int [1:20783] 201 210 208 205 210 210 204 201 210 199 ...
+##  $ spawn_detect_sumT  : num [1:20783] 2301 3149 2728 2915 2753 ...
+##  $ spawn_detect_meanT : num [1:20783] 7.5 9.93 8.69 9.34 8.71 ...
+##  $ spawn_detect_sdT   : num [1:20783] 6.65 6.27 7.48 6.32 7.46 ...
+##  $ spawn_detect_cvT   : num [1:20783] 0.887 0.631 0.861 0.677 0.857 ...
+##  $ spawn_detect_sumF  : num [1:20783] 0 77.1 97.2 0 97.2 ...
+##  $ spawn_detect_meanF : num [1:20783] NaN 0.243 0.31 NaN 0.307 ...
+##  $ spawn_detect_sdF   : num [1:20783] NA 0.365 0.482 NA 0.481 ...
+##  $ spawn_detect_cvF   : num [1:20783] NA 1.5 1.56 NA 1.57 ...
+##  $ spawn_detect_n     : int [1:20783] 307 317 314 312 316 317 311 307 317 305 ...</code></pre>
+</div>
+<div id="counts-of-captured-fish" class="section level3 hasAnchor" number="4.1.4">
+<h3><span class="header-section-number">4.1.4</span> Counts of captured fish<a href="yoyGrowthModel.html#counts-of-captured-fish" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Need to decide whether to include in a model. Spotty data.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="yoyGrowthModel.html#cb20-1" aria-hidden="true" tabindex="-1"></a>countsRSY <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="yoyGrowthModel.html#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(river, species, year) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="yoyGrowthModel.html#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb20-4"><a href="yoyGrowthModel.html#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count =</span> <span class="fu">n</span>(),</span>
+<span id="cb20-5"><a href="yoyGrowthModel.html#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">meanPropSampled =</span> <span class="fu">mean</span>(proportionSampled, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-6"><a href="yoyGrowthModel.html#cb20-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-7"><a href="yoyGrowthModel.html#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">countAdj =</span> count <span class="sc">/</span> meanPropSampled)</span>
+<span id="cb20-8"><a href="yoyGrowthModel.html#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="yoyGrowthModel.html#cb20-9" aria-hidden="true" tabindex="-1"></a>countsRY <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span></span>
+<span id="cb20-10"><a href="yoyGrowthModel.html#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(river, year) <span class="sc">%&gt;%</span></span>
+<span id="cb20-11"><a href="yoyGrowthModel.html#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb20-12"><a href="yoyGrowthModel.html#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">count =</span> <span class="fu">n</span>(),</span>
+<span id="cb20-13"><a href="yoyGrowthModel.html#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">meanPropSampled =</span> <span class="fu">mean</span>(proportionSampled, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-14"><a href="yoyGrowthModel.html#cb20-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-15"><a href="yoyGrowthModel.html#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">countAdj =</span> count <span class="sc">/</span> meanPropSampled)</span>
+<span id="cb20-16"><a href="yoyGrowthModel.html#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-17"><a href="yoyGrowthModel.html#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(countsRY, <span class="fu">aes</span>(year, countAdj, <span class="at">color =</span> river)) <span class="sc">+</span></span>
+<span id="cb20-18"><a href="yoyGrowthModel.html#cb20-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb20-19"><a href="yoyGrowthModel.html#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/rawCounts-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="yoyGrowthModel.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(countsRSY, <span class="fu">aes</span>(year, countAdj, <span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb21-2"><a href="yoyGrowthModel.html#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb21-3"><a href="yoyGrowthModel.html#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb21-4"><a href="yoyGrowthModel.html#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> river)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/rawCounts-2.png" width="100%" /></p>
+</div>
+</div>
+<div id="raw-data-plots" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Raw data plots<a href="yoyGrowthModel.html#raw-data-plots" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="frequency-plots-by-species-and-river" class="section level3 hasAnchor" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Frequency plots by species and river<a href="yoyGrowthModel.html#frequency-plots-by-species-and-river" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="brook-trout-west-brook" class="section level4 hasAnchor" number="4.2.1.1">
+<h4><span class="header-section-number">4.2.1.1</span> Brook Trout, West brook<a href="yoyGrowthModel.html#brook-trout-west-brook" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="yoyGrowthModel.html#cb22-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#cd1 &lt;- cdWB_electro %&gt;% filter(ageInSamples == 1, species != &#39;ats&#39;)</span></span>
+<span id="cb22-2"><a href="yoyGrowthModel.html#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="yoyGrowthModel.html#cb22-3" aria-hidden="true" tabindex="-1"></a>  plotSppRiv <span class="ot">=</span> <span class="cf">function</span>(s, r) { </span>
+<span id="cb22-4"><a href="yoyGrowthModel.html#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">==</span> s, river <span class="sc">==</span> r), <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb22-5"><a href="yoyGrowthModel.html#cb22-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb22-6"><a href="yoyGrowthModel.html#cb22-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
+<span id="cb22-7"><a href="yoyGrowthModel.html#cb22-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="fu">paste</span>(s, r, <span class="at">sep =</span> <span class="st">&#39;, &#39;</span>)) <span class="sc">+</span></span>
+<span id="cb22-8"><a href="yoyGrowthModel.html#cb22-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">125</span>)) <span class="sc">+</span></span>
+<span id="cb22-9"><a href="yoyGrowthModel.html#cb22-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(<span class="sc">~</span> year, <span class="at">scales =</span> <span class="st">&quot;free_y&quot;</span>)</span>
+<span id="cb22-10"><a href="yoyGrowthModel.html#cb22-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb22-11"><a href="yoyGrowthModel.html#cb22-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-12"><a href="yoyGrowthModel.html#cb22-12" aria-hidden="true" tabindex="-1"></a>  species <span class="ot">=</span> <span class="st">&#39;bkt&#39;</span></span>
+<span id="cb22-13"><a href="yoyGrowthModel.html#cb22-13" aria-hidden="true" tabindex="-1"></a>  riverOrdered <span class="ot">=</span> <span class="st">&quot;west brook&quot;</span></span>
+<span id="cb22-14"><a href="yoyGrowthModel.html#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="yoyGrowthModel.html#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plotSppRiv</span>(species, riverOrdered)</span></code></pre></div>
 <p><img src="westBrook-book_files/figure-html/raw%20data%20plots1-1.png" width="100%" /></p>
 </div>
-<div id="brook-trout-wb-jimmy" class="section level4 hasAnchor" number="4.1.1.2">
-<h4><span class="header-section-number">4.1.1.2</span> Brook Trout, wb jimmy<a href="yoyGrowthModel.html#brook-trout-wb-jimmy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="brook-trout-wb-jimmy" class="section level4 hasAnchor" number="4.2.1.2">
+<h4><span class="header-section-number">4.2.1.2</span> Brook Trout, wb jimmy<a href="yoyGrowthModel.html#brook-trout-wb-jimmy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><img src="westBrook-book_files/figure-html/raw%20data%20plots2-1.png" width="100%" /></p>
 </div>
-<div id="brook-trout-wb-mitchell" class="section level4 hasAnchor" number="4.1.1.3">
-<h4><span class="header-section-number">4.1.1.3</span> Brook Trout, wb mitchell<a href="yoyGrowthModel.html#brook-trout-wb-mitchell" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="brook-trout-wb-mitchell" class="section level4 hasAnchor" number="4.2.1.3">
+<h4><span class="header-section-number">4.2.1.3</span> Brook Trout, wb mitchell<a href="yoyGrowthModel.html#brook-trout-wb-mitchell" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><img src="westBrook-book_files/figure-html/raw%20data%20plots3-1.png" width="100%" /></p>
 </div>
-<div id="brook-trout-wb-obear" class="section level4 hasAnchor" number="4.1.1.4">
-<h4><span class="header-section-number">4.1.1.4</span> Brook Trout, wb obear<a href="yoyGrowthModel.html#brook-trout-wb-obear" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="brook-trout-wb-obear" class="section level4 hasAnchor" number="4.2.1.4">
+<h4><span class="header-section-number">4.2.1.4</span> Brook Trout, wb obear<a href="yoyGrowthModel.html#brook-trout-wb-obear" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><img src="westBrook-book_files/figure-html/raw%20data%20plots4-1.png" width="100%" /></p>
 </div>
-<div id="brown-trout-west-brook" class="section level4 hasAnchor" number="4.1.1.5">
-<h4><span class="header-section-number">4.1.1.5</span> Brown Trout, West brook<a href="yoyGrowthModel.html#brown-trout-west-brook" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="brown-trout-west-brook" class="section level4 hasAnchor" number="4.2.1.5">
+<h4><span class="header-section-number">4.2.1.5</span> Brown Trout, West brook<a href="yoyGrowthModel.html#brown-trout-west-brook" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><img src="westBrook-book_files/figure-html/raw%20data%20plots5-1.png" width="100%" /></p>
 </div>
-<div id="brown-trout-wb-jimmy" class="section level4 hasAnchor" number="4.1.1.6">
-<h4><span class="header-section-number">4.1.1.6</span> Brown Trout, wb jimmy<a href="yoyGrowthModel.html#brown-trout-wb-jimmy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="brown-trout-wb-jimmy" class="section level4 hasAnchor" number="4.2.1.6">
+<h4><span class="header-section-number">4.2.1.6</span> Brown Trout, wb jimmy<a href="yoyGrowthModel.html#brown-trout-wb-jimmy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><img src="westBrook-book_files/figure-html/raw%20data%20plots6-1.png" width="100%" /></p>
 </div>
-<div id="brown-trout-wb-mitchell" class="section level4 hasAnchor" number="4.1.1.7">
-<h4><span class="header-section-number">4.1.1.7</span> Brown Trout, wb mitchell<a href="yoyGrowthModel.html#brown-trout-wb-mitchell" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="brown-trout-wb-mitchell" class="section level4 hasAnchor" number="4.2.1.7">
+<h4><span class="header-section-number">4.2.1.7</span> Brown Trout, wb mitchell<a href="yoyGrowthModel.html#brown-trout-wb-mitchell" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><img src="westBrook-book_files/figure-html/raw%20data%20plots7-1.png" width="100%" /></p>
 </div>
-<div id="brown-trout-wb-obear---there-are-no-brown-trout-in-obear" class="section level4 hasAnchor" number="4.1.1.8">
-<h4><span class="header-section-number">4.1.1.8</span> Brown Trout, wb obear - there are no Brown trout in O’Bear<a href="yoyGrowthModel.html#brown-trout-wb-obear---there-are-no-brown-trout-in-obear" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="brown-trout-wb-obear---there-are-no-brown-trout-in-obear" class="section level4 hasAnchor" number="4.2.1.8">
+<h4><span class="header-section-number">4.2.1.8</span> Brown Trout, wb obear - there are no Brown trout in O’Bear<a href="yoyGrowthModel.html#brown-trout-wb-obear---there-are-no-brown-trout-in-obear" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 </div>
 </div>
-<div id="trout-in-the-wb-mainstem-only" class="section level3 hasAnchor" number="4.1.2">
-<h3><span class="header-section-number">4.1.2</span> Trout, in the WB mainstem only<a href="yoyGrowthModel.html#trout-in-the-wb-mainstem-only" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="yoyGrowthModel.html#cb14-1" aria-hidden="true" tabindex="-1"></a>  cdWB1 <span class="ot">&lt;-</span> cdWB_electro <span class="sc">%&gt;%</span> <span class="fu">filter</span>(ageInSamples <span class="sc">==</span> <span class="dv">1</span>, species <span class="sc">!=</span> <span class="st">&#39;ats&#39;</span>, riverOrdered <span class="sc">==</span> <span class="st">&quot;west brook&quot;</span>)</span>
-<span id="cb14-2"><a href="yoyGrowthModel.html#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="yoyGrowthModel.html#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB1, <span class="fu">aes</span>(observedLength)) <span class="sc">+</span></span>
-<span id="cb14-4"><a href="yoyGrowthModel.html#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
-<span id="cb14-5"><a href="yoyGrowthModel.html#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>, <span class="at">color =</span> <span class="st">&#39;orange&#39;</span>) <span class="sc">+</span></span>
-<span id="cb14-6"><a href="yoyGrowthModel.html#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(species <span class="sc">~</span> year)</span></code></pre></div>
+<div id="trout-in-the-wb-mainstem-only" class="section level3 hasAnchor" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> Trout, in the WB mainstem only<a href="yoyGrowthModel.html#trout-in-the-wb-mainstem-only" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="yoyGrowthModel.html#cb23-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">!=</span> <span class="st">&quot;ats&quot;</span>), <span class="fu">aes</span>(observedLength)) <span class="sc">+</span></span>
+<span id="cb23-2"><a href="yoyGrowthModel.html#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb23-3"><a href="yoyGrowthModel.html#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>, <span class="at">color =</span> <span class="st">&#39;orange&#39;</span>) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="yoyGrowthModel.html#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(species <span class="sc">~</span> year)</span></code></pre></div>
 <p><img src="westBrook-book_files/figure-html/unnamed-chunk-3-1.png" width="100%" /></p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="yoyGrowthModel.html#cb15-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB1, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
-<span id="cb15-2"><a href="yoyGrowthModel.html#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
-<span id="cb15-3"><a href="yoyGrowthModel.html#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
-<span id="cb15-4"><a href="yoyGrowthModel.html#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(species <span class="sc">~</span> year)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="yoyGrowthModel.html#cb24-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">!=</span> <span class="st">&quot;ats&quot;</span>), <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb24-2"><a href="yoyGrowthModel.html#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb24-3"><a href="yoyGrowthModel.html#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>, <span class="at">color =</span> <span class="st">&#39;orange&#39;</span>) <span class="sc">+</span></span>
+<span id="cb24-4"><a href="yoyGrowthModel.html#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(species <span class="sc">~</span> year)</span></code></pre></div>
 <p><img src="westBrook-book_files/figure-html/unnamed-chunk-3-2.png" width="100%" /></p>
 </div>
-<div id="why-are-there-untagged-fish-bigger-than-60mm" class="section level3 hasAnchor" number="4.1.3">
-<h3><span class="header-section-number">4.1.3</span> Why are there untagged fish bigger than 60mm?<a href="yoyGrowthModel.html#why-are-there-untagged-fish-bigger-than-60mm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="why-are-there-untagged-fish-bigger-than-60mm" class="section level3 hasAnchor" number="4.2.3">
+<h3><span class="header-section-number">4.2.3</span> Why are there untagged fish bigger than 60mm?<a href="yoyGrowthModel.html#why-are-there-untagged-fish-bigger-than-60mm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Check 2002/bkt/WB, as an example</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="yoyGrowthModel.html#cb16-1" aria-hidden="true" tabindex="-1"></a>  cdWB12002BKT <span class="ot">&lt;-</span> cdWB1 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2002</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>)</span>
-<span id="cb16-2"><a href="yoyGrowthModel.html#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(<span class="fu">is.na</span>(cdWB12002BKT<span class="sc">$</span>tag))</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="yoyGrowthModel.html#cb25-1" aria-hidden="true" tabindex="-1"></a>  firstObs2002BKT <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2002</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>)</span>
+<span id="cb25-2"><a href="yoyGrowthModel.html#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(<span class="fu">is.na</span>(cdWB12002BKT<span class="sc">$</span>tag))</span></code></pre></div>
 <pre><code>## 
 ## FALSE  TRUE 
-##   213   132</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="yoyGrowthModel.html#cb18-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB12002BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
-<span id="cb18-2"><a href="yoyGrowthModel.html#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
-<span id="cb18-3"><a href="yoyGrowthModel.html#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>)</span></code></pre></div>
+##   295   253</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="yoyGrowthModel.html#cb27-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(firstObs2002BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="yoyGrowthModel.html#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb27-3"><a href="yoyGrowthModel.html#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>)</span></code></pre></div>
 <p><img src="westBrook-book_files/figure-html/2002%20untagged-1.png" width="100%" /></p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="yoyGrowthModel.html#cb19-1" aria-hidden="true" tabindex="-1"></a>  cdWB12002BKT <span class="sc">%&gt;%</span> <span class="fu">filter</span>(observedLength <span class="sc">&gt;</span> <span class="dv">60</span>, <span class="fu">is.na</span>(tag)) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>()</span></code></pre></div>
-<pre><code>##     tag detectionDate sampleName sampleNumber      river section   area observedLength survey
-## 1  &lt;NA&gt;    2002-09-18         41           31 west brook       8 inside             68  shock
-## 2  &lt;NA&gt;    2002-09-19         41           31 west brook      13 inside             62  shock
-## 3  &lt;NA&gt;    2002-09-23         41           31 west brook      15 inside             61  shock
-## 4  &lt;NA&gt;    2002-09-23         41           31 west brook      16 inside             64  shock
-## 5  &lt;NA&gt;    2002-09-23         41           31 west brook      17 inside             68  shock
-## 6  &lt;NA&gt;    2002-09-24         41           31 west brook      23 inside             68  shock
-## 7  &lt;NA&gt;    2002-09-30         41           31 west brook      31 inside             62  shock
-## 8  &lt;NA&gt;    2002-09-30         41           31 west brook      32 inside             61  shock
-## 9  &lt;NA&gt;    2002-10-01         41           31 west brook      35 inside             69  shock
-## 10 &lt;NA&gt;    2002-10-04         41           31 west brook      80  below             74  shock
-## 11 &lt;NA&gt;    2002-10-04         41           31 west brook      80  below             71  shock
-## 12 &lt;NA&gt;    2002-10-04         41           31 west brook       0  below             69  shock
-## 13 &lt;NA&gt;    2002-10-04         41           31 west brook      60  above             70  shock
-## 14 &lt;NA&gt;    2002-10-04         41           31 west brook      60  above             68  shock
-## 15 &lt;NA&gt;    2002-10-04         41           31 west brook     100  below             71  shock
-## 16 &lt;NA&gt;    2002-10-04         41           31 west brook      60  below             71  shock
-## 17 &lt;NA&gt;    2002-10-04         41           31 west brook      60  below             71  shock
-## 18 &lt;NA&gt;    2002-10-04         41           31 west brook      40  below             77  shock
-## 19 &lt;NA&gt;    2002-10-04         41           31 west brook      40  below             78  shock
-## 20 &lt;NA&gt;    2002-10-04         41           31 west brook      40  below             71  shock
-## 21 &lt;NA&gt;    2002-10-04         41           31 west brook      20  below             70  shock
-## 22 &lt;NA&gt;    2002-10-04         41           31 west brook      20  below             68  shock
-##    pass observedWeight         comments cohort species dateEmigrated  sex year season
-## 1     1            3.5 shock scars/mort   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 2     1            2.8 shock scars/mort   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 3     1            2.4     tagging mort   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 4     1            2.6             slow   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 5     1            3.1 shock scars/mort   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 6     1            3.2 shock scars/mort   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 7     2            2.4 shock scars/mort   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 8     2            2.5 shock scars/mort   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 9     1            3.4             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 10    1            4.2             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 11    1            4.0             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 12    1            3.4             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 13    1            3.6             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 14    1            3.1             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 15    1            4.1             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 16    1            3.8             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 17    1            3.6             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 18    1            5.2             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 19    1            4.7             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 20    1            3.8             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 21    1            3.8             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-## 22    1            3.3             &lt;NA&gt;   2002     bkt          &lt;NA&gt; &lt;NA&gt; 2002      3
-##    proportionSampled lagDetectionDate meanTemperature    meanFlow sectionOriginal riverOrdered
-## 1                  1       2002-09-18        15.00319 -0.04960486               8   west brook
-## 2                  1       2002-09-19        14.68938 -0.05461786              13   west brook
-## 3                  1       2002-09-23        16.77944 -0.06006055              15   west brook
-## 4                  1       2002-09-23        16.77944 -0.06006055              16   west brook
-## 5                  1       2002-09-23        16.77944 -0.06006055              17   west brook
-## 6                  1       2002-09-24        14.72569 -0.06281770              23   west brook
-## 7                  1       2002-09-30        11.86201 -0.03975789              31   west brook
-## 8                  1       2002-09-30        11.86201 -0.03975789              32   west brook
-## 9                  1       2002-10-01        13.36111 -0.03438682              35   west brook
-## 10                 1       2002-10-04        13.41424 -0.03510296              80   west brook
-## 11                 1       2002-10-04        13.41424 -0.03510296              80   west brook
-## 12                 1       2002-10-04        13.41424 -0.03510296               0   west brook
-## 13                 1       2002-10-04        13.41424 -0.03510296              60   west brook
-## 14                 1       2002-10-04        13.41424 -0.03510296              60   west brook
-## 15                 1       2002-10-04        13.41424 -0.03510296             100   west brook
-## 16                 1       2002-10-04        13.41424 -0.03510296              60   west brook
-## 17                 1       2002-10-04        13.41424 -0.03510296              60   west brook
-## 18                 1       2002-10-04        13.41424 -0.03510296              40   west brook
-## 19                 1       2002-10-04        13.41424 -0.03510296              40   west brook
-## 20                 1       2002-10-04        13.41424 -0.03510296              40   west brook
-## 21                 1       2002-10-04        13.41424 -0.03510296              20   west brook
-## 22                 1       2002-10-04        13.41424 -0.03510296              20   west brook
-##    inside yday ageInSamples isYOY lagSection distMoved lagObservedWeight lagObservedLength
-## 1    TRUE  261            1  TRUE         NA        NA                NA                NA
-## 2    TRUE  262            1  TRUE         NA        NA                NA                NA
-## 3    TRUE  266            1  TRUE         NA        NA                NA                NA
-## 4    TRUE  266            1  TRUE         NA        NA                NA                NA
-## 5    TRUE  266            1  TRUE         NA        NA                NA                NA
-## 6    TRUE  267            1  TRUE         NA        NA                NA                NA
-## 7    TRUE  273            1  TRUE         NA        NA                NA                NA
-## 8    TRUE  273            1  TRUE         NA        NA                NA                NA
-## 9    TRUE  274            1  TRUE         NA        NA                NA                NA
-## 10  FALSE  277            1  TRUE         NA        NA                NA                NA
-## 11  FALSE  277            1  TRUE         NA        NA                NA                NA
-## 12  FALSE  277            1  TRUE         NA        NA                NA                NA
-## 13  FALSE  277            1  TRUE         NA        NA                NA                NA
-## 14  FALSE  277            1  TRUE         NA        NA                NA                NA
-## 15  FALSE  277            1  TRUE         NA        NA                NA                NA
-## 16  FALSE  277            1  TRUE         NA        NA                NA                NA
-## 17  FALSE  277            1  TRUE         NA        NA                NA                NA
-## 18   TRUE  277            1  TRUE         NA        NA                NA                NA
-## 19   TRUE  277            1  TRUE         NA        NA                NA                NA
-## 20   TRUE  277            1  TRUE         NA        NA                NA                NA
-## 21   TRUE  277            1  TRUE         NA        NA                NA                NA
-## 22   TRUE  277            1  TRUE         NA        NA                NA                NA
-##    grWeight grLength minSample maxSample minYear moveDir sampleInterval drainage
-## 1        NA       NA        10        92    1997       0              0     west
-## 2        NA       NA        10        92    1997       0              0     west
-## 3        NA       NA        10        92    1997       0              0     west
-## 4        NA       NA        10        92    1997       0              0     west
-## 5        NA       NA        10        92    1997       0              0     west
-## 6        NA       NA        10        92    1997       0              0     west
-## 7        NA       NA        10        92    1997       0              0     west
-## 8        NA       NA        10        92    1997       0              0     west
-## 9        NA       NA        10        92    1997       0              0     west
-## 10       NA       NA        10        92    1997       0              0     west
-## 11       NA       NA        10        92    1997       0              0     west
-## 12       NA       NA        10        92    1997       0              0     west
-## 13       NA       NA        10        92    1997       0              0     west
-## 14       NA       NA        10        92    1997       0              0     west
-## 15       NA       NA        10        92    1997       0              0     west
-## 16       NA       NA        10        92    1997       0              0     west
-## 17       NA       NA        10        92    1997       0              0     west
-## 18       NA       NA        10        92    1997       0              0     west
-## 19       NA       NA        10        92    1997       0              0     west
-## 20       NA       NA        10        92    1997       0              0     west
-## 21       NA       NA        10        92    1997       0              0     west
-## 22       NA       NA        10        92    1997       0              0     west
-##    quarter_length river_meter confluence_river_meter riverMeter nPasses
-## 1           5.400     4542.85                      0    4542.85       2
-## 2           4.850     4647.75                      0    4647.75       2
-## 3           6.100     4692.05                      0    4692.05       2
-## 4           4.900     4714.05                      0    4714.05       2
-## 5           5.100     4734.05                      0    4734.05       2
-## 6           5.375     4861.40                      0    4861.40       2
-## 7           5.025     5026.00                      0    5026.00       2
-## 8           5.000     5046.05                      0    5046.05       2
-## 9           5.250     5108.65                      0    5108.65       2
-## 10          5.475     4281.50                      0    4281.50       2
-## 11          5.475     4281.50                      0    4281.50       2
-## 12          6.675     4369.90                      0    4369.90       2
-## 13          4.925     5432.70                      0    5432.70       2
-## 14          4.925     5432.70                      0    5432.70       2
-## 15          4.400     4261.75                      0    4261.75       2
-## 16          4.550     4301.55                      0    4301.55       2
-## 17          4.550     4301.55                      0    4301.55       2
-## 18          5.975     4322.60                      0    4322.60       2
-## 19          5.975     4322.60                      0    4322.60       2
-## 20          5.975     4322.60                      0    4322.60       2
-## 21          5.500     4345.55                      0    4345.55       2
-## 22          5.500     4345.55                      0    4345.55       2
-##  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 46 rows ]</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="yoyGrowthModel.html#cb21-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># looks like untagged area=inside fish wee morts, the rest were above or below</span></span>
-<span id="cb21-2"><a href="yoyGrowthModel.html#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB12002BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
-<span id="cb21-3"><a href="yoyGrowthModel.html#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
-<span id="cb21-4"><a href="yoyGrowthModel.html#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
-<span id="cb21-5"><a href="yoyGrowthModel.html#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span>area)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="yoyGrowthModel.html#cb28-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># looks like untagged area=inside fish wee morts, the rest were above or below</span></span>
+<span id="cb28-2"><a href="yoyGrowthModel.html#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(firstObs2002BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb28-3"><a href="yoyGrowthModel.html#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb28-4"><a href="yoyGrowthModel.html#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
+<span id="cb28-5"><a href="yoyGrowthModel.html#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span>area)</span></code></pre></div>
 <p><img src="westBrook-book_files/figure-html/2002%20untagged-2.png" width="100%" /></p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="yoyGrowthModel.html#cb22-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># check 2003</span></span>
-<span id="cb22-2"><a href="yoyGrowthModel.html#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB1 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2003</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>), <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
-<span id="cb22-3"><a href="yoyGrowthModel.html#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
-<span id="cb22-4"><a href="yoyGrowthModel.html#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
-<span id="cb22-5"><a href="yoyGrowthModel.html#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span>area)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="yoyGrowthModel.html#cb29-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># check 2003</span></span>
+<span id="cb29-2"><a href="yoyGrowthModel.html#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2003</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>), <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb29-3"><a href="yoyGrowthModel.html#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb29-4"><a href="yoyGrowthModel.html#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
+<span id="cb29-5"><a href="yoyGrowthModel.html#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span>area)</span></code></pre></div>
 <p><img src="westBrook-book_files/figure-html/2002%20untagged-3.png" width="100%" /></p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="yoyGrowthModel.html#cb23-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># same story as 2002</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="yoyGrowthModel.html#cb30-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># same story as 2002</span></span></code></pre></div>
 </div>
-<div id="why-no-untagged-fish-at-all-for-2000-and-2001" class="section level3 hasAnchor" number="4.1.4">
-<h3><span class="header-section-number">4.1.4</span> Why no untagged fish at all for 2000 and 2001?<a href="yoyGrowthModel.html#why-no-untagged-fish-at-all-for-2000-and-2001" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="yoyGrowthModel.html#cb24-1" aria-hidden="true" tabindex="-1"></a>  cdWB12000_2001BKT <span class="ot">&lt;-</span> cdWB1 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="dv">2000</span><span class="sc">:</span><span class="dv">2001</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>)</span>
-<span id="cb24-2"><a href="yoyGrowthModel.html#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(<span class="fu">is.na</span>(cdWB12000_2001BKT<span class="sc">$</span>tag))</span></code></pre></div>
+<div id="why-no-untagged-fish-at-all-for-2000-and-2001" class="section level3 hasAnchor" number="4.2.4">
+<h3><span class="header-section-number">4.2.4</span> Why no untagged fish at all for 2000 and 2001?<a href="yoyGrowthModel.html#why-no-untagged-fish-at-all-for-2000-and-2001" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="yoyGrowthModel.html#cb31-1" aria-hidden="true" tabindex="-1"></a>  cfirstObs2000_2001BKT <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="dv">2000</span><span class="sc">:</span><span class="dv">2001</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>)</span>
+<span id="cb31-2"><a href="yoyGrowthModel.html#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(<span class="fu">is.na</span>(cfirstObs2000_2001BKT<span class="sc">$</span>tag))</span></code></pre></div>
 <pre><code>## 
 ## FALSE 
 ##   343</code></pre>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="yoyGrowthModel.html#cb26-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(cdWB12000_2001BKT<span class="sc">$</span>observedLength)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="yoyGrowthModel.html#cb33-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(cfirstObs2000_2001BKT<span class="sc">$</span>observedLength)</span></code></pre></div>
 <pre><code>## 
 ## 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 85 90 
 ## 18 23 23 26 20 28 19 14 28 23 20 21  9 14  8 11  3  8  4  5  6  5  1  3  2  1</code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="yoyGrowthModel.html#cb28-1" aria-hidden="true" tabindex="-1"></a>  cdWB12000_2001BKT <span class="sc">%&gt;%</span> <span class="fu">filter</span>(observedLength <span class="sc">&lt;</span> <span class="dv">60</span>)</span></code></pre></div>
-<pre><code>## # A tibble: 64 x 45
-##    tag    detectionDate       sampleName sampleNumber river section area  observedLength survey
-##    &lt;chr&gt;  &lt;dttm&gt;              &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt; 
-##  1 1bf0f~ 2001-09-10 12:00:00 36                   27 west~      25 insi~             58 shock 
-##  2 1bf0f~ 2001-09-07 12:00:00 36                   27 west~      20 insi~             57 shock 
-##  3 1bf0f~ 2001-09-07 12:00:00 36                   27 west~      19 insi~             59 shock 
-##  4 1bf0f~ 2001-09-07 12:00:00 36                   27 west~      20 insi~             59 shock 
-##  5 1bf0f~ 2001-09-06 12:00:00 36                   27 west~      17 insi~             59 shock 
-##  6 1bf0f~ 2001-09-10 12:00:00 36                   27 west~      25 insi~             57 shock 
-##  7 1bf0f~ 2001-09-07 12:00:00 36                   27 west~      22 insi~             58 shock 
-##  8 1bf0f~ 2001-09-10 12:00:00 36                   27 west~      30 insi~             58 shock 
-##  9 1bf0f~ 2001-09-06 12:00:00 36                   27 west~      18 insi~             58 shock 
-## 10 1bf0f~ 2001-09-07 12:00:00 36                   27 west~      22 insi~             58 shock 
-## # ... with 54 more rows, and 36 more variables: pass &lt;dbl&gt;, observedWeight &lt;dbl&gt;,
-## #   comments &lt;chr&gt;, cohort &lt;dbl&gt;, species &lt;chr&gt;, dateEmigrated &lt;date&gt;, sex &lt;chr&gt;, year &lt;dbl&gt;,
-## #   season &lt;dbl&gt;, proportionSampled &lt;dbl&gt;, lagDetectionDate &lt;dttm&gt;, meanTemperature &lt;dbl&gt;,
-## #   meanFlow &lt;dbl&gt;, sectionOriginal &lt;chr&gt;, riverOrdered &lt;ord&gt;, inside &lt;lgl&gt;, yday &lt;dbl&gt;,
-## #   ageInSamples &lt;dbl&gt;, isYOY &lt;lgl&gt;, lagSection &lt;dbl&gt;, distMoved &lt;dbl&gt;,
-## #   lagObservedWeight &lt;dbl&gt;, lagObservedLength &lt;dbl&gt;, grWeight &lt;dbl&gt;, grLength &lt;dbl&gt;,
-## #   minSample &lt;dbl&gt;, maxSample &lt;dbl&gt;, minYear &lt;dbl&gt;, moveDir &lt;dbl&gt;, sampleInterval &lt;dbl&gt;, ...</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="yoyGrowthModel.html#cb30-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cdWB12000_2001BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
-<span id="cb30-2"><a href="yoyGrowthModel.html#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
-<span id="cb30-3"><a href="yoyGrowthModel.html#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="yoyGrowthModel.html#cb35-1" aria-hidden="true" tabindex="-1"></a>  cfirstObs2000_2001BKT <span class="sc">%&gt;%</span> <span class="fu">filter</span>(observedLength <span class="sc">&lt;</span> <span class="dv">60</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 64 x 18
+##    tag    species river detectionDate       sampleNumber     n proportionSampl~ observedLength observedWeight area  date        yday
+##    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; &lt;dttm&gt;                     &lt;dbl&gt; &lt;dbl&gt;            &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt; &lt;date&gt;     &lt;dbl&gt;
+##  1 1bf0f~ bkt     west~ 2001-09-10 12:00:00           27     2                1             58            1.9 insi~ 2001-09-10   253
+##  2 1bf0f~ bkt     west~ 2001-09-07 12:00:00           27     2                1             57            1.9 insi~ 2001-09-07   250
+##  3 1bf0f~ bkt     west~ 2001-09-07 12:00:00           27     1                1             59            2.1 insi~ 2001-09-07   250
+##  4 1bf0f~ bkt     west~ 2001-09-07 12:00:00           27     6                1             59            2.1 insi~ 2001-09-07   250
+##  5 1bf0f~ bkt     west~ 2001-09-06 12:00:00           27     1                1             59            2.2 insi~ 2001-09-06   249
+##  6 1bf0f~ bkt     west~ 2001-09-10 12:00:00           27     1                1             57            1.9 insi~ 2001-09-10   253
+##  7 1bf0f~ bkt     west~ 2001-09-07 12:00:00           27     3                1             58            2   insi~ 2001-09-07   250
+##  8 1bf0f~ bkt     west~ 2001-09-10 12:00:00           27     2                1             58            2.1 insi~ 2001-09-10   253
+##  9 1bf0f~ bkt     west~ 2001-09-06 12:00:00           27     4                1             58            2   insi~ 2001-09-06   249
+## 10 1bf0f~ bkt     west~ 2001-09-07 12:00:00           27     3                1             58            1.8 insi~ 2001-09-07   250
+## # ... with 54 more rows, and 6 more variables: year &lt;dbl&gt;, spawnDate &lt;date&gt;, emergeDate &lt;date&gt;, spawn_emerge &lt;list&gt;,
+## #   emerge_detect &lt;list&gt;, spawn_detect &lt;list&gt;</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="yoyGrowthModel.html#cb37-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cfirstObs2000_2001BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb37-2"><a href="yoyGrowthModel.html#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb37-3"><a href="yoyGrowthModel.html#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>)</span></code></pre></div>
 <p><img src="westBrook-book_files/figure-html/untagged%202000,%202001-1.png" width="100%" /></p>
 </div>
 </div>
-<div id="yearly-means" class="section level2 hasAnchor" number="4.2">
-<h2><span class="header-section-number">4.2</span> Yearly means<a href="yoyGrowthModel.html#yearly-means" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="yoyGrowthModel.html#cb31-1" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> cdWB1 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(species, year) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">meanLength =</span></span>
-<span id="cb31-2"><a href="yoyGrowthModel.html#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(observedLength, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">meanYday =</span> <span class="fu">mean</span>(yday, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb31-3"><a href="yoyGrowthModel.html#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-4"><a href="yoyGrowthModel.html#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(means, <span class="fu">aes</span>(year, meanLength, <span class="at">color =</span> species)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb31-5"><a href="yoyGrowthModel.html#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_line</span>()</span></code></pre></div>
+<div id="yearly-means" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Yearly means<a href="yoyGrowthModel.html#yearly-means" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="yoyGrowthModel.html#cb38-1" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span> </span>
+<span id="cb38-2"><a href="yoyGrowthModel.html#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species, year) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-3"><a href="yoyGrowthModel.html#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">meanLength =</span> <span class="fu">mean</span>(observedLength, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb38-4"><a href="yoyGrowthModel.html#cb38-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">meanYday =</span> <span class="fu">mean</span>(yday, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb38-5"><a href="yoyGrowthModel.html#cb38-5" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb38-6"><a href="yoyGrowthModel.html#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="yoyGrowthModel.html#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(means, <span class="fu">aes</span>(year, meanLength, <span class="at">color =</span> species)) <span class="sc">+</span> </span>
+<span id="cb38-8"><a href="yoyGrowthModel.html#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb38-9"><a href="yoyGrowthModel.html#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div>
 <p><img src="westBrook-book_files/figure-html/means-1.png" width="100%" /></p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="yoyGrowthModel.html#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(means, <span class="fu">aes</span>(meanYday, meanLength, <span class="at">color =</span> species)) <span class="sc">+</span></span>
-<span id="cb32-2"><a href="yoyGrowthModel.html#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="yoyGrowthModel.html#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(means, <span class="fu">aes</span>(meanYday, meanLength, <span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb39-2"><a href="yoyGrowthModel.html#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb39-3"><a href="yoyGrowthModel.html#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>)</span></code></pre></div>
 <p><img src="westBrook-book_files/figure-html/means-2.png" width="100%" /></p>
 
 </div>
@@ -497,7 +551,7 @@ div.csl-indent {
           </div>
         </div>
       </div>
-<a href="wrangle.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="getData.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="intro.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>

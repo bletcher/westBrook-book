@@ -1,10 +1,15 @@
 tab:nice-tab
 introduction
-getData
 wrangle
+getData
 yoyGrowthModel
 raw-data
-frequcny-ploty-by-species-and-river
+get-environmental-data
+get-first-observations
+get-environmental-data-flow-temp-from-the-server.
+counts-of-captured-fish
+raw-data-plots
+frequency-plots-by-species-and-river
 brook-trout-west-brook
 brook-trout-wb-jimmy
 brook-trout-wb-mitchell
