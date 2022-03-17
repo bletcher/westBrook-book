@@ -1,0 +1,20 @@
+# Models {#models}
+
+```{r global Models, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesModels, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(validate)
+
+# devtools::install_github('bletcher/getPrepareWBData')
+library(getPrepareWBData) # this has functions for preparing West Brook data
+```
+
+List of models will go here
+
+

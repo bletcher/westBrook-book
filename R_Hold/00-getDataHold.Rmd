@@ -1,0 +1,192 @@
+# Get fish data from the server {#getData}
+
+```{r globalGetData, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+The server hosting the data is named osensei and is at UMass (osensei.cns.umass.edu). It can be accessed using functions in the 'getWBData' package. Use
+`devtools::install_github('Conte-Ecology/westBrookData/getWBData')` to install. Most of the functions will run reconnect() to connect to the server with your username and password. Run `reconnect()` from the console to connect if necessary. Use `conDplyr` to see the list of available tables on the server. Details about the 'getWBData' package are 
+[here](https://github.com/Conte-Ecology/westBrookData/blob/master/getWBData/vignettes/getWBDataTutorial.pdf).     
+
+
+```{r librariesGetData, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(validate)
+```
+
+There are four main databases we want to create:    
+1. **cdWB_electro0** West Brook electrofishing data, 3 species (brook trout, brown trout and Atlantic salmon), tagged and untagged fish  
+2. **cdWB_CMR0** West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals  
+3. **cdWB_wanding0** West Brook wanding (portable antenna) data, all tagged salmonids  
+4. **cdWB_antenna0** West Brook stationary antenna data, all tagged salmonids  
+
+The "0" at the end of these file names indicates that they are the initial files that will be wrangled in the next step (next chapter). "cd" stands for "core data".
+
+```{r switchesCD}
+getNew_cdWB_electro0 <- FALSE
+getNew_cdWB_CMR0 <- FALSE
+getNew_cdWB_wanding0 <- FALSE
+getNew_cdWB_antenna0 <- FALSE
+```
+
+1. West Brook electrofishing data, all salmonids (tagged and untagged)
+```{r cdWB_electro0}
+
+# default values for createCoreData()
+# function (sampleType = "electrofishing", baseColumns = T, 
+#    columnsToAdd = NULL, includeUntagged = F, whichDrainage = "west") 
+
+if(getNew_cdWB_electro0) {
+  cdWB_electro0 <- createCoreData(
+        sampleType = "electrofishing",  #"stationaryAntenna","portableAntenna"
+        columnsToAdd = c("sampleNumber",
+                         "river",
+                         "survey",
+                         "pass",
+                         "observedLength",
+                         "observedWeight",
+                         "comments"),
+        includeUntagged = TRUE,
+        whichDrainage = "west"
+      ) %>%
+      addTagProperties(
+        columnsToAdd = c("cohort",
+                         "species",
+                         "dateEmigrated",
+                         "sex",
+                         "species"
+        )
+      ) %>%
+      dplyr::filter(species %in% c( "bkt","bnt","ats"),
+                    area %in% c("trib","inside","below","above"),
+                    !is.na(sampleNumber)) %>%
+      addSampleProperties() %>%
+      addEnvironmental()
+  
+  save(cdWB_electro0, file = './data/cdWB_electro0.RData')
+  
+} else {
+  load(file = './data/cdWB_electro0.RData')
+}
+str(cdWB_electro0)
+```
+
+2. West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals
+```{r CJS}
+
+if(getNew_cdWB_CMR0) {
+  cdWB_CMR0 <- 
+    createCoreData(
+      sampleType = "electrofishing", #"stationaryAntenna","portableAntenna"),
+      whichDrainage = "west",
+      columnsToAdd =
+        c("sampleNumber",
+          "river",
+          "riverMeter",
+          "survey",
+          "pass",
+          'observedLength',
+          'observedWeight')
+    ) %>%
+    addTagProperties(
+      columnsToAdd = 
+        c("cohort",
+          "species",
+          "dateEmigrated",
+          "sex",
+          "species")
+      ) %>%
+    dplyr::filter(!is.na(tag), 
+                  area %in% c("trib","inside","below","above"), 
+                  !is.na(sampleNumber) 
+                  ) %>%
+    createCmrData(maxAgeInSamples = 20, 
+                  inside = F, 
+                  censorDead = F, 
+                  censorEmigrated = T) %>%
+    addSampleProperties() %>%
+    addEnvironmental() %>%
+    addKnownZ() %>%
+    fillSizeLocation(size = F) #assumes fish stay in same location until observed elsewhere
+
+  save(cdWB_CMR0, file = './data/cdWB_CMR0.RData')
+  
+} else {
+  load(file = './data/cdWB_CMR0.RData')
+}
+str(cdWB_CMR0)
+```
+
+3. West Brook wanding data, all salmonids (tagged)
+```{r wanding}
+
+if(getNew_cdWB_wanding0) {
+# from wandingDataWB project in d:/ben/github/wandingData/
+  cdWB_wanding0 <- createCoreData(
+    sampleType = "portableAntenna",
+    columnsToAdd = c("tag", 
+                     "detectionDate", 
+                     "river", 
+                     "area", 
+                     "section", 
+                     "survey", 
+                     "sampleName", 
+                     "readerId", 
+                     "aliveOrDead", 
+                     "instance", 
+                     "pass", 
+                     "quarter", 
+                     "leftOrRight", 
+                     "habitat", 
+                     "cover", 
+                     "justification", 
+                     "comment")
+    ) %>% 
+    addTagProperties() %>%
+    dplyr::filter( species %in% c( "bkt","bnt","ats" ) )
+  
+    save(cdWB_wanding0, file = './data/cdWB_wanding0.RData')
+    
+  } else {
+    load(file = './data/cdWB_wanding0.RData')
+  }
+str(cdWB_wanding0)
+```
+
+4. West Brook antenna data, all tagged salmonids
+Note: some pitAntenna code at https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R
+```{r stationary antenna}
+
+if(getNew_cdWB_antenna0) {
+  cdWB_antenna0 <- createCoreData(
+    sampleType=c("stationaryAntenna"), 
+    whichDrainage = "west",
+    columnsToAdd=c(
+      "river",
+      "riverMeter",
+      "survey",
+      "readerID",
+      "comment"
+      )
+  ) %>%  
+  filter(!is.na(tag)) %>% # for now
+  addTagProperties(columnsToAdd = c(
+    "cohort",
+    "species",
+    "dateEmigrated",
+    "sex",
+    "species")
+  )
+  
+  save(cdWB_antenna0, file = './data/cdWB_antenna0.RData')
+    
+} else {
+  load(file = './data/cdWB_antenna0.RData')
+}
+
+str(cdWB_antenna0)
+
+```
+

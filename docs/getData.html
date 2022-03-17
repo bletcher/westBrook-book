@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 4 Get fish data from the server | The West Brook Story</title>
+  <title>Chapter 2 Get data | The West Brook Story</title>
   <meta name="description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
   <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 4 Get fish data from the server | The West Brook Story" />
+  <meta property="og:title" content="Chapter 2 Get data | The West Brook Story" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 4 Get fish data from the server | The West Brook Story" />
+  <meta name="twitter:title" content="Chapter 2 Get data | The West Brook Story" />
   
   <meta name="twitter:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
   
@@ -30,9 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="explorecdWB.html"/>
-<link rel="next" href="yoyGrowthModel.html"/>
-<script src="libs/header-attrs-2.13/header-attrs.js"></script>
+<link rel="prev" href="index.html"/>
+<link rel="next" href="models.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -120,28 +119,6 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
-<style type="text/css">
-/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}
-</style>
 
 </head>
 
@@ -156,35 +133,46 @@ div.csl-indent {
 
 <ul class="summary">
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction<span></span></a></li>
-<li class="chapter" data-level="2" data-path="wrangle.html"><a href="wrangle.html"><i class="fa fa-check"></i><b>2</b> Wrangle the data<span></span></a></li>
-<li class="chapter" data-level="3" data-path="explorecdWB.html"><a href="explorecdWB.html"><i class="fa fa-check"></i><b>3</b> Explore the data<span></span></a></li>
-<li class="chapter" data-level="4" data-path="getData.html"><a href="getData.html"><i class="fa fa-check"></i><b>4</b> Get fish data from the server<span></span></a></li>
-<li class="chapter" data-level="5" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html"><i class="fa fa-check"></i><b>5</b> Young-of-year Growth Model<span></span></a>
+<li class="chapter" data-level="2" data-path="getData.html"><a href="getData.html"><i class="fa fa-check"></i><b>2</b> Get data<span></span></a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#raw-data"><i class="fa fa-check"></i><b>5.1</b> Raw data<span></span></a>
+<li class="chapter" data-level="2.1" data-path="getData.html"><a href="getData.html#dataElectro"><i class="fa fa-check"></i><b>2.1</b> Electrofishing data<span></span></a>
 <ul>
-<li class="chapter" data-level="5.1.1" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#get-environmental-data"><i class="fa fa-check"></i><b>5.1.1</b> Get environmental data<span></span></a></li>
-<li class="chapter" data-level="5.1.2" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#get-first-observations"><i class="fa fa-check"></i><b>5.1.2</b> Get first observations<span></span></a></li>
-<li class="chapter" data-level="5.1.3" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#counts-of-captured-fish"><i class="fa fa-check"></i><b>5.1.3</b> Counts of captured fish<span></span></a></li>
+<li class="chapter" data-level="2.1.1" data-path="getData.html"><a href="getData.html#get-data"><i class="fa fa-check"></i><b>2.1.1</b> Get data<span></span></a></li>
+<li class="chapter" data-level="2.1.2" data-path="getData.html"><a href="getData.html#wrangle-data"><i class="fa fa-check"></i><b>2.1.2</b> Wrangle data<span></span></a></li>
+<li class="chapter" data-level="2.1.3" data-path="getData.html"><a href="getData.html#explore-data"><i class="fa fa-check"></i><b>2.1.3</b> Explore data<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="5.2" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#raw-data-plots"><i class="fa fa-check"></i><b>5.2</b> Raw data plots<span></span></a>
+<li class="chapter" data-level="2.2" data-path="getData.html"><a href="getData.html#dataCMR"><i class="fa fa-check"></i><b>2.2</b> Capture-recapture data<span></span></a>
 <ul>
-<li class="chapter" data-level="5.2.1" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#frequency-plots-by-species-and-river"><i class="fa fa-check"></i><b>5.2.1</b> Frequency plots by species and river<span></span></a></li>
-<li class="chapter" data-level="5.2.2" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#trout-in-the-wb-mainstem-only"><i class="fa fa-check"></i><b>5.2.2</b> Trout, in the WB mainstem only<span></span></a></li>
-<li class="chapter" data-level="5.2.3" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#why-are-there-untagged-fish-bigger-than-60mm"><i class="fa fa-check"></i><b>5.2.3</b> Why are there untagged fish bigger than 60mm?<span></span></a></li>
-<li class="chapter" data-level="5.2.4" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#why-no-untagged-fish-at-all-for-2000-and-2001"><i class="fa fa-check"></i><b>5.2.4</b> Why no untagged fish at all for 2000 and 2001?<span></span></a></li>
+<li class="chapter" data-level="2.2.1" data-path="getData.html"><a href="getData.html#get-data-1"><i class="fa fa-check"></i><b>2.2.1</b> Get data<span></span></a></li>
+<li class="chapter" data-level="2.2.2" data-path="getData.html"><a href="getData.html#wrangle-data-1"><i class="fa fa-check"></i><b>2.2.2</b> Wrangle data<span></span></a></li>
+<li class="chapter" data-level="2.2.3" data-path="getData.html"><a href="getData.html#explore-data-1"><i class="fa fa-check"></i><b>2.2.3</b> Explore data<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="5.3" data-path="yoyGrowthModel.html"><a href="yoyGrowthModel.html#yearly-means"><i class="fa fa-check"></i><b>5.3</b> Yearly means<span></span></a></li>
-</ul></li>
-<li class="chapter" data-level="6" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>6</b> Introduction<span></span></a></li>
-<li class="chapter" data-level="7" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>7</b> Literature<span></span></a></li>
-<li class="chapter" data-level="8" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>8</b> Methods<span></span></a></li>
-<li class="chapter" data-level="9" data-path="applications.html"><a href="applications.html"><i class="fa fa-check"></i><b>9</b> Applications<span></span></a>
+<li class="chapter" data-level="2.3" data-path="getData.html"><a href="getData.html#dataWanding"><i class="fa fa-check"></i><b>2.3</b> Wanding data<span></span></a>
 <ul>
-<li class="chapter" data-level="9.1" data-path="applications.html"><a href="applications.html#example-one"><i class="fa fa-check"></i><b>9.1</b> Example one<span></span></a></li>
-<li class="chapter" data-level="9.2" data-path="applications.html"><a href="applications.html#example-two"><i class="fa fa-check"></i><b>9.2</b> Example two<span></span></a></li>
+<li class="chapter" data-level="2.3.1" data-path="getData.html"><a href="getData.html#get-data-2"><i class="fa fa-check"></i><b>2.3.1</b> Get data<span></span></a></li>
+<li class="chapter" data-level="2.3.2" data-path="getData.html"><a href="getData.html#wrangle-data-2"><i class="fa fa-check"></i><b>2.3.2</b> Wrangle data<span></span></a></li>
+<li class="chapter" data-level="2.3.3" data-path="getData.html"><a href="getData.html#explore-data-2"><i class="fa fa-check"></i><b>2.3.3</b> Explore data<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>10</b> Final Words<span></span></a></li>
+<li class="chapter" data-level="2.4" data-path="getData.html"><a href="getData.html#dataAntenna"><i class="fa fa-check"></i><b>2.4</b> Antenna data<span></span></a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="getData.html"><a href="getData.html#get-data-3"><i class="fa fa-check"></i><b>2.4.1</b> Get data<span></span></a></li>
+<li class="chapter" data-level="2.4.2" data-path="getData.html"><a href="getData.html#wrangle-data-3"><i class="fa fa-check"></i><b>2.4.2</b> Wrangle data<span></span></a></li>
+<li class="chapter" data-level="2.4.3" data-path="getData.html"><a href="getData.html#explore-data-3"><i class="fa fa-check"></i><b>2.4.3</b> Explore data<span></span></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>3</b> Models<span></span></a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="models.html"><a href="models.html#modelYOY"><i class="fa fa-check"></i><b>3.1</b> Young-of-year size model<span></span></a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="models.html"><a href="models.html#raw-data-for-yoy-model"><i class="fa fa-check"></i><b>3.1.1</b> Raw data for YOY model<span></span></a></li>
+<li class="chapter" data-level="3.1.2" data-path="models.html"><a href="models.html#get-environmental-data"><i class="fa fa-check"></i><b>3.1.2</b> Get environmental data<span></span></a></li>
+<li class="chapter" data-level="3.1.3" data-path="models.html"><a href="models.html#get-first-observations"><i class="fa fa-check"></i><b>3.1.3</b> Get first observations<span></span></a></li>
+<li class="chapter" data-level="3.1.4" data-path="models.html"><a href="models.html#counts-of-captured-fish"><i class="fa fa-check"></i><b>3.1.4</b> Counts of captured fish<span></span></a></li>
+<li class="chapter" data-level="3.1.5" data-path="models.html"><a href="models.html#raw-data-plots"><i class="fa fa-check"></i><b>3.1.5</b> Raw data plots<span></span></a></li>
+<li class="chapter" data-level="3.1.6" data-path="models.html"><a href="models.html#yearly-means"><i class="fa fa-check"></i><b>3.1.6</b> Yearly means<span></span></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>4</b> Final Words<span></span></a></li>
 <li><a href="references.html#references">References<span></span></a></li>
 </ul>
 
@@ -203,8 +191,8 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="getData" class="section level1 hasAnchor" number="4">
-<h1><span class="header-section-number">Chapter 4</span> Get fish data from the server<a href="getData.html#getData" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="getData" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Get data<a href="getData.html#getData" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>The server hosting the data is named osensei and is at UMass (osensei.cns.umass.edu). It can be accessed using functions in the ‘getWBData’ package. Use
 <code>devtools::install_github('Conte-Ecology/westBrookData/getWBData')</code> to install. Most of the functions will run reconnect() to connect to the server with your username and password. Run <code>reconnect()</code> from the console to connect if necessary. Use <code>conDplyr</code> to see the list of available tables on the server. Details about the ‘getWBData’ package are
 <a href="https://github.com/Conte-Ecology/westBrookData/blob/master/getWBData/vignettes/getWBDataTutorial.pdf">here</a>.</p>
@@ -214,50 +202,52 @@ div.csl-indent {
 3. <strong>cdWB_wanding0</strong> West Brook wanding (portable antenna) data, all tagged salmonids<br />
 4. <strong>cdWB_antenna0</strong> West Brook stationary antenna data, all tagged salmonids</p>
 <p>The “0” at the end of these file names indicates that they are the initial files that will be wrangled in the next step (next chapter). “cd” stands for “core data”.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="getData.html#cb10-1" aria-hidden="true" tabindex="-1"></a>getNew_cdWB_electro0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
-<span id="cb10-2"><a href="getData.html#cb10-2" aria-hidden="true" tabindex="-1"></a>getNew_cdWB_CMR0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
-<span id="cb10-3"><a href="getData.html#cb10-3" aria-hidden="true" tabindex="-1"></a>getNew_cdWB_wanding0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
-<span id="cb10-4"><a href="getData.html#cb10-4" aria-hidden="true" tabindex="-1"></a>getNew_cdWB_antenna0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
-<ol style="list-style-type: decimal">
-<li>West Brook electrofishing data, all salmonids (tagged and untagged)</li>
-</ol>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="getData.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># default values for createCoreData()</span></span>
-<span id="cb11-2"><a href="getData.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># function (sampleType = &quot;electrofishing&quot;, baseColumns = T, </span></span>
-<span id="cb11-3"><a href="getData.html#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#    columnsToAdd = NULL, includeUntagged = F, whichDrainage = &quot;west&quot;) </span></span>
-<span id="cb11-4"><a href="getData.html#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="getData.html#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_electro0) {</span>
-<span id="cb11-6"><a href="getData.html#cb11-6" aria-hidden="true" tabindex="-1"></a>  cdWB_electro0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
-<span id="cb11-7"><a href="getData.html#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">sampleType =</span> <span class="st">&quot;electrofishing&quot;</span>,  <span class="co">#&quot;stationaryAntenna&quot;,&quot;portableAntenna&quot;</span></span>
-<span id="cb11-8"><a href="getData.html#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;sampleNumber&quot;</span>,</span>
-<span id="cb11-9"><a href="getData.html#cb11-9" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;river&quot;</span>,</span>
-<span id="cb11-10"><a href="getData.html#cb11-10" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;survey&quot;</span>,</span>
-<span id="cb11-11"><a href="getData.html#cb11-11" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;pass&quot;</span>,</span>
-<span id="cb11-12"><a href="getData.html#cb11-12" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;observedLength&quot;</span>,</span>
-<span id="cb11-13"><a href="getData.html#cb11-13" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;observedWeight&quot;</span>,</span>
-<span id="cb11-14"><a href="getData.html#cb11-14" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;comments&quot;</span>),</span>
-<span id="cb11-15"><a href="getData.html#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">includeUntagged =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb11-16"><a href="getData.html#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">whichDrainage =</span> <span class="st">&quot;west&quot;</span></span>
-<span id="cb11-17"><a href="getData.html#cb11-17" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
-<span id="cb11-18"><a href="getData.html#cb11-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addTagProperties</span>(</span>
-<span id="cb11-19"><a href="getData.html#cb11-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;cohort&quot;</span>,</span>
-<span id="cb11-20"><a href="getData.html#cb11-20" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;species&quot;</span>,</span>
-<span id="cb11-21"><a href="getData.html#cb11-21" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;dateEmigrated&quot;</span>,</span>
-<span id="cb11-22"><a href="getData.html#cb11-22" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;sex&quot;</span>,</span>
-<span id="cb11-23"><a href="getData.html#cb11-23" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;species&quot;</span></span>
-<span id="cb11-24"><a href="getData.html#cb11-24" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb11-25"><a href="getData.html#cb11-25" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
-<span id="cb11-26"><a href="getData.html#cb11-26" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(species <span class="sc">%in%</span> <span class="fu">c</span>( <span class="st">&quot;bkt&quot;</span>,<span class="st">&quot;bnt&quot;</span>,<span class="st">&quot;ats&quot;</span>),</span>
-<span id="cb11-27"><a href="getData.html#cb11-27" aria-hidden="true" tabindex="-1"></a>                    area <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;trib&quot;</span>,<span class="st">&quot;inside&quot;</span>,<span class="st">&quot;below&quot;</span>,<span class="st">&quot;above&quot;</span>),</span>
-<span id="cb11-28"><a href="getData.html#cb11-28" aria-hidden="true" tabindex="-1"></a>                    <span class="sc">!</span><span class="fu">is.na</span>(sampleNumber)) <span class="sc">%&gt;%</span></span>
-<span id="cb11-29"><a href="getData.html#cb11-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addSampleProperties</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb11-30"><a href="getData.html#cb11-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addEnvironmental</span>()</span>
-<span id="cb11-31"><a href="getData.html#cb11-31" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-32"><a href="getData.html#cb11-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_electro0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro0.RData&#39;</span>)</span>
-<span id="cb11-33"><a href="getData.html#cb11-33" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-34"><a href="getData.html#cb11-34" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb11-35"><a href="getData.html#cb11-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro0.RData&#39;</span>)</span>
-<span id="cb11-36"><a href="getData.html#cb11-36" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-37"><a href="getData.html#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_electro0)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="getData.html#cb1-1" aria-hidden="true" tabindex="-1"></a>getNew_cdWB_electro0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb1-2"><a href="getData.html#cb1-2" aria-hidden="true" tabindex="-1"></a>getNew_cdWB_CMR0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb1-3"><a href="getData.html#cb1-3" aria-hidden="true" tabindex="-1"></a>getNew_cdWB_wanding0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb1-4"><a href="getData.html#cb1-4" aria-hidden="true" tabindex="-1"></a>getNew_cdWB_antenna0 <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
+
+<div id="dataElectro" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Electrofishing data<a href="getData.html#dataElectro" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="get-data" class="section level3 hasAnchor" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Get data<a href="getData.html#get-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="getData.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># default values for createCoreData()</span></span>
+<span id="cb2-2"><a href="getData.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># function (sampleType = &quot;electrofishing&quot;, baseColumns = T, </span></span>
+<span id="cb2-3"><a href="getData.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#    columnsToAdd = NULL, includeUntagged = F, whichDrainage = &quot;west&quot;) </span></span>
+<span id="cb2-4"><a href="getData.html#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="getData.html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_electro0) {</span>
+<span id="cb2-6"><a href="getData.html#cb2-6" aria-hidden="true" tabindex="-1"></a>  cdWB_electro0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
+<span id="cb2-7"><a href="getData.html#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">sampleType =</span> <span class="st">&quot;electrofishing&quot;</span>,  <span class="co">#&quot;stationaryAntenna&quot;,&quot;portableAntenna&quot;</span></span>
+<span id="cb2-8"><a href="getData.html#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;sampleNumber&quot;</span>,</span>
+<span id="cb2-9"><a href="getData.html#cb2-9" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;river&quot;</span>,</span>
+<span id="cb2-10"><a href="getData.html#cb2-10" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;survey&quot;</span>,</span>
+<span id="cb2-11"><a href="getData.html#cb2-11" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;pass&quot;</span>,</span>
+<span id="cb2-12"><a href="getData.html#cb2-12" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;observedLength&quot;</span>,</span>
+<span id="cb2-13"><a href="getData.html#cb2-13" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;observedWeight&quot;</span>,</span>
+<span id="cb2-14"><a href="getData.html#cb2-14" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;comments&quot;</span>),</span>
+<span id="cb2-15"><a href="getData.html#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">includeUntagged =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-16"><a href="getData.html#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">whichDrainage =</span> <span class="st">&quot;west&quot;</span></span>
+<span id="cb2-17"><a href="getData.html#cb2-17" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-18"><a href="getData.html#cb2-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addTagProperties</span>(</span>
+<span id="cb2-19"><a href="getData.html#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;cohort&quot;</span>,</span>
+<span id="cb2-20"><a href="getData.html#cb2-20" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;species&quot;</span>,</span>
+<span id="cb2-21"><a href="getData.html#cb2-21" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;dateEmigrated&quot;</span>,</span>
+<span id="cb2-22"><a href="getData.html#cb2-22" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;sex&quot;</span>,</span>
+<span id="cb2-23"><a href="getData.html#cb2-23" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;species&quot;</span></span>
+<span id="cb2-24"><a href="getData.html#cb2-24" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-25"><a href="getData.html#cb2-25" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-26"><a href="getData.html#cb2-26" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(species <span class="sc">%in%</span> <span class="fu">c</span>( <span class="st">&quot;bkt&quot;</span>,<span class="st">&quot;bnt&quot;</span>,<span class="st">&quot;ats&quot;</span>),</span>
+<span id="cb2-27"><a href="getData.html#cb2-27" aria-hidden="true" tabindex="-1"></a>                    area <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;trib&quot;</span>,<span class="st">&quot;inside&quot;</span>,<span class="st">&quot;below&quot;</span>,<span class="st">&quot;above&quot;</span>),</span>
+<span id="cb2-28"><a href="getData.html#cb2-28" aria-hidden="true" tabindex="-1"></a>                    <span class="sc">!</span><span class="fu">is.na</span>(sampleNumber)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-29"><a href="getData.html#cb2-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addSampleProperties</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-30"><a href="getData.html#cb2-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addEnvironmental</span>()</span>
+<span id="cb2-31"><a href="getData.html#cb2-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-32"><a href="getData.html#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_electro0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro0.RData&#39;</span>)</span>
+<span id="cb2-33"><a href="getData.html#cb2-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-34"><a href="getData.html#cb2-34" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb2-35"><a href="getData.html#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro0.RData&#39;</span>)</span>
+<span id="cb2-36"><a href="getData.html#cb2-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-37"><a href="getData.html#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_electro0)</span></code></pre></div>
 <pre><code>## tibble [91,103 x 22] (S3: tbl_df/tbl/data.frame)
 ##  $ tag              : chr [1:91103] &quot;00088cbed0&quot; &quot;00088cbed3&quot; &quot;00088cbed4&quot; &quot;00088cbed4&quot; ...
 ##  $ detectionDate    : POSIXct[1:91103], format: &quot;2013-03-25 00:00:00&quot; &quot;2012-06-07 09:03:00&quot; &quot;2013-03-29 10:08:00&quot; &quot;2013-06-25 14:51:00&quot; ...
@@ -281,50 +271,108 @@ div.csl-indent {
 ##  $ lagDetectionDate : POSIXct[1:91103], format: NA NA &quot;2013-06-25 14:51:00&quot; NA ...
 ##  $ meanTemperature  : num [1:91103] NaN NaN 10.7 NaN 16.5 ...
 ##  $ meanFlow         : num [1:91103] NaN NaN 0.5247 NaN 0.0338 ...</code></pre>
-<ol start="2" style="list-style-type: decimal">
-<li>West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals</li>
-</ol>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="getData.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_CMR0) {</span>
-<span id="cb13-2"><a href="getData.html#cb13-2" aria-hidden="true" tabindex="-1"></a>  cdWB_CMR0 <span class="ot">&lt;-</span> </span>
-<span id="cb13-3"><a href="getData.html#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">createCoreData</span>(</span>
-<span id="cb13-4"><a href="getData.html#cb13-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">sampleType =</span> <span class="st">&quot;electrofishing&quot;</span>, <span class="co">#&quot;stationaryAntenna&quot;,&quot;portableAntenna&quot;),</span></span>
-<span id="cb13-5"><a href="getData.html#cb13-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">whichDrainage =</span> <span class="st">&quot;west&quot;</span>,</span>
-<span id="cb13-6"><a href="getData.html#cb13-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">columnsToAdd =</span></span>
-<span id="cb13-7"><a href="getData.html#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(<span class="st">&quot;sampleNumber&quot;</span>,</span>
-<span id="cb13-8"><a href="getData.html#cb13-8" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;river&quot;</span>,</span>
-<span id="cb13-9"><a href="getData.html#cb13-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;riverMeter&quot;</span>,</span>
-<span id="cb13-10"><a href="getData.html#cb13-10" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;survey&quot;</span>,</span>
-<span id="cb13-11"><a href="getData.html#cb13-11" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;pass&quot;</span>,</span>
-<span id="cb13-12"><a href="getData.html#cb13-12" aria-hidden="true" tabindex="-1"></a>          <span class="st">&#39;observedLength&#39;</span>,</span>
-<span id="cb13-13"><a href="getData.html#cb13-13" aria-hidden="true" tabindex="-1"></a>          <span class="st">&#39;observedWeight&#39;</span>)</span>
-<span id="cb13-14"><a href="getData.html#cb13-14" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb13-15"><a href="getData.html#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addTagProperties</span>(</span>
-<span id="cb13-16"><a href="getData.html#cb13-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">columnsToAdd =</span> </span>
-<span id="cb13-17"><a href="getData.html#cb13-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(<span class="st">&quot;cohort&quot;</span>,</span>
-<span id="cb13-18"><a href="getData.html#cb13-18" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;species&quot;</span>,</span>
-<span id="cb13-19"><a href="getData.html#cb13-19" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;dateEmigrated&quot;</span>,</span>
-<span id="cb13-20"><a href="getData.html#cb13-20" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;sex&quot;</span>,</span>
-<span id="cb13-21"><a href="getData.html#cb13-21" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;species&quot;</span>)</span>
-<span id="cb13-22"><a href="getData.html#cb13-22" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
-<span id="cb13-23"><a href="getData.html#cb13-23" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(tag), </span>
-<span id="cb13-24"><a href="getData.html#cb13-24" aria-hidden="true" tabindex="-1"></a>                  area <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;trib&quot;</span>,<span class="st">&quot;inside&quot;</span>,<span class="st">&quot;below&quot;</span>,<span class="st">&quot;above&quot;</span>), </span>
-<span id="cb13-25"><a href="getData.html#cb13-25" aria-hidden="true" tabindex="-1"></a>                  <span class="sc">!</span><span class="fu">is.na</span>(sampleNumber) </span>
-<span id="cb13-26"><a href="getData.html#cb13-26" aria-hidden="true" tabindex="-1"></a>                  ) <span class="sc">%&gt;%</span></span>
-<span id="cb13-27"><a href="getData.html#cb13-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">createCmrData</span>(<span class="at">maxAgeInSamples =</span> <span class="dv">20</span>, </span>
-<span id="cb13-28"><a href="getData.html#cb13-28" aria-hidden="true" tabindex="-1"></a>                  <span class="at">inside =</span> F, </span>
-<span id="cb13-29"><a href="getData.html#cb13-29" aria-hidden="true" tabindex="-1"></a>                  <span class="at">censorDead =</span> F, </span>
-<span id="cb13-30"><a href="getData.html#cb13-30" aria-hidden="true" tabindex="-1"></a>                  <span class="at">censorEmigrated =</span> T) <span class="sc">%&gt;%</span></span>
-<span id="cb13-31"><a href="getData.html#cb13-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addSampleProperties</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb13-32"><a href="getData.html#cb13-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addEnvironmental</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb13-33"><a href="getData.html#cb13-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addKnownZ</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb13-34"><a href="getData.html#cb13-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fillSizeLocation</span>(<span class="at">size =</span> F) <span class="co">#assumes fish stay in same location until observed elsewhere</span></span>
-<span id="cb13-35"><a href="getData.html#cb13-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-36"><a href="getData.html#cb13-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_CMR0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_CMR0.RData&#39;</span>)</span>
-<span id="cb13-37"><a href="getData.html#cb13-37" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-38"><a href="getData.html#cb13-38" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb13-39"><a href="getData.html#cb13-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_CMR0.RData&#39;</span>)</span>
-<span id="cb13-40"><a href="getData.html#cb13-40" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-41"><a href="getData.html#cb13-41" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_CMR0)</span></code></pre></div>
+</div>
+<div id="wrangle-data" class="section level3 hasAnchor" number="2.1.2">
+<h3><span class="header-section-number">2.1.2</span> Wrangle data<a href="getData.html#wrangle-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This section takes cdWB_electro0 and cleans it to create cdWB_electro.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="getData.html#cb4-1" aria-hidden="true" tabindex="-1"></a>reclean_cdWB_electro <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="getData.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(reclean_cdWB_electro){</span>
+<span id="cb5-2"><a href="getData.html#cb5-2" aria-hidden="true" tabindex="-1"></a>  drainage <span class="ot">&lt;-</span> <span class="st">&#39;west&#39;</span></span>
+<span id="cb5-3"><a href="getData.html#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="getData.html#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># functions in getPrepareWBData library</span></span>
+<span id="cb5-5"><a href="getData.html#cb5-5" aria-hidden="true" tabindex="-1"></a>  cdWB_electro <span class="ot">&lt;-</span> cdWB_electro0 <span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="getData.html#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cleanData</span>(drainage) <span class="sc">%&gt;%</span></span>
+<span id="cb5-7"><a href="getData.html#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mergeSites</span>(drainage) <span class="sc">%&gt;%</span></span>
+<span id="cb5-8"><a href="getData.html#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addNPasses</span>(drainage) <span class="sc">%&gt;%</span></span>
+<span id="cb5-9"><a href="getData.html#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">drainage =</span> drainage)</span>
+<span id="cb5-10"><a href="getData.html#cb5-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-11"><a href="getData.html#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_electro, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro.RData&#39;</span>)</span>
+<span id="cb5-12"><a href="getData.html#cb5-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-13"><a href="getData.html#cb5-13" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb5-14"><a href="getData.html#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro.RData&#39;</span>)</span>
+<span id="cb5-15"><a href="getData.html#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="explore-data" class="section level3 hasAnchor" number="2.1.3">
+<h3><span class="header-section-number">2.1.3</span> Explore data<a href="getData.html#explore-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="getData.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cdWB_electro, <span class="fu">aes</span>(observedLength, observedWeight, <span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="getData.html#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="getData.html#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb6-4"><a href="getData.html#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb6-5"><a href="getData.html#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_publication</span>() <span class="sc">+</span></span>
+<span id="cb6-6"><a href="getData.html#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> species)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/lw-1.png" width="672" /></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="getData.html#cb7-1" aria-hidden="true" tabindex="-1"></a>lwReg <span class="ot">&lt;-</span> cdWB_electro <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="getData.html#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest_by</span>(species) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="getData.html#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">reg =</span> <span class="fu">list</span>(<span class="fu">lm</span>(<span class="fu">log</span>(observedWeight) <span class="sc">~</span> <span class="fu">log</span>(observedLength), <span class="at">data =</span> data)))</span>
+<span id="cb7-4"><a href="getData.html#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="getData.html#cb7-5" aria-hidden="true" tabindex="-1"></a>lwReg <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(broom<span class="sc">::</span><span class="fu">tidy</span>(reg))  </span></code></pre></div>
+<pre><code>## # A tibble: 6 x 6
+## # Groups:   species [3]
+##   species term                estimate std.error statistic p.value
+##   &lt;chr&gt;   &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 ats     (Intercept)           -11.4    0.00942    -1210.       0
+## 2 ats     log(observedLength)     3.00   0.00208     1442.       0
+## 3 bkt     (Intercept)           -11.5    0.00621    -1859.       0
+## 4 bkt     log(observedLength)     3.02   0.00140     2155.       0
+## 5 bnt     (Intercept)           -11.5    0.00686    -1670.       0
+## 6 bnt     log(observedLength)     3.01   0.00149     2023.       0</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="getData.html#cb9-1" aria-hidden="true" tabindex="-1"></a>lwReg <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(broom<span class="sc">::</span><span class="fu">glance</span>(reg))</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 13
+## # Groups:   species [3]
+##   species r.squared adj.r.squared  sigma statistic p.value    df logLik     AIC     BIC deviance df.residual  nobs
+##   &lt;chr&gt;       &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;int&gt; &lt;int&gt;
+## 1 ats         0.989         0.989 0.0945  2080611.       0     1 22663. -45319. -45295.     215.       24092 24094
+## 2 bkt         0.991         0.991 0.112   4643341.       0     1 32555. -65105. -65079.     537.       42490 42492
+## 3 bnt         0.996         0.996 0.0858  4092957.       0     1 18345. -36683. -36660.     130.       17694 17696</code></pre>
+
+</div>
+</div>
+<div id="dataCMR" class="section level2 hasAnchor" number="2.2">
+<h2><span class="header-section-number">2.2</span> Capture-recapture data<a href="getData.html#dataCMR" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="get-data-1" class="section level3 hasAnchor" number="2.2.1">
+<h3><span class="header-section-number">2.2.1</span> Get data<a href="getData.html#get-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="getData.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_CMR0) {</span>
+<span id="cb11-2"><a href="getData.html#cb11-2" aria-hidden="true" tabindex="-1"></a>  cdWB_CMR0 <span class="ot">&lt;-</span> </span>
+<span id="cb11-3"><a href="getData.html#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">createCoreData</span>(</span>
+<span id="cb11-4"><a href="getData.html#cb11-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">sampleType =</span> <span class="st">&quot;electrofishing&quot;</span>, <span class="co">#&quot;stationaryAntenna&quot;,&quot;portableAntenna&quot;),</span></span>
+<span id="cb11-5"><a href="getData.html#cb11-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">whichDrainage =</span> <span class="st">&quot;west&quot;</span>,</span>
+<span id="cb11-6"><a href="getData.html#cb11-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">columnsToAdd =</span></span>
+<span id="cb11-7"><a href="getData.html#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(<span class="st">&quot;sampleNumber&quot;</span>,</span>
+<span id="cb11-8"><a href="getData.html#cb11-8" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;river&quot;</span>,</span>
+<span id="cb11-9"><a href="getData.html#cb11-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;riverMeter&quot;</span>,</span>
+<span id="cb11-10"><a href="getData.html#cb11-10" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;survey&quot;</span>,</span>
+<span id="cb11-11"><a href="getData.html#cb11-11" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;pass&quot;</span>,</span>
+<span id="cb11-12"><a href="getData.html#cb11-12" aria-hidden="true" tabindex="-1"></a>          <span class="st">&#39;observedLength&#39;</span>,</span>
+<span id="cb11-13"><a href="getData.html#cb11-13" aria-hidden="true" tabindex="-1"></a>          <span class="st">&#39;observedWeight&#39;</span>)</span>
+<span id="cb11-14"><a href="getData.html#cb11-14" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-15"><a href="getData.html#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addTagProperties</span>(</span>
+<span id="cb11-16"><a href="getData.html#cb11-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">columnsToAdd =</span> </span>
+<span id="cb11-17"><a href="getData.html#cb11-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(<span class="st">&quot;cohort&quot;</span>,</span>
+<span id="cb11-18"><a href="getData.html#cb11-18" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;species&quot;</span>,</span>
+<span id="cb11-19"><a href="getData.html#cb11-19" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;dateEmigrated&quot;</span>,</span>
+<span id="cb11-20"><a href="getData.html#cb11-20" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;sex&quot;</span>,</span>
+<span id="cb11-21"><a href="getData.html#cb11-21" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;species&quot;</span>)</span>
+<span id="cb11-22"><a href="getData.html#cb11-22" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-23"><a href="getData.html#cb11-23" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(tag), </span>
+<span id="cb11-24"><a href="getData.html#cb11-24" aria-hidden="true" tabindex="-1"></a>                  area <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;trib&quot;</span>,<span class="st">&quot;inside&quot;</span>,<span class="st">&quot;below&quot;</span>,<span class="st">&quot;above&quot;</span>), </span>
+<span id="cb11-25"><a href="getData.html#cb11-25" aria-hidden="true" tabindex="-1"></a>                  <span class="sc">!</span><span class="fu">is.na</span>(sampleNumber) </span>
+<span id="cb11-26"><a href="getData.html#cb11-26" aria-hidden="true" tabindex="-1"></a>                  ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-27"><a href="getData.html#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">createCmrData</span>(<span class="at">maxAgeInSamples =</span> <span class="dv">20</span>, </span>
+<span id="cb11-28"><a href="getData.html#cb11-28" aria-hidden="true" tabindex="-1"></a>                  <span class="at">inside =</span> F, </span>
+<span id="cb11-29"><a href="getData.html#cb11-29" aria-hidden="true" tabindex="-1"></a>                  <span class="at">censorDead =</span> F, </span>
+<span id="cb11-30"><a href="getData.html#cb11-30" aria-hidden="true" tabindex="-1"></a>                  <span class="at">censorEmigrated =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb11-31"><a href="getData.html#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addSampleProperties</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-32"><a href="getData.html#cb11-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addEnvironmental</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-33"><a href="getData.html#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addKnownZ</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-34"><a href="getData.html#cb11-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fillSizeLocation</span>(<span class="at">size =</span> F) <span class="co">#assumes fish stay in same location until observed elsewhere</span></span>
+<span id="cb11-35"><a href="getData.html#cb11-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-36"><a href="getData.html#cb11-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_CMR0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_CMR0.RData&#39;</span>)</span>
+<span id="cb11-37"><a href="getData.html#cb11-37" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-38"><a href="getData.html#cb11-38" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb11-39"><a href="getData.html#cb11-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_CMR0.RData&#39;</span>)</span>
+<span id="cb11-40"><a href="getData.html#cb11-40" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-41"><a href="getData.html#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_CMR0)</span></code></pre></div>
 <pre><code>## tibble [483,605 x 26] (S3: tbl_df/tbl/data.frame)
 ##  $ tag              : chr [1:483605] &quot;00088cc21e&quot; &quot;00088cc21e&quot; &quot;00088cc21e&quot; &quot;00088cc21e&quot; ...
 ##  $ cohort           : num [1:483605] 2012 2012 2012 2012 2012 ...
@@ -352,40 +400,51 @@ div.csl-indent {
 ##  $ meanTemperature  : num [1:483605] 16.48 7.98 1.25 9.13 16.51 ...
 ##  $ meanFlow         : num [1:483605] 0.0315 0.135 0.3647 0.3887 0.3033 ...
 ##  $ knownZ           : num [1:483605] 1 1 2 2 2 2 2 2 2 2 ...</code></pre>
-<ol start="3" style="list-style-type: decimal">
-<li>West Brook wanding data, all salmonids (tagged)</li>
-</ol>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="getData.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_wanding0) {</span>
-<span id="cb15-2"><a href="getData.html#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># from wandingDataWB project in d:/ben/github/wandingData/</span></span>
-<span id="cb15-3"><a href="getData.html#cb15-3" aria-hidden="true" tabindex="-1"></a>  cdWB_wanding0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
-<span id="cb15-4"><a href="getData.html#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sampleType =</span> <span class="st">&quot;portableAntenna&quot;</span>,</span>
-<span id="cb15-5"><a href="getData.html#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;tag&quot;</span>, </span>
-<span id="cb15-6"><a href="getData.html#cb15-6" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;detectionDate&quot;</span>, </span>
-<span id="cb15-7"><a href="getData.html#cb15-7" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;river&quot;</span>, </span>
-<span id="cb15-8"><a href="getData.html#cb15-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;area&quot;</span>, </span>
-<span id="cb15-9"><a href="getData.html#cb15-9" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;section&quot;</span>, </span>
-<span id="cb15-10"><a href="getData.html#cb15-10" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;survey&quot;</span>, </span>
-<span id="cb15-11"><a href="getData.html#cb15-11" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;sampleName&quot;</span>, </span>
-<span id="cb15-12"><a href="getData.html#cb15-12" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;readerId&quot;</span>, </span>
-<span id="cb15-13"><a href="getData.html#cb15-13" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;aliveOrDead&quot;</span>, </span>
-<span id="cb15-14"><a href="getData.html#cb15-14" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;instance&quot;</span>, </span>
-<span id="cb15-15"><a href="getData.html#cb15-15" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;pass&quot;</span>, </span>
-<span id="cb15-16"><a href="getData.html#cb15-16" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;quarter&quot;</span>, </span>
-<span id="cb15-17"><a href="getData.html#cb15-17" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;leftOrRight&quot;</span>, </span>
-<span id="cb15-18"><a href="getData.html#cb15-18" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;habitat&quot;</span>, </span>
-<span id="cb15-19"><a href="getData.html#cb15-19" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;cover&quot;</span>, </span>
-<span id="cb15-20"><a href="getData.html#cb15-20" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;justification&quot;</span>, </span>
-<span id="cb15-21"><a href="getData.html#cb15-21" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;comment&quot;</span>)</span>
-<span id="cb15-22"><a href="getData.html#cb15-22" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-23"><a href="getData.html#cb15-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addTagProperties</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb15-24"><a href="getData.html#cb15-24" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>( species <span class="sc">%in%</span> <span class="fu">c</span>( <span class="st">&quot;bkt&quot;</span>,<span class="st">&quot;bnt&quot;</span>,<span class="st">&quot;ats&quot;</span> ) )</span>
-<span id="cb15-25"><a href="getData.html#cb15-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb15-26"><a href="getData.html#cb15-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">save</span>(cdWB_wanding0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_wanding0.RData&#39;</span>)</span>
-<span id="cb15-27"><a href="getData.html#cb15-27" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-28"><a href="getData.html#cb15-28" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb15-29"><a href="getData.html#cb15-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_wanding0.RData&#39;</span>)</span>
-<span id="cb15-30"><a href="getData.html#cb15-30" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb15-31"><a href="getData.html#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_wanding0)</span></code></pre></div>
+</div>
+<div id="wrangle-data-1" class="section level3 hasAnchor" number="2.2.2">
+<h3><span class="header-section-number">2.2.2</span> Wrangle data<a href="getData.html#wrangle-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="explore-data-1" class="section level3 hasAnchor" number="2.2.3">
+<h3><span class="header-section-number">2.2.3</span> Explore data<a href="getData.html#explore-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+
+</div>
+</div>
+<div id="dataWanding" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> Wanding data<a href="getData.html#dataWanding" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="get-data-2" class="section level3 hasAnchor" number="2.3.1">
+<h3><span class="header-section-number">2.3.1</span> Get data<a href="getData.html#get-data-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>West Brook wanding data</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="getData.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_wanding0) {</span>
+<span id="cb13-2"><a href="getData.html#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># from wandingDataWB project in d:/ben/github/wandingData/</span></span>
+<span id="cb13-3"><a href="getData.html#cb13-3" aria-hidden="true" tabindex="-1"></a>  cdWB_wanding0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
+<span id="cb13-4"><a href="getData.html#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sampleType =</span> <span class="st">&quot;portableAntenna&quot;</span>,</span>
+<span id="cb13-5"><a href="getData.html#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;tag&quot;</span>, </span>
+<span id="cb13-6"><a href="getData.html#cb13-6" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;detectionDate&quot;</span>, </span>
+<span id="cb13-7"><a href="getData.html#cb13-7" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;river&quot;</span>, </span>
+<span id="cb13-8"><a href="getData.html#cb13-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;area&quot;</span>, </span>
+<span id="cb13-9"><a href="getData.html#cb13-9" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;section&quot;</span>, </span>
+<span id="cb13-10"><a href="getData.html#cb13-10" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;survey&quot;</span>, </span>
+<span id="cb13-11"><a href="getData.html#cb13-11" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;sampleName&quot;</span>, </span>
+<span id="cb13-12"><a href="getData.html#cb13-12" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;readerId&quot;</span>, </span>
+<span id="cb13-13"><a href="getData.html#cb13-13" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;aliveOrDead&quot;</span>, </span>
+<span id="cb13-14"><a href="getData.html#cb13-14" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;instance&quot;</span>, </span>
+<span id="cb13-15"><a href="getData.html#cb13-15" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;pass&quot;</span>, </span>
+<span id="cb13-16"><a href="getData.html#cb13-16" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;quarter&quot;</span>, </span>
+<span id="cb13-17"><a href="getData.html#cb13-17" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;leftOrRight&quot;</span>, </span>
+<span id="cb13-18"><a href="getData.html#cb13-18" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;habitat&quot;</span>, </span>
+<span id="cb13-19"><a href="getData.html#cb13-19" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;cover&quot;</span>, </span>
+<span id="cb13-20"><a href="getData.html#cb13-20" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;justification&quot;</span>, </span>
+<span id="cb13-21"><a href="getData.html#cb13-21" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;comment&quot;</span>)</span>
+<span id="cb13-22"><a href="getData.html#cb13-22" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-23"><a href="getData.html#cb13-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addTagProperties</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-24"><a href="getData.html#cb13-24" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>( species <span class="sc">%in%</span> <span class="fu">c</span>( <span class="st">&quot;bkt&quot;</span>,<span class="st">&quot;bnt&quot;</span>,<span class="st">&quot;ats&quot;</span> ) )</span>
+<span id="cb13-25"><a href="getData.html#cb13-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-26"><a href="getData.html#cb13-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">save</span>(cdWB_wanding0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_wanding0.RData&#39;</span>)</span>
+<span id="cb13-27"><a href="getData.html#cb13-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-28"><a href="getData.html#cb13-28" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb13-29"><a href="getData.html#cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_wanding0.RData&#39;</span>)</span>
+<span id="cb13-30"><a href="getData.html#cb13-30" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-31"><a href="getData.html#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_wanding0)</span></code></pre></div>
 <pre><code>## tibble [14,880 x 19] (S3: tbl_df/tbl/data.frame)
 ##  $ tag          : chr [1:14880] &quot;00088cf41b&quot; &quot;00088cf41b&quot; &quot;00088cf41b&quot; &quot;00088cf435&quot; ...
 ##  $ detectionDate: POSIXct[1:14880], format: &quot;2010-09-27 11:08:45&quot; &quot;2010-10-18 14:16:22&quot; &quot;2010-10-25 11:40:24&quot; &quot;2010-12-06 13:32:15&quot; ...
@@ -406,38 +465,49 @@ div.csl-indent {
 ##  $ comment      : chr [1:14880] NA NA NA NA ...
 ##  $ species      : chr [1:14880] &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; ...
 ##  $ cohort       : num [1:14880] 2010 2010 2010 2010 2009 ...</code></pre>
-<ol start="4" style="list-style-type: decimal">
-<li>West Brook antenna data, all tagged salmonids
-Note: some pitAntenna code at <a href="https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R" class="uri">https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R</a></li>
-</ol>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="getData.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_antenna0) {</span>
-<span id="cb17-2"><a href="getData.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  cdWB_antenna0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
-<span id="cb17-3"><a href="getData.html#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">sampleType=</span><span class="fu">c</span>(<span class="st">&quot;stationaryAntenna&quot;</span>), </span>
-<span id="cb17-4"><a href="getData.html#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">whichDrainage =</span> <span class="st">&quot;west&quot;</span>,</span>
-<span id="cb17-5"><a href="getData.html#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">columnsToAdd=</span><span class="fu">c</span>(</span>
-<span id="cb17-6"><a href="getData.html#cb17-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;river&quot;</span>,</span>
-<span id="cb17-7"><a href="getData.html#cb17-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;riverMeter&quot;</span>,</span>
-<span id="cb17-8"><a href="getData.html#cb17-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;survey&quot;</span>,</span>
-<span id="cb17-9"><a href="getData.html#cb17-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;readerID&quot;</span>,</span>
-<span id="cb17-10"><a href="getData.html#cb17-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;comment&quot;</span></span>
-<span id="cb17-11"><a href="getData.html#cb17-11" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb17-12"><a href="getData.html#cb17-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span>  </span>
-<span id="cb17-13"><a href="getData.html#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(tag)) <span class="sc">%&gt;%</span> <span class="co"># for now</span></span>
-<span id="cb17-14"><a href="getData.html#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTagProperties</span>(<span class="at">columnsToAdd =</span> <span class="fu">c</span>(</span>
-<span id="cb17-15"><a href="getData.html#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cohort&quot;</span>,</span>
-<span id="cb17-16"><a href="getData.html#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;species&quot;</span>,</span>
-<span id="cb17-17"><a href="getData.html#cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;dateEmigrated&quot;</span>,</span>
-<span id="cb17-18"><a href="getData.html#cb17-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;sex&quot;</span>,</span>
-<span id="cb17-19"><a href="getData.html#cb17-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;species&quot;</span>)</span>
-<span id="cb17-20"><a href="getData.html#cb17-20" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb17-21"><a href="getData.html#cb17-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb17-22"><a href="getData.html#cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_antenna0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_antenna0.RData&#39;</span>)</span>
-<span id="cb17-23"><a href="getData.html#cb17-23" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb17-24"><a href="getData.html#cb17-24" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb17-25"><a href="getData.html#cb17-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_antenna0.RData&#39;</span>)</span>
-<span id="cb17-26"><a href="getData.html#cb17-26" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb17-27"><a href="getData.html#cb17-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-28"><a href="getData.html#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_antenna0)</span></code></pre></div>
+</div>
+<div id="wrangle-data-2" class="section level3 hasAnchor" number="2.3.2">
+<h3><span class="header-section-number">2.3.2</span> Wrangle data<a href="getData.html#wrangle-data-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="explore-data-2" class="section level3 hasAnchor" number="2.3.3">
+<h3><span class="header-section-number">2.3.3</span> Explore data<a href="getData.html#explore-data-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+
+</div>
+</div>
+<div id="dataAntenna" class="section level2 hasAnchor" number="2.4">
+<h2><span class="header-section-number">2.4</span> Antenna data<a href="getData.html#dataAntenna" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="get-data-3" class="section level3 hasAnchor" number="2.4.1">
+<h3><span class="header-section-number">2.4.1</span> Get data<a href="getData.html#get-data-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>West Brook antenna data
+Note: some pitAntenna code at <a href="https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R" class="uri">https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R</a></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="getData.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_antenna0) {</span>
+<span id="cb15-2"><a href="getData.html#cb15-2" aria-hidden="true" tabindex="-1"></a>  cdWB_antenna0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
+<span id="cb15-3"><a href="getData.html#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">sampleType=</span><span class="fu">c</span>(<span class="st">&quot;stationaryAntenna&quot;</span>), </span>
+<span id="cb15-4"><a href="getData.html#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">whichDrainage =</span> <span class="st">&quot;west&quot;</span>,</span>
+<span id="cb15-5"><a href="getData.html#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">columnsToAdd=</span><span class="fu">c</span>(</span>
+<span id="cb15-6"><a href="getData.html#cb15-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;river&quot;</span>,</span>
+<span id="cb15-7"><a href="getData.html#cb15-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;riverMeter&quot;</span>,</span>
+<span id="cb15-8"><a href="getData.html#cb15-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;survey&quot;</span>,</span>
+<span id="cb15-9"><a href="getData.html#cb15-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;readerID&quot;</span>,</span>
+<span id="cb15-10"><a href="getData.html#cb15-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;comment&quot;</span></span>
+<span id="cb15-11"><a href="getData.html#cb15-11" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb15-12"><a href="getData.html#cb15-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span>  </span>
+<span id="cb15-13"><a href="getData.html#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(tag)) <span class="sc">%&gt;%</span> <span class="co"># for now</span></span>
+<span id="cb15-14"><a href="getData.html#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTagProperties</span>(<span class="at">columnsToAdd =</span> <span class="fu">c</span>(</span>
+<span id="cb15-15"><a href="getData.html#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cohort&quot;</span>,</span>
+<span id="cb15-16"><a href="getData.html#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;species&quot;</span>,</span>
+<span id="cb15-17"><a href="getData.html#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;dateEmigrated&quot;</span>,</span>
+<span id="cb15-18"><a href="getData.html#cb15-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;sex&quot;</span>,</span>
+<span id="cb15-19"><a href="getData.html#cb15-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;species&quot;</span>)</span>
+<span id="cb15-20"><a href="getData.html#cb15-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-21"><a href="getData.html#cb15-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-22"><a href="getData.html#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_antenna0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_antenna0.RData&#39;</span>)</span>
+<span id="cb15-23"><a href="getData.html#cb15-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-24"><a href="getData.html#cb15-24" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb15-25"><a href="getData.html#cb15-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_antenna0.RData&#39;</span>)</span>
+<span id="cb15-26"><a href="getData.html#cb15-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-27"><a href="getData.html#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="getData.html#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_antenna0)</span></code></pre></div>
 <pre><code>## tibble [410,915 x 10] (S3: tbl_df/tbl/data.frame)
 ##  $ tag          : chr [1:410915] &quot;00088cbed9&quot; &quot;00088cbed9&quot; &quot;00088cbed9&quot; &quot;00088cbed9&quot; ...
 ##  $ detectionDate: POSIXct[1:410915], format: &quot;2014-10-17 20:22:33&quot; &quot;2014-10-24 15:34:31&quot; &quot;2014-10-24 16:03:51&quot; &quot;2014-10-24 17:29:37&quot; ...
@@ -449,15 +519,23 @@ Note: some pitAntenna code at <a href="https://github.com/bletcher/pitAntenna/bl
 ##  $ species      : chr [1:410915] &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; ...
 ##  $ dateEmigrated: Date[1:410915], format: &quot;2014-10-25&quot; &quot;2014-10-25&quot; &quot;2014-10-25&quot; &quot;2014-10-25&quot; ...
 ##  $ sex          : chr [1:410915] NA NA NA NA ...</code></pre>
+</div>
+<div id="wrangle-data-3" class="section level3 hasAnchor" number="2.4.2">
+<h3><span class="header-section-number">2.4.2</span> Wrangle data<a href="getData.html#wrangle-data-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+</div>
+<div id="explore-data-3" class="section level3 hasAnchor" number="2.4.3">
+<h3><span class="header-section-number">2.4.3</span> Explore data<a href="getData.html#explore-data-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 
+</div>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="explorecdWB.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="yoyGrowthModel.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="models.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

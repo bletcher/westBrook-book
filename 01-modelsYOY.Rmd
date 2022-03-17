@@ -1,0 +1,359 @@
+## Young-of-year size model {#modelYOY}
+
+```{r globalModelsYOY, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesModelsYOY, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+
+```
+
+The question here is what is driving _body size variation_ across years in brook trout and brown trout in the WB?  
+
+We focus on ageInSamples == 1 (age-0 fish in the fall sample) fish for growth model. This is the first sampling occasion that most fish are big enough to tag. Not all fish are big enough, however, and there is a number of untagged fish each year. We need to include both tagged and untagged fish in our age-0 size model.
+
+Factors to include in the model are   
+1. Sample date  
+2. Cumulative temperature prior to sampling  
+3. Cumulative flow prior to sampling  
+4. Extreme flow events??  
+5. Fish density, maybe total and age-0 across all three salmonids??  
+
+### Raw data for YOY model
+1. Environmental data (flow, temperature) are from assumed spawning dates, assumed emergence dates and actual observation (sample) dates.
+2. All fish data are from age-0 in autumn.
+3. Abundance data...?
+
+### Get environmental data
+
+```{r switchesEnv}
+getNew_envDataWB <- FALSE
+```
+
+West Brook environmental data (flow and temperature)
+```{r envDataWB}
+
+if(getNew_envDataWB) {
+  
+  reconnect()
+  envDataWB <- tbl(conDplyr, "data_daily_temperature") %>% 
+    collect(n = Inf) %>% 
+    full_join(tbl(conDplyr, "data_flow_extension") %>% 
+    collect(n = Inf), by = c("river", "date")) %>% 
+    select(-source) %>% 
+    rename(temperature = daily_mean_temp, flow = qPredicted) %>%
+    mutate(dateDate = as_date(date))
+
+  save(envDataWB, file = './data/envDataWB.RData')
+  
+} else {
+  load(file = './data/envDataWB.RData')
+}
+str(envDataWB)
+```
+
+
+### Get first observations
+
+1. Filter cdWB_electro for first observations in the autumn for age-0 fish (ageInsamples == 0). Including both tagged and untagged fish.
+```{r firstObs0}
+selectedVariables <- c("tag", "species", "river", "detectionDate", "sampleNumber", "n", "proportionSampled", "observedLength", "observedWeight", "area")
+
+firstObs_noTag <- cdWB_electro %>%
+  filter(is.na(tag), ageInSamples == 1) %>%
+  mutate(n = 1) %>%
+  select(all_of(selectedVariables)) 
+
+firstObs_tag <- cdWB_electro %>%
+  group_by(tag) %>%
+  mutate(isFirstObs = detectionDate == min(detectionDate),
+         n = n()) %>%
+  filter(isFirstObs, ageInSamples == 1) %>%
+  select(all_of(selectedVariables)) %>%
+  ungroup()
+
+firstObs0 <- add_row(firstObs_tag, firstObs_noTag) %>%
+  mutate(date = as_date(detectionDate),
+         yday = yday(date))
+
+
+```
+
+For each date in firstObs0 that at least one fish was captured, calculate summary stats for flow and temperature for different time periods:   
+1. Assumed spawning to capture
+2. Assumed spawning to assumed emergence
+3. Assumed emergence to capture
+
+Then merge results with firstObs0 to create firstObs.
+```{r firstObs, cache = TRUE}
+
+spawn_month <- "11" # spawning
+spawn_day <- "15"
+emerge_month <- "03" # emergence
+emerge_day <- "01"
+
+firstObsDates <- firstObs0 %>% distinct(date = date(detectionDate), river)
+
+# move to getPrepareWBData
+getEnvMeans <- function(riverIn, start, end) { 
+  out <- envDataWB %>% 
+    filter(river == riverIn, dateDate >= start, dateDate <= end) %>%
+    summarize(
+      sumT = sum(temperature, na.rm = TRUE),
+      meanT = mean(temperature, na.rm = TRUE),
+      sdT = sd(temperature, na.rm = TRUE), 
+      cvT = sdT/meanT,
+      
+      sumF = sum(flow, na.rm = TRUE),
+      meanF = mean(flow, na.rm = TRUE),
+      sdF = sd(flow, na.rm = TRUE),
+      cvF = sdF/meanF,
+      n = n()
+    )
+
+  #message(paste(river, start, end,tag))
+  return(out)
+}
+
+firstObs_Env <- firstObsDates %>%
+  rowwise() %>%
+  mutate(
+    year = year(date),
+    spawnDate = ymd(paste0(year,spawn_month,spawn_day)) - years(1),
+    emergeDate = ymd(paste0(year,emerge_month,emerge_day)),
+    spawn_emerge = list(getEnvMeans(river, spawnDate, emergeDate)),
+    emerge_detect = list(getEnvMeans(river, emergeDate, date)),
+    spawn_detect = list(getEnvMeans(river, spawnDate, date))
+  )
+
+# merge env data into firstObs0
+firstObs <- firstObs0 %>%
+  left_join(firstObs_Env)
+
+#str(firstObs)
+```
+
+Unnest firstObs so environmental summary stats are available as data frame with the name of the time interval as the prefix to the statisticVariable name
+```{r firstObsUnnested}
+
+firstObsUnnested <- firstObs %>% 
+  unnest(cols = c(spawn_emerge, emerge_detect, spawn_detect), names_sep = "_") %>%
+  mutate(
+    emerge_detect_sumTScaled = (emerge_detect_sumT - mean(emerge_detect_sumT, na.rm = TRUE)) / 
+                                sd(emerge_detect_sumT, na.rm = TRUE),
+    emerge_detect_sumFScaled = (emerge_detect_sumF - mean(emerge_detect_sumF, na.rm = TRUE)) / 
+                                sd(emerge_detect_sumF, na.rm = TRUE),
+    ydayScaled = (yday - mean(yday, na.rm = TRUE)) / sd(yday, na.rm = TRUE)
+  )
+
+str(firstObsUnnested)
+```
+
+### Counts of captured fish
+
+Need to decide whether to include in a model. Spotty data.
+```{r rawCounts}
+
+countsRSY <- firstObs %>%
+  group_by(river, species, year) %>%
+  summarize(
+    count = n(),
+    meanPropSampled = mean(proportionSampled, na.rm = TRUE)
+  ) %>%
+mutate(countAdj = count / meanPropSampled)
+
+countsRY <- firstObs %>%
+  group_by(river, year) %>%
+  summarize(
+    count = n(),
+    meanPropSampled = mean(proportionSampled, na.rm = TRUE)
+  ) %>%
+mutate(countAdj = count / meanPropSampled)
+
+ggplot(countsRY, aes(year, countAdj, color = river)) +
+  geom_point() +
+  geom_line()
+
+ggplot(countsRSY, aes(year, countAdj, color = species)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~ river)
+```
+
+### Raw data plots
+
+#### Frequency plots by species and river
+
+#### Brook Trout, West brook  
+```{r raw data plots1}
+  #cd1 <- cdWB_electro %>% filter(ageInSamples == 1, species != 'ats')
+
+  plotSppRiv = function(s, r) { 
+    ggplot(firstObs %>% filter(species == s, river == r), aes(observedLength, color = is.na(tag))) +
+      geom_freqpoly() +
+      geom_vline(xintercept = 60) +
+      ggtitle(paste(s, r, sep = ', ')) +
+      xlim(c(30,125)) +
+      facet_wrap(~ year, scales = "free_y")
+  }
+  
+  species = 'bkt'
+  riverOrdered = "west brook"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brook Trout, wb jimmy 
+```{r raw data plots2, echo = FALSE}
+  species = 'bkt'
+  riverOrdered = "wb jimmy"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brook Trout, wb mitchell  
+```{r raw data plots3, echo = FALSE}
+  species = 'bkt'
+  riverOrdered = "wb mitchell"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brook Trout, wb obear  
+```{r raw data plots4, echo = FALSE}
+  species = 'bkt'
+  riverOrdered = "wb obear"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brown Trout, West brook  
+```{r raw data plots5, echo = FALSE}
+  species = 'bnt'
+  riverOrdered = "west brook"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brown Trout, wb jimmy 
+```{r raw data plots6, echo = FALSE}
+  species = 'bnt'
+  riverOrdered = "wb jimmy"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brown Trout, wb mitchell  
+```{r raw data plots7, echo = FALSE}
+  species = 'bnt'
+  riverOrdered = "wb mitchell"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brown Trout, wb obear - there are no Brown trout in O'Bear  
+
+#### Trout, in the WB mainstem only
+```{r}
+  
+  ggplot(firstObs %>% filter(species != "ats"), aes(observedLength)) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60, color = 'orange') +
+    facet_grid(species ~ year)
+  
+  ggplot(firstObs %>% filter(species != "ats"), aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60, color = 'orange') +
+    facet_grid(species ~ year)
+```
+  
+
+#### Why are there untagged fish bigger than 60mm?  
+Check 2002/bkt/WB, as an example
+
+```{r 2002 untagged}
+
+  firstObs2002BKT <- firstObs %>% filter(year == 2002, species == "bkt")
+  table(is.na(firstObs2002BKT$tag))
+  
+  ggplot(firstObs2002BKT, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60)
+  
+  # looks like untagged area=inside fish wee morts, the rest were above or below
+  ggplot(firstObs2002BKT, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60) +
+    facet_grid(~area)
+  
+  # check 2003
+  ggplot(firstObs %>% filter(year == 2003, species == "bkt"), aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60) +
+    facet_grid(~area)
+  # same story as 2002
+```
+
+#### Why no untagged fish at all for 2000 and 2001?
+
+```{r untagged 2000, 2001}
+
+  cfirstObs2000_2001BKT <- firstObs %>% filter(year %in% 2000:2001, species == "bkt")
+  table(is.na(cfirstObs2000_2001BKT$tag))
+  table(cfirstObs2000_2001BKT$observedLength)
+
+  cfirstObs2000_2001BKT %>% filter(observedLength < 60)
+  
+  ggplot(cfirstObs2000_2001BKT, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60)
+```
+
+### Yearly means
+```{r means}
+
+means <- firstObs %>% 
+  group_by(species, year) %>% 
+  summarize(meanLength = mean(observedLength, na.rm = TRUE), 
+            meanYday = mean(yday, na.rm = TRUE)
+            )
+
+ggplot(means, aes(year, meanLength, color = species)) + 
+  geom_point() +
+  geom_line()
+
+ggplot(means, aes(meanYday, meanLength, color = species)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+#### Models
+```{r}
+library(lme4)
+library(relaimpo)
+
+firstObsUnnestedWB <- firstObsUnnested %>% filter(river == "west brook")
+
+modLM1 <- lm(observedLength ~ (factor(species) * emerge_detect_sumTScaled * emerge_detect_sumFScaled * ydayScaled), 
+             data = firstObsUnnestedWB %>% filter(species != "ats"))
+
+modLM2 <- lm(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled), 
+             data = firstObsUnnestedWB %>% filter(species != "ats"))
+
+modLM3 <- lm(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled)^2, 
+             data = firstObsUnnestedWB %>% filter(species != "ats"))
+
+AIC(modLM1, modLM2, modLM3) %>% arrange(AIC)
+
+# relaimpo::calc.relimp(modLM3) # slow
+
+
+
+#modLMER2 <- lmer(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled) + 1|year, data = firstObsUnnestedWB %>% filter(species != "ats"))
+```
+
+

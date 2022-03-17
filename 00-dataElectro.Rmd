@@ -1,0 +1,113 @@
+## Electrofishing data {#dataElectro}
+
+```{r globalGetDataElectro, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesDataElectro, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(validate)
+
+# devtools::install_github('bletcher/getPrepareWBData')
+library(getPrepareWBData) # this has functions for preparing West Brook data
+```
+
+### Get data
+```{r cdWB_electro0}
+
+# default values for createCoreData()
+# function (sampleType = "electrofishing", baseColumns = T, 
+#    columnsToAdd = NULL, includeUntagged = F, whichDrainage = "west") 
+
+if(getNew_cdWB_electro0) {
+  cdWB_electro0 <- createCoreData(
+        sampleType = "electrofishing",  #"stationaryAntenna","portableAntenna"
+        columnsToAdd = c("sampleNumber",
+                         "river",
+                         "survey",
+                         "pass",
+                         "observedLength",
+                         "observedWeight",
+                         "comments"),
+        includeUntagged = TRUE,
+        whichDrainage = "west"
+      ) %>%
+      addTagProperties(
+        columnsToAdd = c("cohort",
+                         "species",
+                         "dateEmigrated",
+                         "sex",
+                         "species"
+        )
+      ) %>%
+      dplyr::filter(species %in% c( "bkt","bnt","ats"),
+                    area %in% c("trib","inside","below","above"),
+                    !is.na(sampleNumber)) %>%
+      addSampleProperties() %>%
+      addEnvironmental()
+  
+  save(cdWB_electro0, file = './data/cdWB_electro0.RData')
+  
+} else {
+  load(file = './data/cdWB_electro0.RData')
+}
+str(cdWB_electro0)
+```
+
+### Wrangle data
+
+
+```{r globalWrangle, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+This section takes cdWB_electro0 and cleans it to create cdWB_electro.  
+
+```{r}
+reclean_cdWB_electro <- FALSE
+```
+
+
+```{r wrangleElectroMain, cache = TRUE}
+
+if(reclean_cdWB_electro){
+  drainage <- 'west'
+
+  # functions in getPrepareWBData library
+  cdWB_electro <- cdWB_electro0 %>%
+    cleanData(drainage) %>%
+    mergeSites(drainage) %>%
+    addNPasses(drainage) %>%
+    mutate(drainage = drainage)
+  
+  save(cdWB_electro, file = './data/cdWB_electro.RData')
+  
+} else {
+  load(file = './data/cdWB_electro.RData')
+}
+```
+
+### Explore data
+
+```{r lw, cache = TRUE}
+
+ggplot(cdWB_electro, aes(observedLength, observedWeight, color = species)) +
+  geom_point(alpha = 0.1) +
+  scale_x_log10() +
+  scale_y_log10() +
+  theme_publication() +
+  facet_wrap(~ species)
+
+lwReg <- cdWB_electro %>%
+  nest_by(species) %>%
+  mutate(reg = list(lm(log(observedWeight) ~ log(observedLength), data = data)))
+
+lwReg %>% summarise(broom::tidy(reg))  
+lwReg %>% summarise(broom::glance(reg))
+```
+
+
+

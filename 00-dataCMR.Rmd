@@ -1,0 +1,68 @@
+## Capture-recapture data {#dataCMR}
+
+```{r globalGetDataCMR, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesDataCMR, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(validate)
+```
+
+### Get data
+West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals
+```{r CMR}
+
+if(getNew_cdWB_CMR0) {
+  cdWB_CMR0 <- 
+    createCoreData(
+      sampleType = "electrofishing", #"stationaryAntenna","portableAntenna"),
+      whichDrainage = "west",
+      columnsToAdd =
+        c("sampleNumber",
+          "river",
+          "riverMeter",
+          "survey",
+          "pass",
+          'observedLength',
+          'observedWeight')
+    ) %>%
+    addTagProperties(
+      columnsToAdd = 
+        c("cohort",
+          "species",
+          "dateEmigrated",
+          "sex",
+          "species")
+      ) %>%
+    dplyr::filter(!is.na(tag), 
+                  area %in% c("trib","inside","below","above"), 
+                  !is.na(sampleNumber) 
+                  ) %>%
+    createCmrData(maxAgeInSamples = 20, 
+                  inside = F, 
+                  censorDead = F, 
+                  censorEmigrated = T) %>%
+    addSampleProperties() %>%
+    addEnvironmental() %>%
+    addKnownZ() %>%
+    fillSizeLocation(size = F) #assumes fish stay in same location until observed elsewhere
+
+  save(cdWB_CMR0, file = './data/cdWB_CMR0.RData')
+  
+} else {
+  load(file = './data/cdWB_CMR0.RData')
+}
+str(cdWB_CMR0)
+```
+
+### Wrangle data
+
+
+
+### Explore data
+
+

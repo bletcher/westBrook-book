@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Electrofishing data | The West Brook Story</title>
+  <meta name="description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
+  <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Electrofishing data | The West Brook Story" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Electrofishing data | The West Brook Story" />
+  
+  <meta name="twitter:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
+  
+
+<meta name="author" content="Ben Letcher" />
+
+
+<meta name="date" content="2022-03-17" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="getData.html"/>
+<link rel="next" href="dataCMR.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction<span></span></a></li>
+<li class="chapter" data-level="2" data-path="getData.html"><a href="getData.html"><i class="fa fa-check"></i><b>2</b> Get fish data from the server<span></span></a></li>
+<li class="chapter" data-level="3" data-path="dataElectro.html"><a href="dataElectro.html"><i class="fa fa-check"></i><b>3</b> Electrofishing data<span></span></a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="dataElectro.html"><a href="dataElectro.html#get-data"><i class="fa fa-check"></i><b>3.1</b> Get data<span></span></a></li>
+<li class="chapter" data-level="3.2" data-path="dataElectro.html"><a href="dataElectro.html#wrangle-data"><i class="fa fa-check"></i><b>3.2</b> Wrangle data<span></span></a></li>
+<li class="chapter" data-level="3.3" data-path="dataElectro.html"><a href="dataElectro.html#explore-data"><i class="fa fa-check"></i><b>3.3</b> Explore data<span></span></a></li>
+<li class="chapter" data-level="3.4" data-path="dataElectro.html"><a href="dataElectro.html#models"><i class="fa fa-check"></i><b>3.4</b> Models<span></span></a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="dataElectro.html"><a href="dataElectro.html#young-of-year-body-size-model"><i class="fa fa-check"></i><b>3.4.1</b> Young-of-year body size model<span></span></a></li>
+<li class="chapter" data-level="3.4.2" data-path="dataElectro.html"><a href="dataElectro.html#raw-data-for-yoy-model"><i class="fa fa-check"></i><b>3.4.2</b> Raw data for YOY model<span></span></a></li>
+<li class="chapter" data-level="3.4.3" data-path="dataElectro.html"><a href="dataElectro.html#get-environmental-data"><i class="fa fa-check"></i><b>3.4.3</b> Get environmental data<span></span></a></li>
+<li class="chapter" data-level="3.4.4" data-path="dataElectro.html"><a href="dataElectro.html#get-first-observations"><i class="fa fa-check"></i><b>3.4.4</b> Get first observations<span></span></a></li>
+<li class="chapter" data-level="3.4.5" data-path="dataElectro.html"><a href="dataElectro.html#counts-of-captured-fish"><i class="fa fa-check"></i><b>3.4.5</b> Counts of captured fish<span></span></a></li>
+<li class="chapter" data-level="3.4.6" data-path="dataElectro.html"><a href="dataElectro.html#raw-data-plots"><i class="fa fa-check"></i><b>3.4.6</b> Raw data plots<span></span></a></li>
+<li class="chapter" data-level="3.4.7" data-path="dataElectro.html"><a href="dataElectro.html#yearly-means"><i class="fa fa-check"></i><b>3.4.7</b> Yearly means<span></span></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="dataCMR.html"><a href="dataCMR.html"><i class="fa fa-check"></i><b>4</b> Capture-recapture data<span></span></a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="dataCMR.html"><a href="dataCMR.html#get-data-1"><i class="fa fa-check"></i><b>4.1</b> Get data<span></span></a></li>
+<li class="chapter" data-level="4.2" data-path="dataCMR.html"><a href="dataCMR.html#wrangle-data-1"><i class="fa fa-check"></i><b>4.2</b> Wrangle data<span></span></a></li>
+<li class="chapter" data-level="4.3" data-path="dataCMR.html"><a href="dataCMR.html#explore-data-1"><i class="fa fa-check"></i><b>4.3</b> Explore data<span></span></a></li>
+<li class="chapter" data-level="4.4" data-path="dataCMR.html"><a href="dataCMR.html#models-2"><i class="fa fa-check"></i><b>4.4</b> Models<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="dataWanding.html"><a href="dataWanding.html"><i class="fa fa-check"></i><b>5</b> Wanding data<span></span></a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="dataWanding.html"><a href="dataWanding.html#get-data-2"><i class="fa fa-check"></i><b>5.1</b> Get data<span></span></a></li>
+<li class="chapter" data-level="5.2" data-path="dataWanding.html"><a href="dataWanding.html#wrangle-data-2"><i class="fa fa-check"></i><b>5.2</b> Wrangle data<span></span></a></li>
+<li class="chapter" data-level="5.3" data-path="dataWanding.html"><a href="dataWanding.html#explore-data-2"><i class="fa fa-check"></i><b>5.3</b> Explore data<span></span></a></li>
+<li class="chapter" data-level="5.4" data-path="dataWanding.html"><a href="dataWanding.html#models-3"><i class="fa fa-check"></i><b>5.4</b> Models<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="dataAntenna.html"><a href="dataAntenna.html"><i class="fa fa-check"></i><b>6</b> Antenna data<span></span></a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="dataAntenna.html"><a href="dataAntenna.html#get-data-3"><i class="fa fa-check"></i><b>6.1</b> Get data<span></span></a></li>
+<li class="chapter" data-level="6.2" data-path="dataAntenna.html"><a href="dataAntenna.html#wrangle-data-3"><i class="fa fa-check"></i><b>6.2</b> Wrangle data<span></span></a></li>
+<li class="chapter" data-level="6.3" data-path="dataAntenna.html"><a href="dataAntenna.html#explore-data-3"><i class="fa fa-check"></i><b>6.3</b> Explore data<span></span></a></li>
+<li class="chapter" data-level="6.4" data-path="dataAntenna.html"><a href="dataAntenna.html#models-4"><i class="fa fa-check"></i><b>6.4</b> Models<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>7</b> Final Words<span></span></a></li>
+<li><a href="references.html#references">References<span></span></a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The West Brook Story</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="dataElectro" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Electrofishing data<a href="dataElectro.html#dataElectro" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="get-data" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> Get data<a href="dataElectro.html#get-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="dataElectro.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># default values for createCoreData()</span></span>
+<span id="cb2-2"><a href="dataElectro.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># function (sampleType = &quot;electrofishing&quot;, baseColumns = T, </span></span>
+<span id="cb2-3"><a href="dataElectro.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#    columnsToAdd = NULL, includeUntagged = F, whichDrainage = &quot;west&quot;) </span></span>
+<span id="cb2-4"><a href="dataElectro.html#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="dataElectro.html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_electro0) {</span>
+<span id="cb2-6"><a href="dataElectro.html#cb2-6" aria-hidden="true" tabindex="-1"></a>  cdWB_electro0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
+<span id="cb2-7"><a href="dataElectro.html#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">sampleType =</span> <span class="st">&quot;electrofishing&quot;</span>,  <span class="co">#&quot;stationaryAntenna&quot;,&quot;portableAntenna&quot;</span></span>
+<span id="cb2-8"><a href="dataElectro.html#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;sampleNumber&quot;</span>,</span>
+<span id="cb2-9"><a href="dataElectro.html#cb2-9" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;river&quot;</span>,</span>
+<span id="cb2-10"><a href="dataElectro.html#cb2-10" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;survey&quot;</span>,</span>
+<span id="cb2-11"><a href="dataElectro.html#cb2-11" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;pass&quot;</span>,</span>
+<span id="cb2-12"><a href="dataElectro.html#cb2-12" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;observedLength&quot;</span>,</span>
+<span id="cb2-13"><a href="dataElectro.html#cb2-13" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;observedWeight&quot;</span>,</span>
+<span id="cb2-14"><a href="dataElectro.html#cb2-14" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;comments&quot;</span>),</span>
+<span id="cb2-15"><a href="dataElectro.html#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">includeUntagged =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-16"><a href="dataElectro.html#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">whichDrainage =</span> <span class="st">&quot;west&quot;</span></span>
+<span id="cb2-17"><a href="dataElectro.html#cb2-17" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-18"><a href="dataElectro.html#cb2-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addTagProperties</span>(</span>
+<span id="cb2-19"><a href="dataElectro.html#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;cohort&quot;</span>,</span>
+<span id="cb2-20"><a href="dataElectro.html#cb2-20" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;species&quot;</span>,</span>
+<span id="cb2-21"><a href="dataElectro.html#cb2-21" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;dateEmigrated&quot;</span>,</span>
+<span id="cb2-22"><a href="dataElectro.html#cb2-22" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;sex&quot;</span>,</span>
+<span id="cb2-23"><a href="dataElectro.html#cb2-23" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;species&quot;</span></span>
+<span id="cb2-24"><a href="dataElectro.html#cb2-24" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-25"><a href="dataElectro.html#cb2-25" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-26"><a href="dataElectro.html#cb2-26" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(species <span class="sc">%in%</span> <span class="fu">c</span>( <span class="st">&quot;bkt&quot;</span>,<span class="st">&quot;bnt&quot;</span>,<span class="st">&quot;ats&quot;</span>),</span>
+<span id="cb2-27"><a href="dataElectro.html#cb2-27" aria-hidden="true" tabindex="-1"></a>                    area <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;trib&quot;</span>,<span class="st">&quot;inside&quot;</span>,<span class="st">&quot;below&quot;</span>,<span class="st">&quot;above&quot;</span>),</span>
+<span id="cb2-28"><a href="dataElectro.html#cb2-28" aria-hidden="true" tabindex="-1"></a>                    <span class="sc">!</span><span class="fu">is.na</span>(sampleNumber)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-29"><a href="dataElectro.html#cb2-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addSampleProperties</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-30"><a href="dataElectro.html#cb2-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">addEnvironmental</span>()</span>
+<span id="cb2-31"><a href="dataElectro.html#cb2-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-32"><a href="dataElectro.html#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_electro0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro0.RData&#39;</span>)</span>
+<span id="cb2-33"><a href="dataElectro.html#cb2-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-34"><a href="dataElectro.html#cb2-34" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb2-35"><a href="dataElectro.html#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro0.RData&#39;</span>)</span>
+<span id="cb2-36"><a href="dataElectro.html#cb2-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-37"><a href="dataElectro.html#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_electro0)</span></code></pre></div>
+<pre><code>## tibble [91,103 x 22] (S3: tbl_df/tbl/data.frame)
+##  $ tag              : chr [1:91103] &quot;00088cbed0&quot; &quot;00088cbed3&quot; &quot;00088cbed4&quot; &quot;00088cbed4&quot; ...
+##  $ detectionDate    : POSIXct[1:91103], format: &quot;2013-03-25 00:00:00&quot; &quot;2012-06-07 09:03:00&quot; &quot;2013-03-29 10:08:00&quot; &quot;2013-06-25 14:51:00&quot; ...
+##  $ sampleName       : chr [1:91103] &quot;84&quot; &quot;81&quot; &quot;84&quot; &quot;85&quot; ...
+##  $ sampleNumber     : num [1:91103] 73 70 73 74 70 71 73 79 80 71 ...
+##  $ river            : chr [1:91103] &quot;wb obear&quot; &quot;west brook&quot; &quot;west brook&quot; &quot;west brook&quot; ...
+##  $ section          : chr [1:91103] &quot;7&quot; &quot;1&quot; &quot;40&quot; &quot;44&quot; ...
+##  $ area             : chr [1:91103] &quot;trib&quot; &quot;inside&quot; &quot;inside&quot; &quot;inside&quot; ...
+##  $ observedLength   : num [1:91103] 62 62 109 154 113 120 147 70 74 86 ...
+##  $ survey           : chr [1:91103] &quot;shock&quot; &quot;shock&quot; &quot;shock&quot; &quot;shock&quot; ...
+##  $ pass             : num [1:91103] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ observedWeight   : num [1:91103] 1.9 2.7 12.6 41.3 15.5 18.3 30.4 3.5 4.8 6.7 ...
+##  $ comments         : chr [1:91103] &quot;additional genetic sample&quot; NA NA NA ...
+##  $ cohort           : num [1:91103] 2012 2012 2012 2012 2011 ...
+##  $ species          : chr [1:91103] &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; ...
+##  $ dateEmigrated    : Date[1:91103], format: NA NA NA NA ...
+##  $ sex              : chr [1:91103] NA NA NA NA ...
+##  $ year             : num [1:91103] 2013 2012 2013 2013 2012 ...
+##  $ season           : num [1:91103] 1 2 1 2 2 3 1 3 4 3 ...
+##  $ proportionSampled: num [1:91103] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ lagDetectionDate : POSIXct[1:91103], format: NA NA &quot;2013-06-25 14:51:00&quot; NA ...
+##  $ meanTemperature  : num [1:91103] NaN NaN 10.7 NaN 16.5 ...
+##  $ meanFlow         : num [1:91103] NaN NaN 0.5247 NaN 0.0338 ...</code></pre>
+</div>
+<div id="wrangle-data" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Wrangle data<a href="dataElectro.html#wrangle-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This section takes cdWB_electro0 and cleans it to create cdWB_electro.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="dataElectro.html#cb4-1" aria-hidden="true" tabindex="-1"></a>reclean_cdWB_electro <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="dataElectro.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(reclean_cdWB_electro){</span>
+<span id="cb5-2"><a href="dataElectro.html#cb5-2" aria-hidden="true" tabindex="-1"></a>  drainage <span class="ot">&lt;-</span> <span class="st">&#39;west&#39;</span></span>
+<span id="cb5-3"><a href="dataElectro.html#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="dataElectro.html#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># functions in getPrepareWBData library</span></span>
+<span id="cb5-5"><a href="dataElectro.html#cb5-5" aria-hidden="true" tabindex="-1"></a>  cdWB_electro <span class="ot">&lt;-</span> cdWB_electro0 <span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="dataElectro.html#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cleanData</span>(drainage) <span class="sc">%&gt;%</span></span>
+<span id="cb5-7"><a href="dataElectro.html#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mergeSites</span>(drainage) <span class="sc">%&gt;%</span></span>
+<span id="cb5-8"><a href="dataElectro.html#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addNPasses</span>(drainage) <span class="sc">%&gt;%</span></span>
+<span id="cb5-9"><a href="dataElectro.html#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">drainage =</span> drainage)</span>
+<span id="cb5-10"><a href="dataElectro.html#cb5-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-11"><a href="dataElectro.html#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_electro, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro.RData&#39;</span>)</span>
+<span id="cb5-12"><a href="dataElectro.html#cb5-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-13"><a href="dataElectro.html#cb5-13" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb5-14"><a href="dataElectro.html#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_electro.RData&#39;</span>)</span>
+<span id="cb5-15"><a href="dataElectro.html#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="explore-data" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> Explore data<a href="dataElectro.html#explore-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="dataElectro.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cdWB_electro, <span class="fu">aes</span>(observedLength, observedWeight, <span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="dataElectro.html#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="dataElectro.html#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb6-4"><a href="dataElectro.html#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb6-5"><a href="dataElectro.html#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_publication</span>() <span class="sc">+</span></span>
+<span id="cb6-6"><a href="dataElectro.html#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> species)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/lw-1.png" width="672" /></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="dataElectro.html#cb7-1" aria-hidden="true" tabindex="-1"></a>lwReg <span class="ot">&lt;-</span> cdWB_electro <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="dataElectro.html#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest_by</span>(species) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="dataElectro.html#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">reg =</span> <span class="fu">list</span>(<span class="fu">lm</span>(<span class="fu">log</span>(observedWeight) <span class="sc">~</span> <span class="fu">log</span>(observedLength), <span class="at">data =</span> data)))</span>
+<span id="cb7-4"><a href="dataElectro.html#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="dataElectro.html#cb7-5" aria-hidden="true" tabindex="-1"></a>lwReg <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(broom<span class="sc">::</span><span class="fu">tidy</span>(reg))  </span></code></pre></div>
+<pre><code>## # A tibble: 6 x 6
+## # Groups:   species [3]
+##   species term                estimate std.error statistic p.value
+##   &lt;chr&gt;   &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 ats     (Intercept)           -11.4    0.00942    -1210.       0
+## 2 ats     log(observedLength)     3.00   0.00208     1442.       0
+## 3 bkt     (Intercept)           -11.5    0.00621    -1859.       0
+## 4 bkt     log(observedLength)     3.02   0.00140     2155.       0
+## 5 bnt     (Intercept)           -11.5    0.00686    -1670.       0
+## 6 bnt     log(observedLength)     3.01   0.00149     2023.       0</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="dataElectro.html#cb9-1" aria-hidden="true" tabindex="-1"></a>lwReg <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(broom<span class="sc">::</span><span class="fu">glance</span>(reg))</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 13
+## # Groups:   species [3]
+##   species r.squared adj.r.squared  sigma statistic p.value    df logLik     AIC     BIC deviance df.residual  nobs
+##   &lt;chr&gt;       &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;int&gt; &lt;int&gt;
+## 1 ats         0.989         0.989 0.0945  2080611.       0     1 22663. -45319. -45295.     215.       24092 24094
+## 2 bkt         0.991         0.991 0.112   4643341.       0     1 32555. -65105. -65079.     537.       42490 42492
+## 3 bnt         0.996         0.996 0.0858  4092957.       0     1 18345. -36683. -36660.     130.       17694 17696</code></pre>
+</div>
+<div id="models" class="section level2 hasAnchor" number="3.4">
+<h2><span class="header-section-number">3.4</span> Models<a href="dataElectro.html#models" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="young-of-year-body-size-model" class="section level3 hasAnchor" number="3.4.1">
+<h3><span class="header-section-number">3.4.1</span> Young-of-year body size model<a href="dataElectro.html#young-of-year-body-size-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The question here is what is driving <em>body size variation</em> across years in brook trout and brown trout in the WB?</p>
+<p>We focus on ageInSamples == 1 (age-0 fish in the fall sample) fish for growth model. This is the first sampling occasion that most fish are big enough to tag. Not all fish are big enough, however, and there is a number of untagged fish each year. We need to include both tagged and untagged fish in our age-0 size model.</p>
+<p>Factors to include in the model are<br />
+1. Sample date<br />
+2. Cumulative temperature prior to sampling<br />
+3. Cumulative flow prior to sampling<br />
+4. Extreme flow events??<br />
+5. Fish density, maybe total and age-0 across all three salmonids??</p>
+</div>
+<div id="raw-data-for-yoy-model" class="section level3 hasAnchor" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Raw data for YOY model<a href="dataElectro.html#raw-data-for-yoy-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ol style="list-style-type: decimal">
+<li>Environmental data (flow, temperature) are from assumed spawning dates, assumed emergence dates and actual observation (sample) dates.</li>
+<li>All fish data are from age-0 in autumn.</li>
+<li>Abundance data…?</li>
+</ol>
+</div>
+<div id="get-environmental-data" class="section level3 hasAnchor" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Get environmental data<a href="dataElectro.html#get-environmental-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="dataElectro.html#cb11-1" aria-hidden="true" tabindex="-1"></a>getNew_envDataWB <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
+<p>West Brook environmental data (flow and temperature)</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="dataElectro.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_envDataWB) {</span>
+<span id="cb12-2"><a href="dataElectro.html#cb12-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-3"><a href="dataElectro.html#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reconnect</span>()</span>
+<span id="cb12-4"><a href="dataElectro.html#cb12-4" aria-hidden="true" tabindex="-1"></a>  envDataWB <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conDplyr, <span class="st">&quot;data_daily_temperature&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-5"><a href="dataElectro.html#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect</span>(<span class="at">n =</span> <span class="cn">Inf</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-6"><a href="dataElectro.html#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">full_join</span>(<span class="fu">tbl</span>(conDplyr, <span class="st">&quot;data_flow_extension&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-7"><a href="dataElectro.html#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect</span>(<span class="at">n =</span> <span class="cn">Inf</span>), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;river&quot;</span>, <span class="st">&quot;date&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-8"><a href="dataElectro.html#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>source) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-9"><a href="dataElectro.html#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">temperature =</span> daily_mean_temp, <span class="at">flow =</span> qPredicted) <span class="sc">%&gt;%</span></span>
+<span id="cb12-10"><a href="dataElectro.html#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">dateDate =</span> <span class="fu">as_date</span>(date))</span>
+<span id="cb12-11"><a href="dataElectro.html#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="dataElectro.html#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(envDataWB, <span class="at">file =</span> <span class="st">&#39;./data/envDataWB.RData&#39;</span>)</span>
+<span id="cb12-13"><a href="dataElectro.html#cb12-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-14"><a href="dataElectro.html#cb12-14" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb12-15"><a href="dataElectro.html#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/envDataWB.RData&#39;</span>)</span>
+<span id="cb12-16"><a href="dataElectro.html#cb12-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-17"><a href="dataElectro.html#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(envDataWB)</span></code></pre></div>
+<pre><code>## tibble [32,189 x 7] (S3: tbl_df/tbl/data.frame)
+##  $ river         : chr [1:32189] &quot;wb jimmy&quot; &quot;wb jimmy&quot; &quot;wb jimmy&quot; &quot;wb jimmy&quot; ...
+##  $ date          : POSIXct[1:32189], format: &quot;1997-05-14&quot; &quot;1997-05-15&quot; &quot;1997-05-16&quot; &quot;1997-05-17&quot; ...
+##  $ temperature   : num [1:32189] 11.57 10.4 10.55 8.84 9.09 ...
+##  $ daily_max_temp: num [1:32189] 11.6 12.3 11.9 10.2 11.6 ...
+##  $ daily_min_temp: num [1:32189] 11.57 8.96 9.73 7.74 7.45 ...
+##  $ flow          : num [1:32189] NA NA NA NA NA NA NA NA NA NA ...
+##  $ dateDate      : Date[1:32189], format: &quot;1997-05-14&quot; &quot;1997-05-15&quot; &quot;1997-05-16&quot; &quot;1997-05-17&quot; ...</code></pre>
+</div>
+<div id="get-first-observations" class="section level3 hasAnchor" number="3.4.4">
+<h3><span class="header-section-number">3.4.4</span> Get first observations<a href="dataElectro.html#get-first-observations" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ol style="list-style-type: decimal">
+<li>Filter cdWB_electro for first observations in the autumn for age-0 fish (ageInsamples == 0). Including both tagged and untagged fish.</li>
+</ol>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="dataElectro.html#cb14-1" aria-hidden="true" tabindex="-1"></a>selectedVariables <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;tag&quot;</span>, <span class="st">&quot;species&quot;</span>, <span class="st">&quot;river&quot;</span>, <span class="st">&quot;detectionDate&quot;</span>, <span class="st">&quot;sampleNumber&quot;</span>, <span class="st">&quot;n&quot;</span>, <span class="st">&quot;proportionSampled&quot;</span>, <span class="st">&quot;observedLength&quot;</span>, <span class="st">&quot;observedWeight&quot;</span>, <span class="st">&quot;area&quot;</span>)</span>
+<span id="cb14-2"><a href="dataElectro.html#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="dataElectro.html#cb14-3" aria-hidden="true" tabindex="-1"></a>firstObs_noTag <span class="ot">&lt;-</span> cdWB_electro <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="dataElectro.html#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(tag), ageInSamples <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="dataElectro.html#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-6"><a href="dataElectro.html#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(selectedVariables)) </span>
+<span id="cb14-7"><a href="dataElectro.html#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="dataElectro.html#cb14-8" aria-hidden="true" tabindex="-1"></a>firstObs_tag <span class="ot">&lt;-</span> cdWB_electro <span class="sc">%&gt;%</span></span>
+<span id="cb14-9"><a href="dataElectro.html#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(tag) <span class="sc">%&gt;%</span></span>
+<span id="cb14-10"><a href="dataElectro.html#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">isFirstObs =</span> detectionDate <span class="sc">==</span> <span class="fu">min</span>(detectionDate),</span>
+<span id="cb14-11"><a href="dataElectro.html#cb14-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb14-12"><a href="dataElectro.html#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(isFirstObs, ageInSamples <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-13"><a href="dataElectro.html#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(selectedVariables)) <span class="sc">%&gt;%</span></span>
+<span id="cb14-14"><a href="dataElectro.html#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb14-15"><a href="dataElectro.html#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="dataElectro.html#cb14-16" aria-hidden="true" tabindex="-1"></a>firstObs0 <span class="ot">&lt;-</span> <span class="fu">add_row</span>(firstObs_tag, firstObs_noTag) <span class="sc">%&gt;%</span></span>
+<span id="cb14-17"><a href="dataElectro.html#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">as_date</span>(detectionDate),</span>
+<span id="cb14-18"><a href="dataElectro.html#cb14-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">yday =</span> <span class="fu">yday</span>(date))</span></code></pre></div>
+<p>For each date in firstObs0 that at least one fish was captured, calculate summary stats for flow and temperature for different time periods:<br />
+1. Assumed spawning to capture
+2. Assumed spawning to assumed emergence
+3. Assumed emergence to capture</p>
+<p>Then merge results with firstObs0 to create firstObs.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="dataElectro.html#cb15-1" aria-hidden="true" tabindex="-1"></a>spawn_month <span class="ot">&lt;-</span> <span class="st">&quot;11&quot;</span> <span class="co"># spawning</span></span>
+<span id="cb15-2"><a href="dataElectro.html#cb15-2" aria-hidden="true" tabindex="-1"></a>spawn_day <span class="ot">&lt;-</span> <span class="st">&quot;15&quot;</span></span>
+<span id="cb15-3"><a href="dataElectro.html#cb15-3" aria-hidden="true" tabindex="-1"></a>emerge_month <span class="ot">&lt;-</span> <span class="st">&quot;03&quot;</span> <span class="co"># emergence</span></span>
+<span id="cb15-4"><a href="dataElectro.html#cb15-4" aria-hidden="true" tabindex="-1"></a>emerge_day <span class="ot">&lt;-</span> <span class="st">&quot;01&quot;</span></span>
+<span id="cb15-5"><a href="dataElectro.html#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="dataElectro.html#cb15-6" aria-hidden="true" tabindex="-1"></a>firstObsDates <span class="ot">&lt;-</span> firstObs0 <span class="sc">%&gt;%</span> <span class="fu">distinct</span>(<span class="at">date =</span> <span class="fu">date</span>(detectionDate), river)</span>
+<span id="cb15-7"><a href="dataElectro.html#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="dataElectro.html#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># move to getPrepareWBData</span></span>
+<span id="cb15-9"><a href="dataElectro.html#cb15-9" aria-hidden="true" tabindex="-1"></a>getEnvMeans <span class="ot">&lt;-</span> <span class="cf">function</span>(riverIn, start, end) { </span>
+<span id="cb15-10"><a href="dataElectro.html#cb15-10" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> envDataWB <span class="sc">%&gt;%</span> </span>
+<span id="cb15-11"><a href="dataElectro.html#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(river <span class="sc">==</span> riverIn, dateDate <span class="sc">&gt;=</span> start, dateDate <span class="sc">&lt;=</span> end) <span class="sc">%&gt;%</span></span>
+<span id="cb15-12"><a href="dataElectro.html#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
+<span id="cb15-13"><a href="dataElectro.html#cb15-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">sumT =</span> <span class="fu">sum</span>(temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb15-14"><a href="dataElectro.html#cb15-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">meanT =</span> <span class="fu">mean</span>(temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb15-15"><a href="dataElectro.html#cb15-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">sdT =</span> <span class="fu">sd</span>(temperature, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb15-16"><a href="dataElectro.html#cb15-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">cvT =</span> sdT<span class="sc">/</span>meanT,</span>
+<span id="cb15-17"><a href="dataElectro.html#cb15-17" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb15-18"><a href="dataElectro.html#cb15-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">sumF =</span> <span class="fu">sum</span>(flow, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb15-19"><a href="dataElectro.html#cb15-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">meanF =</span> <span class="fu">mean</span>(flow, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb15-20"><a href="dataElectro.html#cb15-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">sdF =</span> <span class="fu">sd</span>(flow, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb15-21"><a href="dataElectro.html#cb15-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">cvF =</span> sdF<span class="sc">/</span>meanF,</span>
+<span id="cb15-22"><a href="dataElectro.html#cb15-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb15-23"><a href="dataElectro.html#cb15-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-24"><a href="dataElectro.html#cb15-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-25"><a href="dataElectro.html#cb15-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">#message(paste(river, start, end,tag))</span></span>
+<span id="cb15-26"><a href="dataElectro.html#cb15-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
+<span id="cb15-27"><a href="dataElectro.html#cb15-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-28"><a href="dataElectro.html#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="dataElectro.html#cb15-29" aria-hidden="true" tabindex="-1"></a>firstObs_Env <span class="ot">&lt;-</span> firstObsDates <span class="sc">%&gt;%</span></span>
+<span id="cb15-30"><a href="dataElectro.html#cb15-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb15-31"><a href="dataElectro.html#cb15-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-32"><a href="dataElectro.html#cb15-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(date),</span>
+<span id="cb15-33"><a href="dataElectro.html#cb15-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">spawnDate =</span> <span class="fu">ymd</span>(<span class="fu">paste0</span>(year,spawn_month,spawn_day)) <span class="sc">-</span> <span class="fu">years</span>(<span class="dv">1</span>),</span>
+<span id="cb15-34"><a href="dataElectro.html#cb15-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">emergeDate =</span> <span class="fu">ymd</span>(<span class="fu">paste0</span>(year,emerge_month,emerge_day)),</span>
+<span id="cb15-35"><a href="dataElectro.html#cb15-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">spawn_emerge =</span> <span class="fu">list</span>(<span class="fu">getEnvMeans</span>(river, spawnDate, emergeDate)),</span>
+<span id="cb15-36"><a href="dataElectro.html#cb15-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">emerge_detect =</span> <span class="fu">list</span>(<span class="fu">getEnvMeans</span>(river, emergeDate, date)),</span>
+<span id="cb15-37"><a href="dataElectro.html#cb15-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">spawn_detect =</span> <span class="fu">list</span>(<span class="fu">getEnvMeans</span>(river, spawnDate, date))</span>
+<span id="cb15-38"><a href="dataElectro.html#cb15-38" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-39"><a href="dataElectro.html#cb15-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-40"><a href="dataElectro.html#cb15-40" aria-hidden="true" tabindex="-1"></a><span class="co"># merge env data into firstObs0</span></span>
+<span id="cb15-41"><a href="dataElectro.html#cb15-41" aria-hidden="true" tabindex="-1"></a>firstObs <span class="ot">&lt;-</span> firstObs0 <span class="sc">%&gt;%</span></span>
+<span id="cb15-42"><a href="dataElectro.html#cb15-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(firstObs_Env)</span>
+<span id="cb15-43"><a href="dataElectro.html#cb15-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-44"><a href="dataElectro.html#cb15-44" aria-hidden="true" tabindex="-1"></a><span class="co">#str(firstObs)</span></span></code></pre></div>
+<p>Unnest firstObs so environmental summary stats are available as data frame with the name of the time interval as the prefix to the statisticVariable name</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="dataElectro.html#cb16-1" aria-hidden="true" tabindex="-1"></a>firstObsUnnested <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="dataElectro.html#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">c</span>(spawn_emerge, emerge_detect, spawn_detect), <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="dataElectro.html#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb16-4"><a href="dataElectro.html#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">emerge_detect_sumTScaled =</span> (emerge_detect_sumT <span class="sc">-</span> <span class="fu">mean</span>(emerge_detect_sumT, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> </span>
+<span id="cb16-5"><a href="dataElectro.html#cb16-5" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">sd</span>(emerge_detect_sumT, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb16-6"><a href="dataElectro.html#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">emerge_detect_sumFScaled =</span> (emerge_detect_sumF <span class="sc">-</span> <span class="fu">mean</span>(emerge_detect_sumF, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> </span>
+<span id="cb16-7"><a href="dataElectro.html#cb16-7" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">sd</span>(emerge_detect_sumF, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb16-8"><a href="dataElectro.html#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ydayScaled =</span> (yday <span class="sc">-</span> <span class="fu">mean</span>(yday, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> <span class="fu">sd</span>(yday, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-9"><a href="dataElectro.html#cb16-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-10"><a href="dataElectro.html#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="dataElectro.html#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(firstObsUnnested)</span></code></pre></div>
+<pre><code>## tibble [20,783 x 45] (S3: tbl_df/tbl/data.frame)
+##  $ tag                     : chr [1:20783] &quot;00088cbed7&quot; &quot;00088cbed8&quot; &quot;00088cbedb&quot; &quot;00088cbedd&quot; ...
+##  $ species                 : chr [1:20783] &quot;bkt&quot; &quot;bnt&quot; &quot;bkt&quot; &quot;bkt&quot; ...
+##  $ river                   : chr [1:20783] &quot;wb obear&quot; &quot;west brook&quot; &quot;west brook&quot; &quot;wb obear&quot; ...
+##  $ detectionDate           : POSIXct[1:20783], format: &quot;2014-09-17 00:00:00&quot; &quot;2012-09-26 11:01:00&quot; &quot;2014-09-24 11:45:00&quot; &quot;2012-09-21 00:00:00&quot; ...
+##  $ sampleNumber            : num [1:20783] 79 71 79 71 79 71 71 79 71 79 ...
+##  $ n                       : num [1:20783] 2 3 1 3 1 1 4 2 1 1 ...
+##  $ proportionSampled       : num [1:20783] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ observedLength          : num [1:20783] 70 86 89 61 60 64 70 62 87 73 ...
+##  $ observedWeight          : num [1:20783] 3.5 6.7 8.3 2.4 2.4 2.8 4.6 2.3 7.5 4.2 ...
+##  $ area                    : chr [1:20783] &quot;trib&quot; &quot;inside&quot; &quot;inside&quot; &quot;trib&quot; ...
+##  $ date                    : Date[1:20783], format: &quot;2014-09-17&quot; &quot;2012-09-26&quot; &quot;2014-09-24&quot; &quot;2012-09-21&quot; ...
+##  $ yday                    : num [1:20783] 260 270 267 265 269 270 264 260 270 258 ...
+##  $ year                    : num [1:20783] 2014 2012 2014 2012 2014 ...
+##  $ spawnDate               : Date[1:20783], format: &quot;2013-11-15&quot; &quot;2011-11-15&quot; &quot;2013-11-15&quot; &quot;2011-11-15&quot; ...
+##  $ emergeDate              : Date[1:20783], format: &quot;2014-03-01&quot; &quot;2012-03-01&quot; &quot;2014-03-01&quot; &quot;2012-03-01&quot; ...
+##  $ spawn_emerge_sumT       : num [1:20783] 110 358 131 313 131 ...
+##  $ spawn_emerge_meanT      : num [1:20783] 1.03 3.32 1.22 2.9 1.22 ...
+##  $ spawn_emerge_sdT        : num [1:20783] 1.36 2.3 1.56 2.43 1.56 ...
+##  $ spawn_emerge_cvT        : num [1:20783] 1.321 0.695 1.274 0.838 1.274 ...
+##  $ spawn_emerge_sumF       : num [1:20783] 0 48.7 25.7 0 25.7 ...
+##  $ spawn_emerge_meanF      : num [1:20783] NaN 0.451 0.24 NaN 0.24 ...
+##  $ spawn_emerge_sdF        : num [1:20783] NA 0.457 0.352 NA 0.352 ...
+##  $ spawn_emerge_cvF        : num [1:20783] NA 1.01 1.47 NA 1.47 ...
+##  $ spawn_emerge_n          : int [1:20783] 107 108 107 108 107 108 108 107 108 107 ...
+##  $ emerge_detect_sumT      : num [1:20783] 2191 2791 2597 2602 2622 ...
+##  $ emerge_detect_meanT     : num [1:20783] 10.9 13.3 12.5 12.7 12.5 ...
+##  $ emerge_detect_sdT       : num [1:20783] 5.74 4.82 6.36 5 6.33 ...
+##  $ emerge_detect_cvT       : num [1:20783] 0.527 0.362 0.51 0.394 0.507 ...
+##  $ emerge_detect_sumF      : num [1:20783] 0 28.6 71.6 0 71.6 ...
+##  $ emerge_detect_meanF     : num [1:20783] NaN 0.136 0.344 NaN 0.341 ...
+##  $ emerge_detect_sdF       : num [1:20783] NA 0.246 0.533 NA 0.532 ...
+##  $ emerge_detect_cvF       : num [1:20783] NA 1.81 1.55 NA 1.56 ...
+##  $ emerge_detect_n         : int [1:20783] 201 210 208 205 210 210 204 201 210 199 ...
+##  $ spawn_detect_sumT       : num [1:20783] 2301 3149 2728 2915 2753 ...
+##  $ spawn_detect_meanT      : num [1:20783] 7.5 9.93 8.69 9.34 8.71 ...
+##  $ spawn_detect_sdT        : num [1:20783] 6.65 6.27 7.48 6.32 7.46 ...
+##  $ spawn_detect_cvT        : num [1:20783] 0.887 0.631 0.861 0.677 0.857 ...
+##  $ spawn_detect_sumF       : num [1:20783] 0 77.1 97.2 0 97.2 ...
+##  $ spawn_detect_meanF      : num [1:20783] NaN 0.243 0.31 NaN 0.307 ...
+##  $ spawn_detect_sdF        : num [1:20783] NA 0.365 0.482 NA 0.481 ...
+##  $ spawn_detect_cvF        : num [1:20783] NA 1.5 1.56 NA 1.57 ...
+##  $ spawn_detect_n          : int [1:20783] 307 317 314 312 316 317 311 307 317 305 ...
+##  $ emerge_detect_sumTScaled: num [1:20783] -0.261 1.215 0.738 0.751 0.799 ...
+##  $ emerge_detect_sumFScaled: num [1:20783] -1.346 -0.518 0.727 -1.346 0.725 ...
+##  $ ydayScaled              : num [1:20783] -0.6678 0.3131 0.0189 -0.1773 0.215 ...</code></pre>
+</div>
+<div id="counts-of-captured-fish" class="section level3 hasAnchor" number="3.4.5">
+<h3><span class="header-section-number">3.4.5</span> Counts of captured fish<a href="dataElectro.html#counts-of-captured-fish" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Need to decide whether to include in a model. Spotty data.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="dataElectro.html#cb18-1" aria-hidden="true" tabindex="-1"></a>countsRSY <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="dataElectro.html#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(river, species, year) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="dataElectro.html#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb18-4"><a href="dataElectro.html#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">count =</span> <span class="fu">n</span>(),</span>
+<span id="cb18-5"><a href="dataElectro.html#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">meanPropSampled =</span> <span class="fu">mean</span>(proportionSampled, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-6"><a href="dataElectro.html#cb18-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb18-7"><a href="dataElectro.html#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">countAdj =</span> count <span class="sc">/</span> meanPropSampled)</span>
+<span id="cb18-8"><a href="dataElectro.html#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="dataElectro.html#cb18-9" aria-hidden="true" tabindex="-1"></a>countsRY <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span></span>
+<span id="cb18-10"><a href="dataElectro.html#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(river, year) <span class="sc">%&gt;%</span></span>
+<span id="cb18-11"><a href="dataElectro.html#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb18-12"><a href="dataElectro.html#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">count =</span> <span class="fu">n</span>(),</span>
+<span id="cb18-13"><a href="dataElectro.html#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">meanPropSampled =</span> <span class="fu">mean</span>(proportionSampled, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-14"><a href="dataElectro.html#cb18-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb18-15"><a href="dataElectro.html#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">countAdj =</span> count <span class="sc">/</span> meanPropSampled)</span>
+<span id="cb18-16"><a href="dataElectro.html#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="dataElectro.html#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(countsRY, <span class="fu">aes</span>(year, countAdj, <span class="at">color =</span> river)) <span class="sc">+</span></span>
+<span id="cb18-18"><a href="dataElectro.html#cb18-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb18-19"><a href="dataElectro.html#cb18-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/rawCounts-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="dataElectro.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(countsRSY, <span class="fu">aes</span>(year, countAdj, <span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb19-2"><a href="dataElectro.html#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb19-3"><a href="dataElectro.html#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb19-4"><a href="dataElectro.html#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> river)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/rawCounts-2.png" width="100%" /></p>
+</div>
+<div id="raw-data-plots" class="section level3 hasAnchor" number="3.4.6">
+<h3><span class="header-section-number">3.4.6</span> Raw data plots<a href="dataElectro.html#raw-data-plots" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="frequency-plots-by-species-and-river" class="section level4 hasAnchor" number="3.4.6.1">
+<h4><span class="header-section-number">3.4.6.1</span> Frequency plots by species and river<a href="dataElectro.html#frequency-plots-by-species-and-river" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+<div id="brook-trout-west-brook" class="section level4 hasAnchor" number="3.4.6.2">
+<h4><span class="header-section-number">3.4.6.2</span> Brook Trout, West brook<a href="dataElectro.html#brook-trout-west-brook" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="dataElectro.html#cb20-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#cd1 &lt;- cdWB_electro %&gt;% filter(ageInSamples == 1, species != &#39;ats&#39;)</span></span>
+<span id="cb20-2"><a href="dataElectro.html#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="dataElectro.html#cb20-3" aria-hidden="true" tabindex="-1"></a>  plotSppRiv <span class="ot">=</span> <span class="cf">function</span>(s, r) { </span>
+<span id="cb20-4"><a href="dataElectro.html#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">==</span> s, river <span class="sc">==</span> r), <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="dataElectro.html#cb20-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb20-6"><a href="dataElectro.html#cb20-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
+<span id="cb20-7"><a href="dataElectro.html#cb20-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="fu">paste</span>(s, r, <span class="at">sep =</span> <span class="st">&#39;, &#39;</span>)) <span class="sc">+</span></span>
+<span id="cb20-8"><a href="dataElectro.html#cb20-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">125</span>)) <span class="sc">+</span></span>
+<span id="cb20-9"><a href="dataElectro.html#cb20-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(<span class="sc">~</span> year, <span class="at">scales =</span> <span class="st">&quot;free_y&quot;</span>)</span>
+<span id="cb20-10"><a href="dataElectro.html#cb20-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb20-11"><a href="dataElectro.html#cb20-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-12"><a href="dataElectro.html#cb20-12" aria-hidden="true" tabindex="-1"></a>  species <span class="ot">=</span> <span class="st">&#39;bkt&#39;</span></span>
+<span id="cb20-13"><a href="dataElectro.html#cb20-13" aria-hidden="true" tabindex="-1"></a>  riverOrdered <span class="ot">=</span> <span class="st">&quot;west brook&quot;</span></span>
+<span id="cb20-14"><a href="dataElectro.html#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-15"><a href="dataElectro.html#cb20-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plotSppRiv</span>(species, riverOrdered)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/raw%20data%20plots1-1.png" width="100%" /></p>
+</div>
+<div id="brook-trout-wb-jimmy" class="section level4 hasAnchor" number="3.4.6.3">
+<h4><span class="header-section-number">3.4.6.3</span> Brook Trout, wb jimmy<a href="dataElectro.html#brook-trout-wb-jimmy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><img src="westBrook-book_files/figure-html/raw%20data%20plots2-1.png" width="100%" /></p>
+</div>
+<div id="brook-trout-wb-mitchell" class="section level4 hasAnchor" number="3.4.6.4">
+<h4><span class="header-section-number">3.4.6.4</span> Brook Trout, wb mitchell<a href="dataElectro.html#brook-trout-wb-mitchell" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><img src="westBrook-book_files/figure-html/raw%20data%20plots3-1.png" width="100%" /></p>
+</div>
+<div id="brook-trout-wb-obear" class="section level4 hasAnchor" number="3.4.6.5">
+<h4><span class="header-section-number">3.4.6.5</span> Brook Trout, wb obear<a href="dataElectro.html#brook-trout-wb-obear" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><img src="westBrook-book_files/figure-html/raw%20data%20plots4-1.png" width="100%" /></p>
+</div>
+<div id="brown-trout-west-brook" class="section level4 hasAnchor" number="3.4.6.6">
+<h4><span class="header-section-number">3.4.6.6</span> Brown Trout, West brook<a href="dataElectro.html#brown-trout-west-brook" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><img src="westBrook-book_files/figure-html/raw%20data%20plots5-1.png" width="100%" /></p>
+</div>
+<div id="brown-trout-wb-jimmy" class="section level4 hasAnchor" number="3.4.6.7">
+<h4><span class="header-section-number">3.4.6.7</span> Brown Trout, wb jimmy<a href="dataElectro.html#brown-trout-wb-jimmy" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><img src="westBrook-book_files/figure-html/raw%20data%20plots6-1.png" width="100%" /></p>
+</div>
+<div id="brown-trout-wb-mitchell" class="section level4 hasAnchor" number="3.4.6.8">
+<h4><span class="header-section-number">3.4.6.8</span> Brown Trout, wb mitchell<a href="dataElectro.html#brown-trout-wb-mitchell" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><img src="westBrook-book_files/figure-html/raw%20data%20plots7-1.png" width="100%" /></p>
+</div>
+<div id="brown-trout-wb-obear---there-are-no-brown-trout-in-obear" class="section level4 hasAnchor" number="3.4.6.9">
+<h4><span class="header-section-number">3.4.6.9</span> Brown Trout, wb obear - there are no Brown trout in O’Bear<a href="dataElectro.html#brown-trout-wb-obear---there-are-no-brown-trout-in-obear" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+</div>
+<div id="trout-in-the-wb-mainstem-only" class="section level4 hasAnchor" number="3.4.6.10">
+<h4><span class="header-section-number">3.4.6.10</span> Trout, in the WB mainstem only<a href="dataElectro.html#trout-in-the-wb-mainstem-only" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="dataElectro.html#cb21-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">!=</span> <span class="st">&quot;ats&quot;</span>), <span class="fu">aes</span>(observedLength)) <span class="sc">+</span></span>
+<span id="cb21-2"><a href="dataElectro.html#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb21-3"><a href="dataElectro.html#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>, <span class="at">color =</span> <span class="st">&#39;orange&#39;</span>) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="dataElectro.html#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(species <span class="sc">~</span> year)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/unnamed-chunk-2-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="dataElectro.html#cb22-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">!=</span> <span class="st">&quot;ats&quot;</span>), <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="dataElectro.html#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb22-3"><a href="dataElectro.html#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>, <span class="at">color =</span> <span class="st">&#39;orange&#39;</span>) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="dataElectro.html#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(species <span class="sc">~</span> year)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/unnamed-chunk-2-2.png" width="100%" /></p>
+</div>
+<div id="why-are-there-untagged-fish-bigger-than-60mm" class="section level4 hasAnchor" number="3.4.6.11">
+<h4><span class="header-section-number">3.4.6.11</span> Why are there untagged fish bigger than 60mm?<a href="dataElectro.html#why-are-there-untagged-fish-bigger-than-60mm" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Check 2002/bkt/WB, as an example</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="dataElectro.html#cb23-1" aria-hidden="true" tabindex="-1"></a>  firstObs2002BKT <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2002</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>)</span>
+<span id="cb23-2"><a href="dataElectro.html#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(<span class="fu">is.na</span>(firstObs2002BKT<span class="sc">$</span>tag))</span></code></pre></div>
+<pre><code>## 
+## FALSE  TRUE 
+##   295   253</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="dataElectro.html#cb25-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(firstObs2002BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb25-2"><a href="dataElectro.html#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb25-3"><a href="dataElectro.html#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/2002%20untagged-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="dataElectro.html#cb26-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># looks like untagged area=inside fish wee morts, the rest were above or below</span></span>
+<span id="cb26-2"><a href="dataElectro.html#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(firstObs2002BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb26-3"><a href="dataElectro.html#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb26-4"><a href="dataElectro.html#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
+<span id="cb26-5"><a href="dataElectro.html#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span>area)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/2002%20untagged-2.png" width="100%" /></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="dataElectro.html#cb27-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># check 2003</span></span>
+<span id="cb27-2"><a href="dataElectro.html#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2003</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>), <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="dataElectro.html#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb27-4"><a href="dataElectro.html#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="dataElectro.html#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span>area)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/2002%20untagged-3.png" width="100%" /></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="dataElectro.html#cb28-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># same story as 2002</span></span></code></pre></div>
+</div>
+<div id="why-no-untagged-fish-at-all-for-2000-and-2001" class="section level4 hasAnchor" number="3.4.6.12">
+<h4><span class="header-section-number">3.4.6.12</span> Why no untagged fish at all for 2000 and 2001?<a href="dataElectro.html#why-no-untagged-fish-at-all-for-2000-and-2001" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="dataElectro.html#cb29-1" aria-hidden="true" tabindex="-1"></a>  cfirstObs2000_2001BKT <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="dv">2000</span><span class="sc">:</span><span class="dv">2001</span>, species <span class="sc">==</span> <span class="st">&quot;bkt&quot;</span>)</span>
+<span id="cb29-2"><a href="dataElectro.html#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(<span class="fu">is.na</span>(cfirstObs2000_2001BKT<span class="sc">$</span>tag))</span></code></pre></div>
+<pre><code>## 
+## FALSE 
+##   343</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="dataElectro.html#cb31-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(cfirstObs2000_2001BKT<span class="sc">$</span>observedLength)</span></code></pre></div>
+<pre><code>## 
+## 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 85 90 
+## 18 23 23 26 20 28 19 14 28 23 20 21  9 14  8 11  3  8  4  5  6  5  1  3  2  1</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="dataElectro.html#cb33-1" aria-hidden="true" tabindex="-1"></a>  cfirstObs2000_2001BKT <span class="sc">%&gt;%</span> <span class="fu">filter</span>(observedLength <span class="sc">&lt;</span> <span class="dv">60</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 64 x 18
+##    tag     species river detectionDate       sampleNumber     n proportionSampl~ observedLength observedWeight area  date      
+##    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;dttm&gt;                     &lt;dbl&gt; &lt;dbl&gt;            &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt; &lt;date&gt;    
+##  1 1bf0fc~ bkt     west~ 2001-09-10 12:00:00           27     2                1             58            1.9 insi~ 2001-09-10
+##  2 1bf0fc~ bkt     west~ 2001-09-07 12:00:00           27     2                1             57            1.9 insi~ 2001-09-07
+##  3 1bf0fe~ bkt     west~ 2001-09-07 12:00:00           27     1                1             59            2.1 insi~ 2001-09-07
+##  4 1bf0fe~ bkt     west~ 2001-09-07 12:00:00           27     6                1             59            2.1 insi~ 2001-09-07
+##  5 1bf0fe~ bkt     west~ 2001-09-06 12:00:00           27     1                1             59            2.2 insi~ 2001-09-06
+##  6 1bf0fe~ bkt     west~ 2001-09-10 12:00:00           27     1                1             57            1.9 insi~ 2001-09-10
+##  7 1bf0fe~ bkt     west~ 2001-09-07 12:00:00           27     3                1             58            2   insi~ 2001-09-07
+##  8 1bf0fe~ bkt     west~ 2001-09-10 12:00:00           27     2                1             58            2.1 insi~ 2001-09-10
+##  9 1bf0fe~ bkt     west~ 2001-09-06 12:00:00           27     4                1             58            2   insi~ 2001-09-06
+## 10 1bf0fe~ bkt     west~ 2001-09-07 12:00:00           27     3                1             58            1.8 insi~ 2001-09-07
+## # ... with 54 more rows, and 7 more variables: yday &lt;dbl&gt;, year &lt;dbl&gt;, spawnDate &lt;date&gt;, emergeDate &lt;date&gt;,
+## #   spawn_emerge &lt;list&gt;, emerge_detect &lt;list&gt;, spawn_detect &lt;list&gt;</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="dataElectro.html#cb35-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cfirstObs2000_2001BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
+<span id="cb35-2"><a href="dataElectro.html#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
+<span id="cb35-3"><a href="dataElectro.html#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/untagged%202000,%202001-1.png" width="100%" /></p>
+</div>
+</div>
+<div id="yearly-means" class="section level3 hasAnchor" number="3.4.7">
+<h3><span class="header-section-number">3.4.7</span> Yearly means<a href="dataElectro.html#yearly-means" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="dataElectro.html#cb36-1" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> firstObs <span class="sc">%&gt;%</span> </span>
+<span id="cb36-2"><a href="dataElectro.html#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species, year) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-3"><a href="dataElectro.html#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">meanLength =</span> <span class="fu">mean</span>(observedLength, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb36-4"><a href="dataElectro.html#cb36-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">meanYday =</span> <span class="fu">mean</span>(yday, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-5"><a href="dataElectro.html#cb36-5" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb36-6"><a href="dataElectro.html#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="dataElectro.html#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(means, <span class="fu">aes</span>(year, meanLength, <span class="at">color =</span> species)) <span class="sc">+</span> </span>
+<span id="cb36-8"><a href="dataElectro.html#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb36-9"><a href="dataElectro.html#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/means-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="dataElectro.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(means, <span class="fu">aes</span>(meanYday, meanLength, <span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb37-2"><a href="dataElectro.html#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb37-3"><a href="dataElectro.html#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/means-2.png" width="100%" /></p>
+<div id="models-1" class="section level4 hasAnchor" number="3.4.7.1">
+<h4><span class="header-section-number">3.4.7.1</span> Models<a href="dataElectro.html#models-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="dataElectro.html#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb38-2"><a href="dataElectro.html#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(relaimpo)</span>
+<span id="cb38-3"><a href="dataElectro.html#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="dataElectro.html#cb38-4" aria-hidden="true" tabindex="-1"></a>firstObsUnnestedWB <span class="ot">&lt;-</span> firstObsUnnested <span class="sc">%&gt;%</span> <span class="fu">filter</span>(river <span class="sc">==</span> <span class="st">&quot;west brook&quot;</span>)</span>
+<span id="cb38-5"><a href="dataElectro.html#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="dataElectro.html#cb38-6" aria-hidden="true" tabindex="-1"></a>modLM1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(observedLength <span class="sc">~</span> (<span class="fu">factor</span>(species) <span class="sc">*</span> emerge_detect_sumTScaled <span class="sc">*</span> emerge_detect_sumFScaled <span class="sc">*</span> ydayScaled), </span>
+<span id="cb38-7"><a href="dataElectro.html#cb38-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> firstObsUnnestedWB <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">!=</span> <span class="st">&quot;ats&quot;</span>))</span>
+<span id="cb38-8"><a href="dataElectro.html#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="dataElectro.html#cb38-9" aria-hidden="true" tabindex="-1"></a>modLM2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(observedLength <span class="sc">~</span> (<span class="fu">factor</span>(species) <span class="sc">+</span> emerge_detect_sumTScaled <span class="sc">+</span> emerge_detect_sumFScaled <span class="sc">+</span> ydayScaled), </span>
+<span id="cb38-10"><a href="dataElectro.html#cb38-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> firstObsUnnestedWB <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">!=</span> <span class="st">&quot;ats&quot;</span>))</span>
+<span id="cb38-11"><a href="dataElectro.html#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-12"><a href="dataElectro.html#cb38-12" aria-hidden="true" tabindex="-1"></a>modLM3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(observedLength <span class="sc">~</span> (<span class="fu">factor</span>(species) <span class="sc">+</span> emerge_detect_sumTScaled <span class="sc">+</span> emerge_detect_sumFScaled <span class="sc">+</span> ydayScaled)<span class="sc">^</span><span class="dv">2</span>, </span>
+<span id="cb38-13"><a href="dataElectro.html#cb38-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> firstObsUnnestedWB <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species <span class="sc">!=</span> <span class="st">&quot;ats&quot;</span>))</span>
+<span id="cb38-14"><a href="dataElectro.html#cb38-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-15"><a href="dataElectro.html#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(modLM1, modLM2, modLM3) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(AIC)</span></code></pre></div>
+<pre><code>##        df      AIC
+## modLM1 17 79596.41
+## modLM3 12 79729.23
+## modLM2  6 80089.28</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="dataElectro.html#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># relaimpo::calc.relimp(modLM3) # slow</span></span>
+<span id="cb40-2"><a href="dataElectro.html#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="dataElectro.html#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="dataElectro.html#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="dataElectro.html#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co">#modLMER2 &lt;- lmer(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled) + 1|year, data = firstObsUnnestedWB %&gt;% filter(species != &quot;ats&quot;))</span></span></code></pre></div>
+
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="getData.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="dataCMR.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

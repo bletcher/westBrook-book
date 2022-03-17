@@ -11,7 +11,7 @@ library(tidyverse)
 library(getPrepareWBData) # for theme_publication()
 ```
 
-```{r lw}
+```{r lw, cache = TRUE}
 
 ggplot(cdWB_electro, aes(observedLength, observedWeight, color = species)) +
   geom_point(alpha = 0.1) +
@@ -27,3 +27,4 @@ lwReg <- cdWB_electro %>%
 lwReg %>% summarise(broom::tidy(reg))  
 lwReg %>% summarise(broom::glance(reg))
 ```
+

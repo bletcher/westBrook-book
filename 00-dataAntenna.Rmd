@@ -1,0 +1,54 @@
+## Antenna data {#dataAntenna}
+
+```{r globalGetDataAntenna, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesDataAntenna, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(validate)
+```
+
+### Get data
+West Brook antenna data
+Note: some pitAntenna code at https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R
+```{r stationary antenna}
+
+if(getNew_cdWB_antenna0) {
+  cdWB_antenna0 <- createCoreData(
+    sampleType=c("stationaryAntenna"), 
+    whichDrainage = "west",
+    columnsToAdd=c(
+      "river",
+      "riverMeter",
+      "survey",
+      "readerID",
+      "comment"
+      )
+  ) %>%  
+  filter(!is.na(tag)) %>% # for now
+  addTagProperties(columnsToAdd = c(
+    "cohort",
+    "species",
+    "dateEmigrated",
+    "sex",
+    "species")
+  )
+  
+  save(cdWB_antenna0, file = './data/cdWB_antenna0.RData')
+    
+} else {
+  load(file = './data/cdWB_antenna0.RData')
+}
+
+str(cdWB_antenna0)
+
+```
+
+### Wrangle data
+
+### Explore data
+

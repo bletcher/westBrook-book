@@ -1,0 +1,55 @@
+## Wanding data {#dataWanding}
+
+```{r globalGetDataWanding, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesDataWanding, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+
+```
+
+### Get data
+West Brook wanding data
+```{r wanding}
+
+if(getNew_cdWB_wanding0) {
+# from wandingDataWB project in d:/ben/github/wandingData/
+  cdWB_wanding0 <- createCoreData(
+    sampleType = "portableAntenna",
+    columnsToAdd = c("tag", 
+                     "detectionDate", 
+                     "river", 
+                     "area", 
+                     "section", 
+                     "survey", 
+                     "sampleName", 
+                     "readerId", 
+                     "aliveOrDead", 
+                     "instance", 
+                     "pass", 
+                     "quarter", 
+                     "leftOrRight", 
+                     "habitat", 
+                     "cover", 
+                     "justification", 
+                     "comment")
+    ) %>% 
+    addTagProperties() %>%
+    dplyr::filter( species %in% c( "bkt","bnt","ats" ) )
+  
+    save(cdWB_wanding0, file = './data/cdWB_wanding0.RData')
+    
+  } else {
+    load(file = './data/cdWB_wanding0.RData')
+  }
+str(cdWB_wanding0)
+```
+
+### Wrangle data
+
+### Explore data
+
