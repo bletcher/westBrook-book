@@ -1,0 +1,29 @@
+# Explore the data {#explorecdWB}
+
+```{r globalExplore, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+This section takes cdWB_electro0 and cleans it to create cdWB.  
+Will add additional cleaning steps for cdWB_electro0 and for the other data frames.
+```{r librariesExplore}
+library(tidyverse)
+library(getPrepareWBData) # for theme_publication()
+```
+
+```{r lw}
+
+ggplot(cdWB_electro, aes(observedLength, observedWeight, color = species)) +
+  geom_point(alpha = 0.1) +
+  scale_x_log10() +
+  scale_y_log10() +
+  theme_publication() +
+  facet_wrap(~ species)
+
+lwReg <- cdWB_electro %>%
+  nest_by(species) %>%
+  mutate(reg = list(lm(log(observedWeight) ~ log(observedLength), data = data)))
+
+lwReg %>% summarise(broom::tidy(reg))  
+lwReg %>% summarise(broom::glance(reg))
+```

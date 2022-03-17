@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>The West Brook Story</title>
+  <title>Chapter 3 Explore the data | The West Brook Story</title>
   <meta name="description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
   <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="The West Brook Story" />
+  <meta property="og:title" content="Chapter 3 Explore the data | The West Brook Story" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="The West Brook Story" />
+  <meta name="twitter:title" content="Chapter 3 Explore the data | The West Brook Story" />
   
   <meta name="twitter:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-<link rel="next" href="wrangle.html"/>
+<link rel="prev" href="wrangle.html"/>
+<link rel="next" href="getData.html"/>
 <script src="libs/header-attrs-2.13/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -203,16 +203,42 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">The West Brook Story</h1>
-<p class="author"><em>Ben Letcher</em></p>
-<p class="date"><em>2022-03-17</em></p>
-</div>
-<div id="introduction" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">Chapter 1</span> Introduction<a href="index.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>This book describes accessing, cleaning, and analyzing data from the West Brook Study in Whateley MA, USA.</p>
-<p>Use <code>bookdown::render_book()</code> to render the book (not showing up in the ‘Build’ tab like the bookdown book (<a href="https://bookdown.org/yihui/bookdown/usage.html" class="uri">https://bookdown.org/yihui/bookdown/usage.html</a>) says it should. Use <code>bookdown::render_book("index.Rmd", "bookdown::gitbook")</code> to force html book.<br />
-Use <code>clean_book()</code> to clean up temporary files.</p>
+<div id="explorecdWB" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Explore the data<a href="explorecdWB.html#explorecdWB" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>This section takes cdWB_electro0 and cleans it to create cdWB.<br />
+Will add additional cleaning steps for cdWB_electro0 and for the other data frames.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="explorecdWB.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb4-2"><a href="explorecdWB.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(getPrepareWBData) <span class="co"># for theme_publication()</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="explorecdWB.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cdWB_electro, <span class="fu">aes</span>(observedLength, observedWeight, <span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="explorecdWB.html#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="explorecdWB.html#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb5-4"><a href="explorecdWB.html#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb5-5"><a href="explorecdWB.html#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_publication</span>() <span class="sc">+</span></span>
+<span id="cb5-6"><a href="explorecdWB.html#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> species)</span></code></pre></div>
+<p><img src="westBrook-book_files/figure-html/lw-1.png" width="672" /></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="explorecdWB.html#cb6-1" aria-hidden="true" tabindex="-1"></a>lwReg <span class="ot">&lt;-</span> cdWB_electro <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="explorecdWB.html#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nest_by</span>(species) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="explorecdWB.html#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">reg =</span> <span class="fu">list</span>(<span class="fu">lm</span>(<span class="fu">log</span>(observedWeight) <span class="sc">~</span> <span class="fu">log</span>(observedLength), <span class="at">data =</span> data)))</span>
+<span id="cb6-4"><a href="explorecdWB.html#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="explorecdWB.html#cb6-5" aria-hidden="true" tabindex="-1"></a>lwReg <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(broom<span class="sc">::</span><span class="fu">tidy</span>(reg))  </span></code></pre></div>
+<pre><code>## # A tibble: 6 x 6
+## # Groups:   species [3]
+##   species term                estimate std.error statistic p.value
+##   &lt;chr&gt;   &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 ats     (Intercept)           -11.4    0.00942    -1210.       0
+## 2 ats     log(observedLength)     3.00   0.00208     1442.       0
+## 3 bkt     (Intercept)           -11.5    0.00621    -1859.       0
+## 4 bkt     log(observedLength)     3.02   0.00140     2155.       0
+## 5 bnt     (Intercept)           -11.5    0.00686    -1670.       0
+## 6 bnt     log(observedLength)     3.01   0.00149     2023.       0</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="explorecdWB.html#cb8-1" aria-hidden="true" tabindex="-1"></a>lwReg <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(broom<span class="sc">::</span><span class="fu">glance</span>(reg))</span></code></pre></div>
+<pre><code>## # A tibble: 3 x 13
+## # Groups:   species [3]
+##   species r.squared adj.r.squared  sigma statistic p.value    df logLik     AIC     BIC deviance df.residual  nobs
+##   &lt;chr&gt;       &lt;dbl&gt;         &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;int&gt; &lt;int&gt;
+## 1 ats         0.989         0.989 0.0945  2080611.       0     1 22663. -45319. -45295.     215.       24092 24094
+## 2 bkt         0.991         0.991 0.112   4643341.       0     1 32555. -65105. -65079.     537.       42490 42492
+## 3 bnt         0.996         0.996 0.0858  4092957.       0     1 18345. -36683. -36660.     130.       17694 17696</code></pre>
 
 </div>
             </section>
@@ -220,8 +246,8 @@ Use <code>clean_book()</code> to clean up temporary files.</p>
           </div>
         </div>
       </div>
-
-<a href="wrangle.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="wrangle.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="getData.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

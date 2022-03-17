@@ -82,9 +82,7 @@ firstObs0 <- add_row(firstObs_tag, firstObs_noTag) %>%
 
 ```
 
-### Get environmental data (flow, temp) from the server.   
-
-For each captured fish in firstObs0, calculate summary stats for flow and temperature for different time periods:   
+For each date in firstObs0 that at least one fish was captured, calculate summary stats for flow and temperature for different time periods:   
 1. Assumed spawning to capture
 2. Assumed spawning to assumed emergence
 3. Assumed emergence to capture
@@ -97,11 +95,11 @@ spawn_day <- "15"
 emerge_month <- "03" # emergence
 emerge_day <- "01"
 
-firstObsDates <- firstObs %>% distinct(date = date(detectionDate), river)
+firstObsDates <- firstObs0 %>% distinct(date = date(detectionDate), river)
 
 # move to getPrepareWBData
 getEnvMeans <- function(riverIn, start, end) { 
-  out <- envData %>% 
+  out <- envDataWB %>% 
     filter(river == riverIn, dateDate >= start, dateDate <= end) %>%
     summarize(
       sumT = sum(temperature, na.rm = TRUE),
@@ -141,7 +139,15 @@ firstObs <- firstObs0 %>%
 Unnest firstObs so environmental summary stats are available as data frame with the name of the time interval as the prefix to the statisticVariable name
 ```{r firstObsUnnested}
 
-firstObsUnnested <- firstObs %>% unnest(cols = c(spawn_emerge, emerge_detect, spawn_detect), names_sep = "_")
+firstObsUnnested <- firstObs %>% 
+  unnest(cols = c(spawn_emerge, emerge_detect, spawn_detect), names_sep = "_") %>%
+  mutate(
+    emerge_detect_sumTScaled = (emerge_detect_sumT - mean(emerge_detect_sumT, na.rm = TRUE)) / 
+                                sd(emerge_detect_sumT, na.rm = TRUE),
+    emerge_detect_sumFScaled = (emerge_detect_sumF - mean(emerge_detect_sumF, na.rm = TRUE)) / 
+                                sd(emerge_detect_sumF, na.rm = TRUE),
+    ydayScaled = (yday - mean(yday, na.rm = TRUE)) / sd(yday, na.rm = TRUE)
+  )
 
 str(firstObsUnnested)
 ```
@@ -286,7 +292,7 @@ Check 2002/bkt/WB, as an example
 ```{r 2002 untagged}
 
   firstObs2002BKT <- firstObs %>% filter(year == 2002, species == "bkt")
-  table(is.na(cdWB12002BKT$tag))
+  table(is.na(firstObs2002BKT$tag))
   
   ggplot(firstObs2002BKT, aes(observedLength, color = is.na(tag))) +
     geom_freqpoly() +
@@ -336,7 +342,31 @@ ggplot(means, aes(year, meanLength, color = species)) +
 
 ggplot(means, aes(meanYday, meanLength, color = species)) +
   geom_point() + 
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+library(lme4)
+library(relaimpo)
+
+firstObsUnnestedWB <- firstObsUnnested %>% filter(river == "west brook")
+
+modLM1 <- lm(observedLength ~ (factor(species) * emerge_detect_sumTScaled * emerge_detect_sumFScaled * ydayScaled), 
+             data = firstObsUnnestedWB %>% filter(species != "ats"))
+
+modLM2 <- lm(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled), 
+             data = firstObsUnnestedWB %>% filter(species != "ats"))
+
+modLM3 <- lm(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled)^2, 
+             data = firstObsUnnestedWB %>% filter(species != "ats"))
+
+AIC(modLM1, modLM2, modLM3) %>% arrange(AIC)
+
+# relaimpo::calc.relimp(modLM3) # slow
+
+
+
+#modLMER2 <- lmer(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled) + 1|year, data = firstObsUnnestedWB %>% filter(species != "ats"))
 ```
 
 
