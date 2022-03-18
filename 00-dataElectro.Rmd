@@ -1,5 +1,6 @@
 ## Electrofishing data {#dataElectro}
 
+This section retrieves electrofishing data, including both tagged and untagged fish. Fish were untagged if they were too small (< 60 mm, 2 g wet weight) or were captured outside of the core study area (tributaries and 47 sections of the mainstem West Brook).
 ```{r globalGetDataElectro, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```

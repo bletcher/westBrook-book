@@ -1,4 +1,5 @@
 introduction
+the-west-brook
 getData
 dataElectro
 get-data
@@ -23,6 +24,7 @@ get-environmental-data
 get-first-observations
 counts-of-captured-fish
 raw-data-plots
+are-flow-and-temerpature-correlated
 frequency-plots-by-species-and-river
 brook-trout-west-brook
 brook-trout-wb-jimmy
@@ -38,4 +40,3 @@ why-no-untagged-fish-at-all-for-2000-and-2001
 yearly-means
 models-1
 final-words
-the-west-brook

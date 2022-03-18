@@ -1,7 +1,7 @@
 `r if (knitr::is_html_output()) '
 # References {-}
 
-Some references related to the West Brook study. Will need to update and sort. (From Ben's Mendelay, searched for "West brook" and deleted a few refs).  
+Some references related to the West Brook study. Will need to update and sort. (From Bens Mendelay, searched for "West brook" and deleted a few refs).  
 
 Grader, M., and Letcher, B. 2006. Diel and seasonal gut fullness and prey composition of Atlantic salmon parr in the west brook. J. Freshw. Ecol. 21(3): 503–517.  
 

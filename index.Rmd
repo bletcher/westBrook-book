@@ -24,7 +24,6 @@ Use `bookdown::render_book("index.Rmd", "bookdown::gitbook")` to force html book
 
 Use `clean_book()` to clean up temporary files.
 
-Before rendering, seem to need to restart R session to avoid an error with all_of()
 
 ## The West Brook
 The Ecology Section at the USGS Conte Laboratory has studied fish in the West Brook since 1997. The goal is to understand the strength and direction of drivers on fish growth, movement, reproduction and survival in the wild. We hope to provide a comprehensive understanding of fish population dynamics and ultimately individual fitness (natural selection and evolution) in the study area.  

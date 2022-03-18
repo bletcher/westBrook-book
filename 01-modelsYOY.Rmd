@@ -61,19 +61,19 @@ str(envDataWB)
 
 1. Filter cdWB_electro for first observations in the autumn for age-0 fish (ageInsamples == 0). Including both tagged and untagged fish.
 ```{r firstObs0}
-selectedVariables <- c("tag", "species", "river", "detectionDate", "sampleNumber", "n", "proportionSampled", "observedLength", "observedWeight", "area")
+selectedVariables <- c("tag", "species", "river", "detectionDate", "sampleNumber", "n", "proportionSampled", "observedLength", "observedWeight", "area", "season", "isYOY")
 
 firstObs_noTag <- cdWB_electro %>%
   filter(is.na(tag), ageInSamples == 1) %>%
   mutate(n = 1) %>%
-  select(all_of(selectedVariables)) 
+  dplyr:: select(all_of(selectedVariables)) 
 
 firstObs_tag <- cdWB_electro %>%
   group_by(tag) %>%
   mutate(isFirstObs = detectionDate == min(detectionDate),
          n = n()) %>%
   filter(isFirstObs, ageInSamples == 1) %>%
-  select(all_of(selectedVariables)) %>%
+  dplyr::select(all_of(selectedVariables)) %>%
   ungroup()
 
 firstObs0 <- add_row(firstObs_tag, firstObs_noTag) %>%
@@ -154,37 +154,110 @@ str(firstObsUnnested)
 ```
 
 ### Counts of captured fish
+Min and max years (inclusive) for standardizing counts
+```{r}
+minYear <- 2000
+maxYear <- 2015
+```
 
-Need to decide whether to include in a model. Spotty data.
 ```{r rawCounts}
 
+
 countsRSY <- firstObs %>%
+  filter(year %in% minYear:maxYear) %>%
   group_by(river, species, year) %>%
   summarize(
     count = n(),
     meanPropSampled = mean(proportionSampled, na.rm = TRUE)
   ) %>%
-mutate(countAdj = count / meanPropSampled)
+  mutate(countAdj = count / meanPropSampled) %>%
+  ungroup() %>%
+  group_by(river, species) %>%
+  mutate(meanCountRS = mean(count, na.rm = TRUE),
+         sdCountRS = sd(count, na.rm = TRUE),
+         countRS_Scaled = (count - meanCountRS) / sdCountRS) %>%
+  ungroup()
+
+ggplot(countsRSY, aes(year, countRS_Scaled, color = species)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~ river)
 
 countsRY <- firstObs %>%
+  filter(year %in% minYear:maxYear) %>%
   group_by(river, year) %>%
   summarize(
     count = n(),
     meanPropSampled = mean(proportionSampled, na.rm = TRUE)
   ) %>%
-mutate(countAdj = count / meanPropSampled)
+  mutate(countAdj = count / meanPropSampled) %>%
+  ungroup() %>%
+  group_by(river) %>%
+  mutate(meanCountR = mean(count, na.rm = TRUE),
+         sdCountR = sd(count, na.rm = TRUE),
+         countR_Scaled = (count - meanCountR) / sdCountR) %>%
+  ungroup()
 
-ggplot(countsRY, aes(year, countAdj, color = river)) +
+ggplot(countsRY, aes(year, countR_Scaled, color = river)) +
   geom_point() +
   geom_line()
 
-ggplot(countsRSY, aes(year, countAdj, color = species)) +
+countsMetaY <- firstObs %>%
+  filter(river != "wb obear", year %in% minYear:maxYear) %>%
+  group_by(year) %>%
+  summarize(
+    count = n(),
+    meanPropSampled = mean(proportionSampled, na.rm = TRUE)
+  ) %>%
+  mutate(countAdj = count / meanPropSampled) %>%
+  ungroup() %>%
+  mutate(meanCount = mean(count, na.rm = TRUE),
+         sdCount = sd(count, na.rm = TRUE),
+         count_Scaled = (count - meanCount) / sdCount)
+# missing data for tribs in 2000, 2001 - may skew scaled count a bit low - should fix
+
+ggplot(countsMetaY, aes(year, count_Scaled)) +
   geom_point() +
-  geom_line() +
-  facet_wrap(~ river)
+  geom_line()
 ```
 
+Merge metapopulation scaled counts into firstObsUnnested
+```{r}
+
+firstObsUnnested <- firstObsUnnested %>%
+  left_join(countsMetaY %>% dplyr::select(year, count_Scaled))
+
+firstObsUnnestedWB <- firstObsUnnested %>% filter(river == "west brook")
+```
+
+
 ### Raw data plots
+
+#### Are flow and temperature correlated?
+```{r flowTempCor, cache = TRUE}
+
+ggplot(firstObsUnnestedWB, aes(emerge_detect_sumTScaled, emerge_detect_sumFScaled)) +
+  geom_point(aes(color = (year))) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ species)
+
+# water getting warmer during a sample
+ggplot(firstObsUnnestedWB, aes(emerge_detect_sumTScaled, emerge_detect_sumFScaled)) +
+  geom_point(aes(color = (yday))) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ species)
+
+cor(firstObsUnnestedWB$emerge_detect_sumTScaled, firstObsUnnestedWB$emerge_detect_sumFScaled)
+
+# brook trout
+firstObsUnnestedWB_BKT <- firstObsUnnestedWB %>% filter(species == "bkt")
+cor(firstObsUnnestedWB_BKT$emerge_detect_sumTScaled, firstObsUnnestedWB_BKT$emerge_detect_sumFScaled)
+
+# brown trout
+firstObsUnnestedWB_BNT <- firstObsUnnestedWB %>% filter(species == "bnt")
+cor(firstObsUnnestedWB_BNT$emerge_detect_sumTScaled, firstObsUnnestedWB_BNT$emerge_detect_sumFScaled)
+```
+
 
 #### Frequency plots by species and river
 
@@ -331,29 +404,69 @@ ggplot(means, aes(meanYday, meanLength, color = species)) +
   geom_smooth(method = "lm", se = FALSE)
 ```
 
-#### Models
+#### Models based on individual observations
 ```{r}
 library(lme4)
 library(relaimpo)
 
-firstObsUnnestedWB <- firstObsUnnested %>% filter(river == "west brook")
+d_WB_BKT_BNT <- firstObsUnnestedWB %>% filter(species != "ats", year %in% minYear:maxYear) %>%
+  mutate(species01 = ifelse(species == "bkt", 1, 0))
 
-modLM1 <- lm(observedLength ~ (factor(species) * emerge_detect_sumTScaled * emerge_detect_sumFScaled * ydayScaled), 
-             data = firstObsUnnestedWB %>% filter(species != "ats"))
-
-modLM2 <- lm(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled), 
-             data = firstObsUnnestedWB %>% filter(species != "ats"))
-
-modLM3 <- lm(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled)^2, 
-             data = firstObsUnnestedWB %>% filter(species != "ats"))
-
-AIC(modLM1, modLM2, modLM3) %>% arrange(AIC)
-
-# relaimpo::calc.relimp(modLM3) # slow
+hist(d_WB_BKT_BNT$detectionDate, breaks = 250)
 
 
+modLM1 <- lm(observedLength ~ (factor(species) * emerge_detect_sumTScaled * emerge_detect_sumFScaled * ydayScaled * count_Scaled), data = d_WB_BKT_BNT)
 
-#modLMER2 <- lmer(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled) + 1|year, data = firstObsUnnestedWB %>% filter(species != "ats"))
+modLM2 <- lm(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled + count_Scaled), data = d_WB_BKT_BNT)
+
+modLM3 <- lm(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled + count_Scaled)^2, data = d_WB_BKT_BNT)
+
+modLM1a <- lm(observedLength ~ (factor(species)), data = d_WB_BKT_BNT)
+modLM1b <- lm(observedLength ~ (factor(species) * emerge_detect_sumTScaled ), data = d_WB_BKT_BNT)
+modLM1c <- lm(observedLength ~ (factor(species) * emerge_detect_sumFScaled ), data = d_WB_BKT_BNT)
+modLM1d <- lm(observedLength ~ (factor(species) * ydayScaled), data = d_WB_BKT_BNT)
+modLM1e <- lm(observedLength ~ (factor(species) * count_Scaled), data = d_WB_BKT_BNT)
+
+AIC(modLM1, modLM2, modLM3, modLM1a, modLM1b, modLM1c, modLM1d, modLM1e) %>% arrange(AIC)
+
+relaimpo::calc.relimp(modLM2) # slow for bigger models
+
+
+# get 'boundary (singular)' error
+#modLMER2 <- lmer(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled +count_Scaled)^2 + 1|year, data = d_WB_BKT_BNT)
 ```
 
+Raw data exploration following the models  
 
+relaimpo::calc.relimp(modLM2) - other models are too big
+                                 lmg
+factor(species)          0.005339423
+emerge_detect_sumTScaled 0.006883496
+emerge_detect_sumFScaled 0.063450197
+ydayScaled               0.012116064
+count_Scaled             0.028031531
+```{r}
+
+ggplot(d_WB_BKT_BNT, aes(observedLength, emerge_detect_sumFScaled)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm")
+
+ggplot(d_WB_BKT_BNT, aes(observedLength, count_Scaled)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm")
+
+ggplot(d_WB_BKT_BNT, aes(observedLength, ydayScaled)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm")
+
+ggplot(d_WB_BKT_BNT, aes(observedLength, emerge_detect_sumTScaled)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm")
+
+ggplot(d_WB_BKT_BNT, aes(observedLength, species01)) +
+  geom_point(alpha = 0.1) +
+  geom_smooth(family = "binomial")
+
+```
+
+Should probably do models on means...
