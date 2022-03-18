@@ -1,3 +1,82 @@
 `r if (knitr::is_html_output()) '
 # References {-}
+
+Some references related to the West Brook study. Will need to update and sort. (From Ben's Mendelay, searched for "West brook" and deleted a few refs).  
+
+Grader, M., and Letcher, B. 2006. Diel and seasonal gut fullness and prey composition of Atlantic salmon parr in the west brook. J. Freshw. Ecol. 21(3): 503–517.  
+
+Armstrong, J.D., and Nislow, K.H. 2012. Modelling approaches for relating effects of change in river flow to populations of Atlantic salmon and brown trout. Fish. Manag. Ecol. 19(6): 527–536. doi:10.1111/j.1365-2400.2011.00835.x.  
+
+Letcher, B.H., Dubreuil, T.L., O’Donnell, M.J., Obedzinski, M., Griswold, K., and Nislow, K.H. 2004. Long-term consequences of variation in timing and manner of fry introduction on juvenile Atlantic salmon (Salmo salar) growth, survival, and life-history expression. Can. J. Fish. Aquat. Sci. 61(12): 2288–2301. doi:10.1139/f04-214.  
+
+Letcher, B.H., and Gries, G. 2003. Effects of life history variation on size and growth in stream-dwelling Atlantic salmon. J. Fish Biol. 62(1): 97–114. doi:10.1046/j.0022-1112.2003.00009.x.  
+
+Xu, C.L., Letcher, B.H., and Nislow, K.H. 2010. Size-dependent survival of brook trout Salvelinus fontinalis in summer: effects of water temperature and stream flow. J. Fish Biol. 76(10): 2342–2369. doi:10.1111/j.1095-8649.2010.02619.x.  
+
+O’Donnell, M.J., and Letcher, B.H. 2017. Implanting 8-mm passive integrated transponder tags into small Brook Trout: Effects on growth and survival in the laboratory. North Am. J. Fish. Manag. 37(3): 605–611. Taylor & Francis. doi:10.1080/02755947.2017.1307291.  
+
+Zydlewski, G.B., Horton, G.E., Dubreuil, T.L., Letcher, B.H., Casey, S., and Zydlewski, J. 2006. Remote Monitoring of Fish in Small Streams: a unified approach using PIT tags. Fisheries 31(10): 492–502. doi:10.1577/1548-8446(2006)31[492:RMOFIS]2.0.CO;2.  
+
+Sigourney, D.B., Letcher, B.H., Obedzinski, M., and Cunjak, R. a. 2013. Interactive effects of life history and season on size-dependent growth in juvenile Atlantic salmon. Ecol. Freshw. Fish 22(4): 495–507. doi:10.1111/eff.12042.  
+
+Letcher, B.H., Hocking, D.J., O’Neil, K., Whiteley, A.R., Nislow, K.H., and O’Donnell, M.J. 2016. A hierarchical model of daily stream temperature using air-water temperature synchronization, autocorrelation, and time lags. PeerJ 4: e1727. doi:10.7717/peerj.1727.  
+
+Horton, G.E., Dubreuil, T.L., and Letcher, B.H. 2007. A Model for Estimating Passive Integrated Transponder (PIT) Tag Antenna Efficiencies for Interval-Specific Emigration Rates. Trans. Am. Fish. Soc. 136(5): 1165–1176. doi:10.1577/T06-053.1.  
+
+Bassar, R.D., Letcher, B.H., Nislow, K.H., and Whiteley, A.R. 2016. Changes in seasonal climate outpace compensatory density-dependence in eastern brook trout. Glob. Chang. Biol.: 577–593. doi:10.1111/gcb.13135.  
+
+Letcher, B.H., Nislow, K.H., O’Donnell, M.J., Whiteley, A.R., Coombs, J.A., and Dubreuil, T.L. 2022. Cohort strength and body size in co-occurring salmonids in a small stream network: variation in space and time. Can. J. Fish. Aquat. Sci. 79(1): 133–147. doi:10.1139/cjfas-2020-0418.  
+
+Letcher, B.H., Coombs, J. a., and Nislow, K.H. 2011. Maintenance of phenotypic variation: repeatability, heritability and size-dependent processes in a wild brook trout population. Evol. Appl. 4(4): 602–615. doi:10.1111/j.1752-4571.2011.00184.x.  
+
+Letcher, B.H., Gries, G., and Juanes, F. 2002. Survival of Stream-Dwelling Atlantic Salmon: Effects of Life History Variation, Season, and Age. Trans. Am. Fish. Soc. 131(5): 838–854. doi:10.1577/1548-8659(2002)131<0838:SOSDAS>2.0.CO;2.  
+
+Letcher, B.H. 2003. Life history dependent morphometric variation in stream-dwelling Atlantic salmon. Oecologia 137(4): 533–40. doi:10.1007/s00442-003-1387-0.  
+
+Sigourney, D.B., Letcher, B.H., Obedzinski, M., and Cunjak, R.A. 2008. Size-independent growth in fishes: patterns, models and metrics. J. Fish Biol. 72(10): 2435–2455. doi:10.1111/j.1095-8649.2008.01830.x.  
+
+Davidson, R.S., Letcher, B.H., and Nislow, K.H. 2010. Drivers of growth variation in juvenile Atlantic salmon ( Salmo salar ): an elasticity analysis approach. J. Anim. Ecol. 79(5): 1113–1121. doi:10.1111/j.1365-2656.2010.01708.x.  
+
+Nislow, K.H., and Armstrong, J.D. 2012. Towards a life-history-based management framework for the effects of flow on juvenile salmonids in streams and rivers. Fish. Manag. Ecol. 19(6): 451–463. doi:10.1111/j.1365-2400.2011.00810.x.  
+
+Whiteley, A.R., Coombs, J. a., Cembrola, M., O’Donnell, M.J., Hudy, M., Nislow, K.H., and Letcher, B.H. 2015. Effective number of breeders provides a link between interannual variation in stream flow and individual reproductive contribution in a stream salmonid. Mol. Ecol.: n/a-n/a. doi:10.1111/mec.13273.  
+
+Letcher, B.H., Horton, G.E., Dubreuil, T.L., and Donnell, M.J.O. 2005. A field test of the extent of bias in selection estimates after accounting for emigration. Evol. Ecol.: 643–650.  
+
+Pearlstein, J.H., Letcher, B.H., and Obedzinski, M. 2007. Early Discrimination of Atlantic Salmon Smolt Age: Time Course of the Relative Effectiveness of Body Size and Shape. Trans. Am. Fish. Soc. 136(6): 1622–1632. doi:10.1577/T07-010.1.  
+
+Carlson, S.M., Hendry, A.P., and Letcher, B.H. 2004. Natural selection acting on body size , growth rate and compensatory growth : an empirical test in a wild trout population. Evol. Ecol.: 955–973.  
+
+Letcher, B.H., Schueller, P., Bassar, R.D., Nislow, K.H., Coombs, J.A., Sakrejda, K., Morrissey, M., Sigourney, D.B., Whiteley, A.R., O’Donnell, M.J., and Dubreuil, T.L. 2015. Robust estimates of environmental effects on population vital rates: an integrated capture-recapture model of seasonal brook trout growth, survival and movement in a stream network. J. Anim. Ecol. 84(2): 337–352. doi:10.1111/1365-2656.12308.  
+
+Carlson, S.M., Hendry, a. P., and Letcher, B.H. 2007. Growth rate differences between resident native brook trout and non-native brown trout. J. Fish Biol. 71(5): 1430–1447. doi:10.1111/j.1095-8649.2007.01615.x.  
+
+O’Donnell, M.J., Horton, G.E., and Letcher, B.H. 2010. Use of Portable Antennas to Estimate Abundance of PIT-Tagged Fish in Small Streams: Factors Affecting Detection Probability. North Am. J. Fish. Manag. 30: 323–336. doi:10.1577/M09-008.1.  
+
+Letcher, B.H., Nislow, K.H., Coombs, J., O’Donnell, M.J., and Dubreuil, T.L. 2007. Population response to habitat fragmentation in a stream-dwelling brook trout population. PLoS One 2(11): e1139. doi:10.1371/journal.pone.0001139.  
+
+Carlson, S.M., and Letcher, B.H. 2003. Variation in brook and brown trout survival within and among seasons, species, and age classes. J. Fish Biol. 63(3): 780–794. doi:10.1046/j.1095-8649.2003.00191.x.  
+
+Hendry, A.P., Letcher, B.H., and Gries, G. 2003. Estimating Natural Selection Acting on Stream-Dwelling Atlantic Salmon: Implications for the Restoration of Extirpated Populations. Conserv. Biol. 17(3): 795–805. doi:10.1046/j.1523-1739.2003.02075.x.  
+
+Letcher, B.H., Schueller, P., Bassar, R.D., Nislow, K.H., Coombs, J. a, Sakrejda, K., Morrissey, M., Sigourney, D.B., Whiteley, A.R., O’Donnell, M.J., and Dubreuil, T.L. 2015. Robust estimates of environmental effects on population vital rates: an integrated capture-recapture model of seasonal brook trout growth, survival and movement in a stream network. J. Anim. Ecol. 84(2): 337–352. doi:10.1111/1365-2656.12308.  
+
+Letcher, B.H., and Horton, G.E. 2008. Seasonal variation in size-dependent survival of juvenile Atlantic salmon (Salmo salar): performance of multistate capture-mark-recapture models. Can. J. Fish. Aquat. Sci. 65(8): 1649–1666. doi:10.1139/F08-083.  
+
+Horton, G.E., Letcher, B.H., Bailey, M.M., and Kinnison, M.T. 2009. Atlantic salmon (Salmo salar) smolt production: the relative importance of survival and body growth. Can. J. Fish. Aquat. Sci. 66(3): 471–483. doi:10.1139/F09-005.  
+
+Scace, J.G., Letcher, B.H., and Noreika, J. 2007. An Efficient Smolt Trap for Sandy and Debris-Laden Streams. North Am. J. Fish. Manag. 27(4): 1276–1286. doi:10.1577/M07-036.1.  
+
+Gries, G., and Letcher, B.H. 2002. A Night Seining Technique for Sampling Juvenile Atlantic Salmon in Streams. North Am. J. Fish. Manag. 22(2): 595–601. doi:10.1577/1548-8675(2002)022<0595:ANSTFS>2.0.CO;2.  
+
+Childress, E.S., and Letcher, B.H. 2017. Estimating thermal performance curves from repeated field observations. Ecology 98(5): 1377–1387. doi:10.1002/ecy.1801.  
+
+Aubin-Horth, N., Letcher, B.H., and Hofmann, H. a. 2009. Gene-expression signatures of Atlantic salmon’s plastic life cycle. Gen. Comp. Endocrinol. 163(3): 278–84. Elsevier Inc. doi:10.1016/j.ygcen.2009.04.021.  
+
+Childress, E.S., Nislow, K.H., Whiteley, A.R., O’Donnell, M.J., and Letcher, B.H. 2019. Daily estimates reveal fine-scale temporal and spatial variation in fish survival across a stream network. Can. J. Fish. Aquat. Sci. 76(8): 1446–1458. doi:10.1139/cjfas-2018-0191.  
+
+Kanno, Y., Letcher, B.H., Coombs, J. a., Nislow, K.H., and Whiteley, A.R. 2014. Linking movement and reproductive history of brook trout to assess habitat connectivity in a heterogeneous stream network. Freshw. Biol. 59(1): 142–154. doi:10.1111/fwb.12254.  
+
+Horton, G.E., Letcher, B.H., and Kendall, W.L. 2011. A Multistate Capture–Recapture Modeling Strategy to Separate True Survival from Permanent Emigration for a Passive Integrated Transponder Tagged Population of Stream Fish. Trans. Am. Fish. Soc. 140(2): 320–333. doi:10.1080/00028487.2011.567861.  
+
 '`

@@ -18,8 +18,19 @@ description: This book describes accessing, cleaning, and analyzing data from th
 
 This book describes accessing, cleaning, and analyzing data from the West Brook Study in Whateley MA, USA.
 
-Use `bookdown::render_book()` to render the book (not showing up in the 'Build' tab like the bookdown book (https://bookdown.org/yihui/bookdown/usage.html) says it should.   
-Use `bookdown::render_book("index.Rmd", "bookdown::gitbook")` to force html book.  
+Use `bookdown::render_book()` to render the book (not showing up in the 'Build' tab like the [bookdown book](https://bookdown.org/yihui/bookdown/usage.html) says it should.   
+
+Use `bookdown::render_book("index.Rmd", "bookdown::gitbook")` to force html book. `bookdown::preview_chapter("index.Rmd", "bookdown::gitbook")` to update just one chapter (index.Rmd as example here). 
+
 Use `clean_book()` to clean up temporary files.
 
 Before rendering, seem to need to restart R session to avoid an error with all_of()
+
+## The West Brook
+The Ecology Section at the USGS Conte Laboratory has studied fish in the West Brook since 1997. The goal is to understand the strength and direction of drivers on fish growth, movement, reproduction and survival in the wild. We hope to provide a comprehensive understanding of fish population dynamics and ultimately individual fitness (natural selection and evolution) in the study area.  
+
+[Interactive applications](https://pitdata.ecosheds.org/) allow exploration of the raw data.
+```{r, echo = FALSE}
+knitr::include_url("https://pitdata.ecosheds.org/", height = "700px")
+```
+

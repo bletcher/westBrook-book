@@ -22,8 +22,9 @@ There are four main databases we want to create:
 3. **cdWB_wanding0** West Brook wanding (portable antenna) data, all tagged salmonids  
 4. **cdWB_antenna0** West Brook stationary antenna data, all tagged salmonids  
 
-The "0" at the end of these file names indicates that they are the initial files that will be wrangled in the next step (next chapter). "cd" stands for "core data".
+The "0" at the end of these file names indicates that they are the initial files that will be wrangled in the next step (next chapter). "cd" stands for "core data".  
 
+The `getNew_...` variables determine whether the data are retrieved from the server. Change to 'TRUE' to get a new data frame, e.g. when there are new data on the server.
 ```{r switchesCD}
 getNew_cdWB_electro0 <- FALSE
 getNew_cdWB_CMR0 <- FALSE
