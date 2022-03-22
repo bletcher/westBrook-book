@@ -35,7 +35,7 @@ getNew_envDataWB <- FALSE
 ```
 
 West Brook environmental data (flow and temperature)
-```{r envDataWB}
+```{r envDataWB, cache = TRUE}
 
 if(getNew_envDataWB) {
   
@@ -184,7 +184,7 @@ str(firstObsUnnested)
 
 ### Counts of captured fish
 Min and max years (inclusive) for standardizing counts
-```{r}
+```{r minMaxYear}
 minYear <- 2000
 maxYear <- 2015
 ```
@@ -214,7 +214,7 @@ ggplot(countsRSY, aes(year, countRS_Scaled, color = species)) +
 ```
 
 Counts by river
-```{r }
+```{r countsRY}
 countsRY <- firstObs %>%
   filter(year %in% minYear:maxYear) %>%
   group_by(river, year) %>%
@@ -237,7 +237,7 @@ ggplot(countsRY, aes(year, countR_Scaled, color = river)) +
 
 Counts for the metaPopulation (WB, Jimmy, Mitchell)  
 Use these for modelling.
-```{r}
+```{r countsMeta}
 countsMetaY <- firstObs %>%
   filter(river != "wb obear", year %in% minYear:maxYear) %>%
   group_by(year) %>%
@@ -258,7 +258,7 @@ ggplot(countsMetaY, aes(year, count_Scaled)) +
 ```
 
 Merge metapopulation scaled counts into firstObsUnnested
-```{r}
+```{r mergeMeta}
 
 firstObsUnnested <- firstObsUnnested %>%
   left_join(countsMetaY %>% dplyr::select(year, count_Scaled))
@@ -341,7 +341,7 @@ firstObsUnnestedWB <- firstObsUnnested %>% filter(river == "west brook")
 #### Brown Trout, wb obear - there are no Brown trout in O'Bear  
 
 #### Trout, in the WB mainstem only
-```{r}
+```{r troutWB}
   
   ggplot(firstObs %>% filter(species != "ats"), aes(observedLength)) +
     geom_freqpoly() +
@@ -505,16 +505,48 @@ save(means5, mod5, file = "models/mod5LMMeans.Rdata")
 ```
 
 
-
 AICs and Relative importance of main effects models
-```{r rI}
-AIC(mod1[[1]], mod1[[2]], mod1[[3]]) %>% arrange(AIC)
-AIC(mod3[[1]], mod3[[2]], mod3[[3]]) %>% arrange(AIC)
-AIC(mod5[[1]], mod5[[2]], mod5[[3]]) %>% arrange(AIC)
+```{r rIKable, echo = FALSE}
+library("kableExtra")
 
-rI1$lmg
-rI3$lmg
-rI5$lmg
+knitr::kable(
+  format = 'html',
+  AIC(mod1[[1]], mod1[[2]], mod1[[3]]) %>% arrange(AIC) %>% add_column(numMonths = 1),
+  digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+  AIC(mod3[[1]], mod3[[2]], mod3[[3]]) %>% arrange(AIC) %>% add_column(numMonths = 3),
+  digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+  AIC(mod5[[1]], mod5[[2]], mod5[[3]]) %>% arrange(AIC) %>% add_column(numMonths = 5),
+  digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+# Relative Importance
+knitr::kable(
+ tibble(var = names(rI1$lmg), relImp = rI1$lmg) %>% add_column(numMonths = 1),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+ tibble(var = names(rI3$lmg), relImp = rI3$lmg) %>% add_column(numMonths = 3),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+ tibble(var = names(rI5$lmg), relImp = rI5$lmg) %>% add_column(numMonths = 5),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
 ```
 
 
@@ -572,7 +604,7 @@ fTime <- "threeMonth_sumFScaled" #"fiveMonth_sumFScaled"
 ```
 
 
-```{r}
+```{r rI_LM}
 library(lme4)
 library(relaimpo)
 
@@ -598,7 +630,7 @@ AIC(modLM1, modLM2, modLM3, modLM1a, modLM1b, modLM1c, modLM1d, modLM1e) %>% arr
 #modLMER2 <- lmer(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled +count_Scaled)^2 + 1|year, data = d_WB_BKT_BNT)
 ```
 
-```{r}
+```{r calcrelipmm}
 #https://gist.github.com/BERENZ/e9b581a4b7160357934e
 calc.relip.mm <- function(model,type='lmg') {
   if (!isLMM(model) & !isGLMM(model)) {
@@ -659,7 +691,7 @@ emerge_detect_sumTScaled 0.006883496
 emerge_detect_sumFScaled 0.063450197
 ydayScaled               0.012116064
 count_Scaled             0.028031531
-```{r}
+```{r plotRawInd}
 
 ggplot(d_WB_BKT_BNT, aes(get(fTime), observedLength)) +
   geom_point(alpha = 0.2) +
