@@ -35,11 +35,12 @@ brown-trout-wb-mitchell
 brown-trout-wb-obear---there-are-no-brown-trout-in-obear
 trout-in-the-wb-mainstem-only
 why-are-there-untagged-fish-bigger-than-60mm
-why-no-untagged-fish-at-all-for-2000-and-2001
+why-no-untagged-fish-for-2000-and-2001
 models-based-on-yearly-means
-flow-and-temperature-from-previous-one-month
-flow-and-temperature-from-previous-three-months
-flow-and-temperature-from-previous-five-months
+models-with-flow-and-temperature-from-previous-one-month
+models-with-flow-and-temperature-from-previous-three-months
+models-with-flow-and-temperature-from-previous-five-months
+models-with-extreme-flow-events-droughts
 models-based-on-individual-observations
 are-flow-and-temperature-correlated-for-individual-observations
 final-words

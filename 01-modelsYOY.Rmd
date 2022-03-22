@@ -46,7 +46,8 @@ if(getNew_envDataWB) {
     collect(n = Inf), by = c("river", "date")) %>% 
     select(-source) %>% 
     rename(temperature = daily_mean_temp, flow = qPredicted) %>%
-    mutate(dateDate = as_date(date))
+    mutate(dateDate = as_date(date),
+           yday = yday(dateDate))
 
   save(envDataWB, file = './data/envDataWB.RData')
   
@@ -68,7 +69,7 @@ ggplot(envDataWB, aes(date, temperature)) +
 ### Get first observations
 
 1. Filter cdWB_electro for first observations in the autumn for age-0 fish (ageInsamples == 0). Including both tagged and untagged fish.
-```{r firstObs0}
+```{r firstObs0, cache = TRUE}
 selectedVariables <- c("tag", "species", "river", "detectionDate", "sampleNumber", "n", "proportionSampled", "observedLength", "observedWeight", "area", "season", "isYOY")
 
 firstObs_noTag <- cdWB_electro %>%
@@ -162,6 +163,7 @@ getScaled <- function(d){
   (d - mean(d, na.rm = TRUE)) / sd(d, na.rm = TRUE)
 }
 
+# this scales across all individuals - I think this is ok
 firstObsUnnested <- firstObs %>% 
   unnest(cols = c(spawn_emerge, emerge_detect, spawn_detect, oneMonth, threeMonth, fiveMonth), names_sep = "_") %>%
   mutate(
@@ -357,6 +359,7 @@ firstObsUnnestedWB <- firstObsUnnested %>% filter(river == "west brook")
 
 #### Why are there untagged fish bigger than 60mm?  
 Check 2002/bkt/WB, as an example
+Answer: because they are outside the study area (area = 'above' or 'below') or were tagging mortalities
 
 ```{r 2002 untagged}
 
@@ -381,8 +384,8 @@ Check 2002/bkt/WB, as an example
   # same story as 2002
 ```
 
-#### Why no untagged fish at all for 2000 and 2001?
-
+#### Why no untagged fish for 2000 and 2001?
+Check data logs to see if we were not recording untagged fish in 2000, 2001
 ```{r untagged 2000, 2001}
 
   cfirstObs2000_2001BKT <- firstObs %>% filter(year %in% 2000:2001, species == "bkt")
@@ -456,11 +459,11 @@ runMeanModels <- function(means) {
   modLMMeans1 <- lm(meanLength ~ (factor(species) + meanFTime_sumFScaled + meanTTime_sumTScaled + meanYdayScaled + meanCount_Scaled), data = means)
   modLMMeans2 <- lm(meanLength ~ (factor(species) + meanFTime_sumFScaled + meanTTime_sumTScaled + meanYdayScaled + meanCount_Scaled)^2, data = means)
   modLMMeans3 <- lm(meanLength ~ (factor(species) + meanFTime_sumFScaled + meanTTime_sumTScaled + meanYdayScaled + meanCount_Scaled)^3, data = means)
-  return(list(modLMMeans1,modLMMeans2,modLMMeans3))
+  return(list(modLMMeans1, modLMMeans2, modLMMeans3))
 }
 ```
 
-#### Flow and temperature from previous *one* month
+#### Models with flow and temperature from previous *one* month
 ```{r means1Month}
 
 means1 <- getMeansData(d_WB_BKT_BNT, "oneMonth_sumTScaled", "oneMonth_sumFScaled")
@@ -474,7 +477,7 @@ rI1 <- relaimpo::calc.relimp(mod1[[1]])
 save(means1, mod1, file = "models/mod1LMMeans.Rdata")
 ```
 
-#### Flow and temperature from previous *three* months
+#### Models with flow and temperature from previous *three* months
 ```{r means3Month}
 
 means3 <- getMeansData(d_WB_BKT_BNT, "threeMonth_sumTScaled", "threeMonth_sumFScaled")
@@ -489,7 +492,7 @@ rI3 <- relaimpo::calc.relimp(mod3[[1]])
 save(means3, mod3, file = "models/mod3LMMeans.Rdata")
 ```
 
-#### Flow and temperature from previous *five* months
+#### Models with flow and temperature from previous *five* months
 ```{r means5Month}
 
 means5 <- getMeansData(d_WB_BKT_BNT, "fiveMonth_sumTScaled", "fiveMonth_sumFScaled")
@@ -548,6 +551,53 @@ knitr::kable(
   kable_styling(full_width = FALSE)
 
 ```
+
+### Models with extreme flow events (droughts)
+We get negative cumulFlows because we have some negative flows from the flow extension model
+```{r drought}
+# put some of these calculations into envDataWB
+tmp = envDataWB %>%
+  mutate(year = year(dateDate),
+         yday = yday(dateDate),
+         flowNoNAs = ifelse(is.na(flow), 0, flow),
+         tempNoNAs = ifelse(is.na(temperature), 0, temperature)) %>%
+  filter(year %in% minYear:maxYear, 
+         yday > 100, yday < 300,
+         river == "west brook") %>%
+  group_by(year) %>%
+  mutate(cumulFlow = cumsum(flowNoNAs),
+         cumulFlow01 = cumulFlow / max(cumulFlow),
+         cumulTemp = cumsum(tempNoNAs)) %>%
+  ungroup()
+
+tmp2 <- firstObs %>%
+    filter(year %in% minYear:maxYear, 
+           yday > 100, yday < 300)
+
+ggplot(tmp, aes(yday, flow)) +
+  geom_point(aes(yday, observedLength/20), color = 'lightblue', data = tmp2) +
+  geom_point() +
+  scale_x_continuous(breaks = seq(0,300, 30)) +
+  facet_wrap(~year)
+
+ggplot(tmp, aes(yday, cumulFlow / 10)) +
+  geom_point(aes(yday, observedLength / 20), color = 'lightblue', data = tmp2) +
+  geom_point(color = 'darkgrey') +
+  geom_point(aes(yday, cumulTemp / 800), color = "orange", data = tmp) +
+  geom_point(aes(yday, flow), data = tmp) +
+  scale_x_continuous(breaks = seq(0, 300, 30)) +
+  facet_wrap(~year)
+
+ggplot(tmp, aes(yday, cumulFlow / 10, color = factor(year))) +
+  #geom_point(aes(yday, observedLength / 20), color = 'lightblue', data = tmp2) +
+  geom_point() +
+  geom_point(aes(yday, cumulTemp / 800, color = factor(year)), data = tmp) +
+  scale_x_continuous(breaks = seq(0, 300, 30)) 
+
+
+
+```
+
 
 
 ### Models based on individual observations
