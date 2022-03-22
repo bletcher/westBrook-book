@@ -24,7 +24,6 @@ get-environmental-data
 get-first-observations
 counts-of-captured-fish
 raw-data-plots
-are-flow-and-temerpature-correlated
 frequency-plots-by-species-and-river
 brook-trout-west-brook
 brook-trout-wb-jimmy
@@ -37,6 +36,11 @@ brown-trout-wb-obear---there-are-no-brown-trout-in-obear
 trout-in-the-wb-mainstem-only
 why-are-there-untagged-fish-bigger-than-60mm
 why-no-untagged-fish-at-all-for-2000-and-2001
-yearly-means
-models-1
+models-based-on-yearly-means
+flow-and-temperature-correlations-for-means
+flow-and-temperature-from-previous-one-month
+flow-and-temperature-from-previous-three-months
+flow-and-temperature-from-previous-five-months
+models-based-on-individual-observations
+are-flow-and-temperature-correlated-for-individual-observations
 final-words

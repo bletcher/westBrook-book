@@ -20,13 +20,13 @@ Factors to include in the model are
 1. Sample date  
 2. Cumulative temperature prior to sampling  
 3. Cumulative flow prior to sampling  
-4. Extreme flow events??  
-5. Fish density, maybe total and age-0 across all three salmonids??  
+4. Extreme flow events?? Floods, droughts?  
+5. Fish density, age-0 counts across all three salmonids  
 
 ### Raw data for YOY model
-1. Environmental data (flow, temperature) are from assumed spawning dates, assumed emergence dates and actual observation (sample) dates.
+1. Environmental data (flow, temperature) are from 1, 3, or 5 months prior to date of individual capture. Also can used fixed dates: assumed spawning dates, assumed emergence dates and actual observation (sample) dates.
 2. All fish data are from age-0 in autumn.
-3. Abundance data...?
+3. Abundance data.
 
 ### Get environmental data
 
@@ -54,6 +54,14 @@ if(getNew_envDataWB) {
   load(file = './data/envDataWB.RData')
 }
 str(envDataWB)
+
+ggplot(envDataWB, aes(date, flow)) +
+  geom_point() +
+  facet_wrap(~river)
+
+ggplot(envDataWB, aes(date, temperature)) +
+  geom_point(size = 0.5) +
+  facet_wrap(~river)
 ```
 
 
@@ -84,9 +92,13 @@ firstObs0 <- add_row(firstObs_tag, firstObs_noTag) %>%
 ```
 
 For each date in firstObs0 that at least one fish was captured, calculate summary stats for flow and temperature for different time periods:   
-1. Assumed spawning to capture
-2. Assumed spawning to assumed emergence
-3. Assumed emergence to capture
+1. Assumed spawning to capture  
+2. Assumed spawning to assumed emergence  
+3. Assumed emergence to capture  
+4. One month preceding capture  
+5. Three months preceding capture  
+5. Five months preceding capture
+
 
 Then merge results with firstObs0 to create firstObs.
 ```{r firstObs, cache = TRUE}
@@ -125,9 +137,15 @@ firstObs_Env <- firstObsDates %>%
     year = year(date),
     spawnDate = ymd(paste0(year,spawn_month,spawn_day)) - years(1),
     emergeDate = ymd(paste0(year,emerge_month,emerge_day)),
+    oneMonthDate = date - days(as.integer(1 * 30.5)), #months(1), 'months gives error when prev month has 30 days and current has 31
+    threeMonthDate = date - days(as.integer(3 * 30.5)),
+    fiveMonthDate = date - days(as.integer(5 * 30.5)),
     spawn_emerge = list(getEnvMeans(river, spawnDate, emergeDate)),
     emerge_detect = list(getEnvMeans(river, emergeDate, date)),
-    spawn_detect = list(getEnvMeans(river, spawnDate, date))
+    spawn_detect = list(getEnvMeans(river, spawnDate, date)),
+    oneMonth = list(getEnvMeans(river, oneMonthDate, date)),
+    threeMonth = list(getEnvMeans(river, threeMonthDate, date)),
+    fiveMonth = list(getEnvMeans(river, fiveMonthDate, date))
   )
 
 # merge env data into firstObs0
@@ -140,17 +158,28 @@ firstObs <- firstObs0 %>%
 Unnest firstObs so environmental summary stats are available as data frame with the name of the time interval as the prefix to the statisticVariable name
 ```{r firstObsUnnested}
 
+getScaled <- function(d){
+  (d - mean(d, na.rm = TRUE)) / sd(d, na.rm = TRUE)
+}
+
 firstObsUnnested <- firstObs %>% 
-  unnest(cols = c(spawn_emerge, emerge_detect, spawn_detect), names_sep = "_") %>%
+  unnest(cols = c(spawn_emerge, emerge_detect, spawn_detect, oneMonth, threeMonth, fiveMonth), names_sep = "_") %>%
   mutate(
-    emerge_detect_sumTScaled = (emerge_detect_sumT - mean(emerge_detect_sumT, na.rm = TRUE)) / 
-                                sd(emerge_detect_sumT, na.rm = TRUE),
-    emerge_detect_sumFScaled = (emerge_detect_sumF - mean(emerge_detect_sumF, na.rm = TRUE)) / 
-                                sd(emerge_detect_sumF, na.rm = TRUE),
-    ydayScaled = (yday - mean(yday, na.rm = TRUE)) / sd(yday, na.rm = TRUE)
+    emerge_detect_sumTScaled = getScaled(emerge_detect_sumT),
+    emerge_detect_sumFScaled = getScaled(emerge_detect_sumF),
+    oneMonth_sumTScaled = getScaled(oneMonth_sumT),
+    oneMonth_sumFScaled = getScaled(oneMonth_sumF),
+    threeMonth_sumTScaled = getScaled(threeMonth_sumT),
+    threeMonth_sumFScaled = getScaled(threeMonth_sumF),
+    fiveMonth_sumTScaled = getScaled(fiveMonth_sumT),
+    fiveMonth_sumFScaled = getScaled(fiveMonth_sumF),
+    ydayScaled = getScaled(yday)
   )
 
 str(firstObsUnnested)
+#ggplot(firstObsUnnested, aes(oneMonth_sumTScaled, fiveMonth_sumTScaled)) +
+#  geom_point() +
+#  facet_wrap(~river)
 ```
 
 ### Counts of captured fish
@@ -160,8 +189,8 @@ minYear <- 2000
 maxYear <- 2015
 ```
 
+Counts by river and species
 ```{r rawCounts}
-
 
 countsRSY <- firstObs %>%
   filter(year %in% minYear:maxYear) %>%
@@ -182,7 +211,10 @@ ggplot(countsRSY, aes(year, countRS_Scaled, color = species)) +
   geom_point() +
   geom_line() +
   facet_wrap(~ river)
+```
 
+Counts by river
+```{r }
 countsRY <- firstObs %>%
   filter(year %in% minYear:maxYear) %>%
   group_by(river, year) %>%
@@ -201,7 +233,11 @@ countsRY <- firstObs %>%
 ggplot(countsRY, aes(year, countR_Scaled, color = river)) +
   geom_point() +
   geom_line()
+```
 
+Counts for the metaPopulation (WB, Jimmy, Mitchell)  
+Use these for modelling.
+```{r}
 countsMetaY <- firstObs %>%
   filter(river != "wb obear", year %in% minYear:maxYear) %>%
   group_by(year) %>%
@@ -232,32 +268,6 @@ firstObsUnnestedWB <- firstObsUnnested %>% filter(river == "west brook")
 
 
 ### Raw data plots
-
-#### Are flow and temperature correlated?
-```{r flowTempCor, cache = TRUE}
-
-ggplot(firstObsUnnestedWB, aes(emerge_detect_sumTScaled, emerge_detect_sumFScaled)) +
-  geom_point(aes(color = (year))) +
-  geom_smooth(method = "lm") +
-  facet_wrap(~ species)
-
-# water getting warmer during a sample
-ggplot(firstObsUnnestedWB, aes(emerge_detect_sumTScaled, emerge_detect_sumFScaled)) +
-  geom_point(aes(color = (yday))) +
-  geom_smooth(method = "lm") +
-  facet_wrap(~ species)
-
-cor(firstObsUnnestedWB$emerge_detect_sumTScaled, firstObsUnnestedWB$emerge_detect_sumFScaled)
-
-# brook trout
-firstObsUnnestedWB_BKT <- firstObsUnnestedWB %>% filter(species == "bkt")
-cor(firstObsUnnestedWB_BKT$emerge_detect_sumTScaled, firstObsUnnestedWB_BKT$emerge_detect_sumFScaled)
-
-# brown trout
-firstObsUnnestedWB_BNT <- firstObsUnnestedWB %>% filter(species == "bnt")
-cor(firstObsUnnestedWB_BNT$emerge_detect_sumTScaled, firstObsUnnestedWB_BNT$emerge_detect_sumFScaled)
-```
-
 
 #### Frequency plots by species and river
 
@@ -386,55 +396,247 @@ Check 2002/bkt/WB, as an example
     geom_vline(xintercept = 60)
 ```
 
-### Yearly means
-```{r means}
 
-means <- firstObs %>% 
-  group_by(species, year) %>% 
-  summarize(meanLength = mean(observedLength, na.rm = TRUE), 
-            meanYday = mean(yday, na.rm = TRUE)
-            )
+### Models based on yearly means
 
-ggplot(means, aes(year, meanLength, color = species)) + 
-  geom_point() +
-  geom_line()
-
-ggplot(means, aes(meanYday, meanLength, color = species)) +
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE)
-```
-
-#### Models based on individual observations
-```{r}
-library(lme4)
-library(relaimpo)
-
+Filter firstObsUnnestedWB for bkt, bnt and min/maxYear
+```{r filter firstObsUnnestedWB}
 d_WB_BKT_BNT <- firstObsUnnestedWB %>% filter(species != "ats", year %in% minYear:maxYear) %>%
   mutate(species01 = ifelse(species == "bkt", 1, 0))
 
 hist(d_WB_BKT_BNT$detectionDate, breaks = 250)
+```
+
+#### Flow and temperature correlations for means
+```{r}
+
+```
 
 
-modLM1 <- lm(observedLength ~ (factor(species) * emerge_detect_sumTScaled * emerge_detect_sumFScaled * ydayScaled * count_Scaled), data = d_WB_BKT_BNT)
+Mean model functions
+```{r meanModelFunctions}
 
-modLM2 <- lm(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled + count_Scaled), data = d_WB_BKT_BNT)
+getMeansData <- function(d, t, f) {
+  means <- d %>% 
+    group_by(species, year) %>% 
+    summarize(meanLength = mean(observedLength, na.rm = TRUE), 
+              meanEmerge_detect_sumTScaled = mean(emerge_detect_sumTScaled, na.rm = TRUE),
+              meanEmerge_detect_sumFScaled = mean(emerge_detect_sumTScaled, na.rm = TRUE),
+              meanTTime_sumTScaled = mean(get(t), na.rm = TRUE),
+              meanFTime_sumFScaled = mean(get(f), na.rm = TRUE),
+              meanYdayScaled = mean(ydayScaled, na.rm = TRUE),
+              meanCount_Scaled = mean(count_Scaled, na.rm = TRUE)
+              )
+  return(means)
+}
 
-modLM3 <- lm(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled + count_Scaled)^2, data = d_WB_BKT_BNT)
+plotMeans <- function(means){
+  out <- list()
+  out[[1]] <- ggplot(means, aes(year, meanLength, color = species)) + 
+    geom_point() +
+    geom_line()
+
+  out[[2]] <- ggplot(means, aes(meanTTime_sumTScaled, meanLength, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  
+  out[[3]] <- ggplot(means, aes(meanFTime_sumFScaled, meanLength, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  
+  out[[4]] <- ggplot(means, aes(meanYdayScaled, meanLength, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  
+  out[[5]] <- ggplot(means, aes(meanCount_Scaled, meanLength, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  return(out)
+}
+
+runMeanModels <- function(means) {
+  modLMMeans1 <- lm(meanLength ~ (factor(species) + meanFTime_sumFScaled + meanTTime_sumTScaled + meanYdayScaled + meanCount_Scaled), data = means)
+  modLMMeans2 <- lm(meanLength ~ (factor(species) + meanFTime_sumFScaled + meanTTime_sumTScaled + meanYdayScaled + meanCount_Scaled)^2, data = means)
+  modLMMeans3 <- lm(meanLength ~ (factor(species) + meanFTime_sumFScaled + meanTTime_sumTScaled + meanYdayScaled + meanCount_Scaled)^3, data = means)
+  return(list(modLMMeans1,modLMMeans2,modLMMeans3))
+}
+```
+
+#### Flow and temperature from previous *one* month
+```{r means1Month}
+
+means1 <- getMeansData(d_WB_BKT_BNT, "oneMonth_sumTScaled", "oneMonth_sumFScaled")
+plotMeans(means1)
+mod1 <- runMeanModels(means1)
+
+AIC(mod1[[1]], mod1[[2]], mod1[[3]]) %>% arrange(AIC)
+
+summary(mod1[[1]])
+
+#save(means, modLMMeans2, file = "models/modLMMeans2.Rdata")
+```
+
+#### Flow and temperature from previous *three* months
+```{r means3Month}
+
+means3 <- getMeansData(d_WB_BKT_BNT, "threeMonth_sumTScaled", "threeMonth_sumFScaled")
+plotMeans(means3)
+mod3 <- runMeanModels(means3)
+
+AIC(mod3[[1]], mod3[[2]], mod3[[3]]) %>% arrange(AIC)
+
+summary(mod3[[1]])
+
+#save(means, modLMMeans2, file = "models/modLMMeans2.Rdata")
+```
+
+#### Flow and temperature from previous *five* months
+```{r means5Month}
+
+means5 <- getMeansData(d_WB_BKT_BNT, "fiveMonth_sumTScaled", "fiveMonth_sumFScaled")
+plotMeans(means5)
+mod5 <- runMeanModels(means5)
+
+AIC(mod5[[1]], mod5[[2]], mod5[[3]]) %>% arrange(AIC)
+
+summary(mod5[[1]])
+
+#save(means, modLMMeans2, file = "models/modLMMeans2.Rdata")
+```
+
+
+
+### Models based on individual observations
+Probably not use these, too much individual variation
+
+
+#### Are flow and temperature correlated for individual observations?
+```{r flowTempCor, cache = TRUE}
+
+ggplot(firstObsUnnestedWB, aes(oneMonth_sumTScaled, oneMonth_sumFScaled)) +
+  geom_point(aes(color = (year))) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ species)
+
+ggplot(firstObsUnnestedWB, aes(threeMonth_sumTScaled, threeMonth_sumFScaled)) +
+  geom_point(aes(color = (year))) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ species)
+
+ggplot(firstObsUnnestedWB, aes(fiveMonth_sumTScaled, fiveMonth_sumFScaled)) +
+  geom_point(aes(color = (year))) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ species)
+
+# water getting warmer during a sample
+ggplot(firstObsUnnestedWB, aes(fiveMonth_sumTScaled, fiveMonth_sumFScaled)) +
+  geom_point(aes(color = (yday))) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ species)
+
+cor(firstObsUnnestedWB$oneMonth_sumTScaled, firstObsUnnestedWB$oneMonth_sumFScaled)
+cor(firstObsUnnestedWB$threeMonth_sumTScaled, firstObsUnnestedWB$threeMonth_sumFScaled)
+cor(firstObsUnnestedWB$fiveMonth_sumTScaled, firstObsUnnestedWB$fiveMonth_sumFScaled)
+# brook trout
+firstObsUnnestedWB_BKT <- firstObsUnnestedWB %>% filter(species == "bkt")
+cor(firstObsUnnestedWB_BKT$oneMonth_sumTScaled, firstObsUnnestedWB_BKT$oneMonth_sumFScaled)
+cor(firstObsUnnestedWB_BKT$threeMonth_sumTScaled, firstObsUnnestedWB_BKT$threeMonth_sumFScaled)
+cor(firstObsUnnestedWB_BKT$fiveMonth_sumTScaled, firstObsUnnestedWB_BKT$fiveMonth_sumFScaled)
+
+# brown trout
+firstObsUnnestedWB_BNT <- firstObsUnnestedWB %>% filter(species == "bnt")
+cor(firstObsUnnestedWB_BNT$oneMonth_sumTScaled, firstObsUnnestedWB_BNT$oneMonth_sumFScaled)
+cor(firstObsUnnestedWB_BNT$threeMonth_sumTScaled, firstObsUnnestedWB_BNT$threeMonth_sumFScaled)
+cor(firstObsUnnestedWB_BNT$fiveMonth_sumTScaled, firstObsUnnestedWB_BNT$fiveMonth_sumFScaled)
+```
+
+
+
+Assign the month interval (one, three, five) for flow and temperature variables. The variable will be accessed using e.g. `get(tTime)` in formulas and filters
+```{r time}
+tTime <- "threeMonth_sumTScaled"
+fTime <- "threeMonth_sumFScaled" #"fiveMonth_sumFScaled"
+
+```
+
+
+```{r}
+library(lme4)
+library(relaimpo)
+
+
+modLM1 <- lm(observedLength ~ (factor(species) * get(tTime) * get(fTime) * ydayScaled * count_Scaled), data = d_WB_BKT_BNT)
+
+modLM2 <- lm(observedLength ~ (factor(species) + get(tTime) + get(fTime) + ydayScaled + count_Scaled), data = d_WB_BKT_BNT)
+
+modLM3 <- lm(observedLength ~ (factor(species) + get(tTime) + get(fTime) + ydayScaled + count_Scaled)^2, data = d_WB_BKT_BNT)
 
 modLM1a <- lm(observedLength ~ (factor(species)), data = d_WB_BKT_BNT)
-modLM1b <- lm(observedLength ~ (factor(species) * emerge_detect_sumTScaled ), data = d_WB_BKT_BNT)
-modLM1c <- lm(observedLength ~ (factor(species) * emerge_detect_sumFScaled ), data = d_WB_BKT_BNT)
+modLM1b <- lm(observedLength ~ (factor(species) * get(tTime)), data = d_WB_BKT_BNT)
+modLM1c <- lm(observedLength ~ (factor(species) * get(fTime)), data = d_WB_BKT_BNT)
 modLM1d <- lm(observedLength ~ (factor(species) * ydayScaled), data = d_WB_BKT_BNT)
 modLM1e <- lm(observedLength ~ (factor(species) * count_Scaled), data = d_WB_BKT_BNT)
 
 AIC(modLM1, modLM2, modLM3, modLM1a, modLM1b, modLM1c, modLM1d, modLM1e) %>% arrange(AIC)
 
-relaimpo::calc.relimp(modLM2) # slow for bigger models
+#relaimpo::calc.relimp(modLM2) # slow for bigger models
 
 
-# get 'boundary (singular)' error
+# get 'boundary (singular)' error with model without 2-way interaction
 #modLMER2 <- lmer(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled +count_Scaled)^2 + 1|year, data = d_WB_BKT_BNT)
 ```
+
+```{r}
+#https://gist.github.com/BERENZ/e9b581a4b7160357934e
+calc.relip.mm <- function(model,type='lmg') {
+  if (!isLMM(model) & !isGLMM(model)) {
+    stop('Currently supports only lmer/glmer objects', call. = FALSE)
+  }
+  require(lme4)
+  X <- getME(model,'X')
+  X <- X[,-1]
+  Y <- getME(model,'y')
+  s_resid <- sigma(model)
+  s_effect <- getME(model,'theta')*s_resid
+  s2 <- sum(s_resid^2,s_effect^2)
+  V <- Diagonal(x = s2,n=nrow(X))
+  YX <- cbind(Y,X)
+  cov_XY <- solve( t(YX) %*% solve(V) %*% as.matrix(YX))
+  colnames(cov_XY) <- rownames(cov_XY) <- colnames(YX)
+  importances <- calc.relimp(as.matrix(cov_XY),rela=T,type=type)
+  return(importances)
+}
+```
+
+
+```{r lmer}
+
+#modLMER1 <- lmer(observedLength ~ (factor(species) + get(tTime)|year + get(fTime)|year + ydayScaled|year + count_Scaled|year), data = d_WB_BKT_BNT)
+
+modLMER1 <- lmer(observedLength ~ (factor(species) * get(tTime) * get(fTime) * ydayScaled * count_Scaled) + (1|year), data = d_WB_BKT_BNT)
+
+modLMER2 <- lmer(observedLength ~ (factor(species) + get(tTime) + get(fTime) + ydayScaled + count_Scaled) + (1|year), data = d_WB_BKT_BNT)
+
+modLMER3 <- lmer(observedLength ~ (factor(species) + get(tTime) + get(fTime) + ydayScaled + count_Scaled)^2 + (1|year), data = d_WB_BKT_BNT)
+
+# one-by-one
+modLMER1a <- lmer(observedLength ~ (factor(species))  + (1|year), data = d_WB_BKT_BNT)
+modLMER1b <- lmer(observedLength ~ (factor(species) * get(tTime))  + (1|year), data = d_WB_BKT_BNT)
+modLMER1c <- lmer(observedLength ~ (factor(species) * get(fTime)) + (1|year), data = d_WB_BKT_BNT)
+modLMER1d <- lmer(observedLength ~ (factor(species) * ydayScaled) + (1|year), data = d_WB_BKT_BNT)
+modLMER1e <- lmer(observedLength ~ (factor(species) * count_Scaled) + (1|year), data = d_WB_BKT_BNT)
+
+AIC(modLMER1, modLMER2, modLMER3, modLMER1a, modLMER1b, modLMER1c, modLMER1d, modLMER1e) %>% arrange(AIC)
+
+calc.relip.mm(modLMER3)
+library(MuMIn)
+r.squaredGLMM(modLMER1)
+
+summary(modLMER1)
+ranef(modLMER1)
+```
+
+
 
 Raw data exploration following the models  
 
@@ -447,26 +649,24 @@ ydayScaled               0.012116064
 count_Scaled             0.028031531
 ```{r}
 
-ggplot(d_WB_BKT_BNT, aes(observedLength, emerge_detect_sumFScaled)) +
+ggplot(d_WB_BKT_BNT, aes(get(fTime), observedLength)) +
   geom_point(alpha = 0.2) +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  facet_wrap(~species)
 
-ggplot(d_WB_BKT_BNT, aes(observedLength, count_Scaled)) +
+ggplot(d_WB_BKT_BNT, aes(count_Scaled, observedLength)) +
   geom_point(alpha = 0.2) +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  facet_wrap(~species)
 
-ggplot(d_WB_BKT_BNT, aes(observedLength, ydayScaled)) +
+ggplot(d_WB_BKT_BNT, aes(ydayScaled, observedLength)) +
   geom_point(alpha = 0.2) +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  facet_wrap(~species)
 
-ggplot(d_WB_BKT_BNT, aes(observedLength, emerge_detect_sumTScaled)) +
+ggplot(d_WB_BKT_BNT, aes(get(tTime), observedLength)) +
   geom_point(alpha = 0.2) +
-  geom_smooth(method = "lm")
-
-ggplot(d_WB_BKT_BNT, aes(observedLength, species01)) +
-  geom_point(alpha = 0.1) +
-  geom_smooth(family = "binomial")
+  geom_smooth(method = "lm") +
+  facet_wrap(~species)
 
 ```
-
-Should probably do models on means...
