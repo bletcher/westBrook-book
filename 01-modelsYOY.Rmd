@@ -407,12 +407,6 @@ d_WB_BKT_BNT <- firstObsUnnestedWB %>% filter(species != "ats", year %in% minYea
 hist(d_WB_BKT_BNT$detectionDate, breaks = 250)
 ```
 
-#### Flow and temperature correlations for means
-```{r}
-
-```
-
-
 Mean model functions
 ```{r meanModelFunctions}
 
@@ -451,6 +445,10 @@ plotMeans <- function(means){
   out[[5]] <- ggplot(means, aes(meanCount_Scaled, meanLength, color = species)) +
     geom_point() + 
     geom_smooth(method = "lm", se = FALSE)
+  
+  out[[5]] <- ggplot(means, aes(meanTTime_sumTScaled, meanFTime_sumFScaled, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
   return(out)
 }
 
@@ -472,8 +470,8 @@ mod1 <- runMeanModels(means1)
 AIC(mod1[[1]], mod1[[2]], mod1[[3]]) %>% arrange(AIC)
 
 summary(mod1[[1]])
-
-#save(means, modLMMeans2, file = "models/modLMMeans2.Rdata")
+rI1 <- relaimpo::calc.relimp(mod1[[1]])
+save(means1, mod1, file = "models/mod1LMMeans.Rdata")
 ```
 
 #### Flow and temperature from previous *three* months
@@ -487,7 +485,8 @@ AIC(mod3[[1]], mod3[[2]], mod3[[3]]) %>% arrange(AIC)
 
 summary(mod3[[1]])
 
-#save(means, modLMMeans2, file = "models/modLMMeans2.Rdata")
+rI3 <- relaimpo::calc.relimp(mod3[[1]])
+save(means3, mod3, file = "models/mod3LMMeans.Rdata")
 ```
 
 #### Flow and temperature from previous *five* months
@@ -501,9 +500,22 @@ AIC(mod5[[1]], mod5[[2]], mod5[[3]]) %>% arrange(AIC)
 
 summary(mod5[[1]])
 
-#save(means, modLMMeans2, file = "models/modLMMeans2.Rdata")
+rI5 <- relaimpo::calc.relimp(mod5[[1]])
+save(means5, mod5, file = "models/mod5LMMeans.Rdata")
 ```
 
+
+
+AICs and Relative importance of main effects models
+```{r rI}
+AIC(mod1[[1]], mod1[[2]], mod1[[3]]) %>% arrange(AIC)
+AIC(mod3[[1]], mod3[[2]], mod3[[3]]) %>% arrange(AIC)
+AIC(mod5[[1]], mod5[[2]], mod5[[3]]) %>% arrange(AIC)
+
+rI1$lmg
+rI3$lmg
+rI5$lmg
+```
 
 
 ### Models based on individual observations
