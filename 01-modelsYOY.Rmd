@@ -68,9 +68,9 @@ ggplot(envDataWB, aes(date, temperature)) +
 
 ### Get first observations
 
-1. Filter cdWB_electro for first observations in the autumn for age-0 fish (ageInsamples == 0). Including both tagged and untagged fish.
-```{r firstObs0, cache = TRUE}
-selectedVariables <- c("tag", "species", "river", "detectionDate", "sampleNumber", "n", "proportionSampled", "observedLength", "observedWeight", "area", "season", "isYOY")
+1. Filter cdWB_electro for first observations in the autumn for age-0 fish (ageInsamples == 1). Including both tagged and untagged fish.
+```{r firstObs0}
+selectedVariables <- c("tag", "species", "river", "detectionDate", "sampleNumber", "n", "proportionSampled", "observedLength", "observedWeight", "area", "section", "season", "isYOY")
 
 firstObs_noTag <- cdWB_electro %>%
   filter(is.na(tag), ageInSamples == 1) %>%
@@ -89,7 +89,6 @@ firstObs0 <- add_row(firstObs_tag, firstObs_noTag) %>%
   mutate(date = as_date(detectionDate),
          yday = yday(date))
 
-
 ```
 
 For each date in firstObs0 that at least one fish was captured, calculate summary stats for flow and temperature for different time periods:   
@@ -102,7 +101,7 @@ For each date in firstObs0 that at least one fish was captured, calculate summar
 
 
 Then merge results with firstObs0 to create firstObs.
-```{r firstObs, cache = TRUE}
+```{r firstObs}
 
 spawn_month <- "11" # spawning
 spawn_day <- "15"
@@ -408,6 +407,10 @@ d_WB_BKT_BNT <- firstObsUnnestedWB %>% filter(species != "ats", year %in% minYea
   mutate(species01 = ifelse(species == "bkt", 1, 0))
 
 hist(d_WB_BKT_BNT$detectionDate, breaks = 250)
+
+d_BKT_BNT <- firstObsUnnested %>% filter(species != "ats", year %in% minYear:maxYear) %>%
+  mutate(species01 = ifelse(species == "bkt", 1, 0))
+
 ```
 
 Mean model functions
@@ -427,29 +430,31 @@ getMeansData <- function(d, t, f) {
   return(means)
 }
 
+getMeansDataByRiver <- function(d, t, f) {
+  means <- d %>% 
+    group_by(species, year, river) %>% 
+    summarize(meanLength = mean(observedLength, na.rm = TRUE), 
+              meanEmerge_detect_sumTScaled = mean(emerge_detect_sumTScaled, na.rm = TRUE),
+              meanEmerge_detect_sumFScaled = mean(emerge_detect_sumTScaled, na.rm = TRUE),
+              meanTTime_sumTScaled = mean(get(t), na.rm = TRUE),
+              meanFTime_sumFScaled = mean(get(f), na.rm = TRUE),
+              meanYdayScaled = mean(ydayScaled, na.rm = TRUE),
+              meanCount_Scaled = mean(count_Scaled, na.rm = TRUE)
+              )
+  return(means)
+}
+
 plotMeans <- function(means){
   out <- list()
-  out[[1]] <- ggplot(means, aes(year, meanLength, color = species)) + 
-    geom_point() +
-    geom_line()
-
-  out[[2]] <- ggplot(means, aes(meanTTime_sumTScaled, meanLength, color = species)) +
+  out[[1]] <- ggplot(means, aes(meanTTime_sumTScaled, meanLength, color = species)) +
     geom_point() + 
     geom_smooth(method = "lm", se = FALSE)
   
-  out[[3]] <- ggplot(means, aes(meanFTime_sumFScaled, meanLength, color = species)) +
+  out[[2]] <- ggplot(means, aes(meanFTime_sumFScaled, meanLength, color = species)) +
     geom_point() + 
     geom_smooth(method = "lm", se = FALSE)
   
-  out[[4]] <- ggplot(means, aes(meanYdayScaled, meanLength, color = species)) +
-    geom_point() + 
-    geom_smooth(method = "lm", se = FALSE)
-  
-  out[[5]] <- ggplot(means, aes(meanCount_Scaled, meanLength, color = species)) +
-    geom_point() + 
-    geom_smooth(method = "lm", se = FALSE)
-  
-  out[[5]] <- ggplot(means, aes(meanTTime_sumTScaled, meanFTime_sumFScaled, color = species)) +
+  out[[3]] <- ggplot(means, aes(meanTTime_sumTScaled, meanFTime_sumFScaled, color = species)) +
     geom_point() + 
     geom_smooth(method = "lm", se = FALSE)
   return(out)
@@ -463,10 +468,39 @@ runMeanModels <- function(means) {
 }
 ```
 
-#### Models with flow and temperature from previous *one* month
-```{r means1Month}
+Mean lengths by river. This is information only. Using the WB data only shown here and in the next graph for the models.
+```{r meanLengthsR, echo = FALSE}
+means1R <- getMeansDataByRiver(d_BKT_BNT, "oneMonth_sumTScaled", "oneMonth_sumFScaled")
+  ggplot(means1R, aes(year, meanLength, shape = species, color = species)) + 
+    geom_point() +
+    geom_line() +
+    facet_wrap(~river)
+```
 
+Mean lengths for the mean length model.
+```{r meanLengths, echo = FALSE}    
 means1 <- getMeansData(d_WB_BKT_BNT, "oneMonth_sumTScaled", "oneMonth_sumFScaled")
+  ggplot(means1, aes(year, meanLength, color = species)) + 
+    geom_point() +
+    geom_line()
+```
+
+Graphs for variables that do not depend on number of months
+```{r staticGraphs, echo = FALSE}
+  ggplot(means1, aes(meanYdayScaled, meanLength, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  
+  ggplot(means1, aes(meanCount_Scaled, meanLength, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  
+```
+
+
+#### Models with flow and temperature from previous *one* month
+```{r means1Month, echo = FALSE}
+#means1 calculated above
 plotMeans(means1)
 mod1 <- runMeanModels(means1)
 
@@ -474,12 +508,18 @@ AIC(mod1[[1]], mod1[[2]], mod1[[3]]) %>% arrange(AIC)
 
 summary(mod1[[1]])
 rI1 <- relaimpo::calc.relimp(mod1[[1]])
+
 save(means1, mod1, file = "models/mod1LMMeans.Rdata")
 ```
 
-#### Models with flow and temperature from previous *three* months
-```{r means3Month}
+Relative importance for main effects model
+```{r rI1, echo = FALSE}
+rI1$lmg
+```
 
+
+#### Models with flow and temperature from previous *three* months
+```{r means3Month, echo = FALSE}
 means3 <- getMeansData(d_WB_BKT_BNT, "threeMonth_sumTScaled", "threeMonth_sumFScaled")
 plotMeans(means3)
 mod3 <- runMeanModels(means3)
@@ -489,12 +529,18 @@ AIC(mod3[[1]], mod3[[2]], mod3[[3]]) %>% arrange(AIC)
 summary(mod3[[1]])
 
 rI3 <- relaimpo::calc.relimp(mod3[[1]])
+
 save(means3, mod3, file = "models/mod3LMMeans.Rdata")
 ```
 
-#### Models with flow and temperature from previous *five* months
-```{r means5Month}
+Relative importance for main effects model
+```{r rI3, echo = FALSE}
+rI3$lmg
+```
 
+
+#### Models with flow and temperature from previous *five* months
+```{r means5Month, echo = FALSE}
 means5 <- getMeansData(d_WB_BKT_BNT, "fiveMonth_sumTScaled", "fiveMonth_sumFScaled")
 plotMeans(means5)
 mod5 <- runMeanModels(means5)
@@ -504,14 +550,37 @@ AIC(mod5[[1]], mod5[[2]], mod5[[3]]) %>% arrange(AIC)
 summary(mod5[[1]])
 
 rI5 <- relaimpo::calc.relimp(mod5[[1]])
+
 save(means5, mod5, file = "models/mod5LMMeans.Rdata")
 ```
 
+Relative importance for main effects model
+```{r rI5, echo = FALSE}
+rI5$lmg
+```
 
-AICs and Relative importance of main effects models
-```{r rIKable, echo = FALSE}
-library("kableExtra")
 
+r-squared values and AICs for 1st, 2nd (2-way interactions) and 3rd (3-way interactions) order models
+```{r r2, echo = FALSE}
+knitr::kable(
+ tibble(Order = c(1,2,3),r2 = c(summary(mod1[[1]])$r.squared, summary(mod1[[2]])$r.squared, summary(mod1[[3]])$r.squared)) %>% add_column(numMonths = 1),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+ tibble(Order = c(1,2,3),r2 = c(summary(mod3[[1]])$r.squared, summary(mod3[[2]])$r.squared, summary(mod3[[3]])$r.squared)) %>% add_column(numMonths = 3),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+ tibble(Order = c(1,2,3),r2 = c(summary(mod5[[1]])$r.squared, summary(mod5[[2]])$r.squared, summary(mod5[[3]])$r.squared)) %>% add_column(numMonths = 5),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+# AIC
 knitr::kable(
   format = 'html',
   AIC(mod1[[1]], mod1[[2]], mod1[[3]]) %>% arrange(AIC) %>% add_column(numMonths = 1),
@@ -531,6 +600,12 @@ knitr::kable(
 ) %>%
   kable_styling(full_width = FALSE)
 
+```
+
+Relative importance of main effects models (repeat of above, but all in one place here)
+```{r rIKable, echo = FALSE}
+library("kableExtra")
+
 # Relative Importance
 knitr::kable(
  tibble(var = names(rI1$lmg), relImp = rI1$lmg) %>% add_column(numMonths = 1),
@@ -549,14 +624,13 @@ knitr::kable(
  digits = 3
 ) %>%
   kable_styling(full_width = FALSE)
-
 ```
 
 ### Models with extreme flow events (droughts)
 We get negative cumulFlows because we have some negative flows from the flow extension model
 ```{r drought}
 # put some of these calculations into envDataWB
-tmp = envDataWB %>%
+envDataWBFlow = envDataWB %>%
   mutate(year = year(dateDate),
          yday = yday(dateDate),
          flowNoNAs = ifelse(is.na(flow), 0, flow),
@@ -570,35 +644,50 @@ tmp = envDataWB %>%
          cumulTemp = cumsum(tempNoNAs)) %>%
   ungroup()
 
-tmp2 <- firstObs %>%
+firstObsYears <- firstObs %>%
     filter(year %in% minYear:maxYear, 
            yday > 100, yday < 300)
 
-ggplot(tmp, aes(yday, flow)) +
-  geom_point(aes(yday, observedLength/20), color = 'lightblue', data = tmp2) +
-  geom_point() +
+ggplot(envDataWBFlow, aes(yday, flow)) +
+  geom_point(aes(yday, observedLength/20), size = 0.75, alpha = 0.2, color = 'lightblue', data = firstObsYears) +
+  geom_point(size = 0.5) +
   scale_x_continuous(breaks = seq(0,300, 30)) +
   facet_wrap(~year)
 
-ggplot(tmp, aes(yday, cumulFlow / 10)) +
-  geom_point(aes(yday, observedLength / 20), color = 'lightblue', data = tmp2) +
-  geom_point(color = 'darkgrey') +
-  geom_point(aes(yday, cumulTemp / 800), color = "orange", data = tmp) +
-  geom_point(aes(yday, flow), data = tmp) +
+ggplot(envDataWBFlow, aes(yday, cumulFlow / 10)) +
+  geom_point(aes(yday, observedLength / 20), size = 0.75, alpha = 0.2, color = 'lightblue', data = firstObsYears) +
+  geom_point(size = 0.5, color = 'darkgrey') +
+  geom_point(aes(yday, cumulTemp / 800), size = 0.5, color = "orange", data = envDataWBFlow) +
+  geom_point(aes(yday, flow), size = 0.5, data = envDataWBFlow) +
   scale_x_continuous(breaks = seq(0, 300, 30)) +
+  #theme_publication() +
   facet_wrap(~year)
 
-ggplot(tmp, aes(yday, cumulFlow / 10, color = factor(year))) +
-  #geom_point(aes(yday, observedLength / 20), color = 'lightblue', data = tmp2) +
+ggplot(envDataWBFlow, aes(yday, cumulFlow, color = (year))) +
   geom_point() +
-  geom_point(aes(yday, cumulTemp / 800, color = factor(year)), data = tmp) +
   scale_x_continuous(breaks = seq(0, 300, 30)) 
 
-
+ggplot(envDataWBFlow, aes(yday, cumulTemp, color = (year))) +
+  geom_point() +
+  #geom_point(aes(yday, cumulTemp / 800, color = factor(year)), data = tmp) +
+  scale_x_continuous(breaks = seq(0, 300, 30))
 
 ```
 
+Is there a sampling section effect?
 
+Note: there are fish in sections > 50 for years 2002 and 2003, need to filter out early
+```{r}
+ggplot(d_WB_BKT_BNT %>% filter( section <= 47), aes(factor(section), observedLength)) +
+  geom_boxplot() +
+  geom_smooth() +
+  facet_wrap(~year)
+
+ggplot(d_WB_BKT_BNT %>% filter( section <= 47), aes(factor(year), observedLength)) +
+  geom_boxplot() +
+  geom_smooth() +
+  facet_wrap(~section)
+```
 
 ### Models based on individual observations
 Probably not use these, too much individual variation
@@ -644,6 +733,14 @@ cor(firstObsUnnestedWB_BNT$threeMonth_sumTScaled, firstObsUnnestedWB_BNT$threeMo
 cor(firstObsUnnestedWB_BNT$fiveMonth_sumTScaled, firstObsUnnestedWB_BNT$fiveMonth_sumFScaled)
 ```
 
+Do fish from long samples get bigger over time?  
+No clear evidence.
+```{r}
+ggplot(firstObsUnnestedWB, aes(yday, observedLength)) +
+  geom_point(alpha = 0.05) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~year)
+```
 
 
 Assign the month interval (one, three, five) for flow and temperature variables. The variable will be accessed using e.g. `get(tTime)` in formulas and filters
@@ -703,7 +800,7 @@ calc.relip.mm <- function(model,type='lmg') {
 ```
 
 
-```{r lmer}
+```{r lmer, cache = TRUE}
 
 #modLMER1 <- lmer(observedLength ~ (factor(species) + get(tTime)|year + get(fTime)|year + ydayScaled|year + count_Scaled|year), data = d_WB_BKT_BNT)
 
