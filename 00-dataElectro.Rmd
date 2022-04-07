@@ -7,10 +7,12 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 
 ```{r librariesDataElectro, echo = FALSE}
+# library(devtools)
+# install_github(repo = "Conte-Ecology/westBrookData", subdir = "getWBData")
 library(getWBData)
 library(tidyverse)
 library(lubridate)
-library(validate)
+#library(validate)
 
 # devtools::install_github('bletcher/getPrepareWBData')
 library(getPrepareWBData) # this has functions for preparing West Brook data

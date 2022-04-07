@@ -87,9 +87,11 @@ firstObs_tag <- cdWB_electro %>%
 
 firstObs0 <- add_row(firstObs_tag, firstObs_noTag) %>%
   mutate(date = as_date(detectionDate),
-         yday = yday(date))
+         yday = yday(date),
+         year = year(date))
 
 ```
+
 
 For each date in firstObs0 that at least one fish was captured, calculate summary stats for flow and temperature for different time periods:   
 1. Assumed spawning to capture  
