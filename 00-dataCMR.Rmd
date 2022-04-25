@@ -59,10 +59,42 @@ if(getNew_cdWB_CMR0) {
 str(cdWB_CMR0)
 ```
 
+### Make encounter history file
+```{r enc hist}
+
+ehAll0 <- cdWB_CMR0 %>%
+  arrange(sampleNumber, tag) %>%
+  pivot_wider( 
+    id_cols = tag, 
+    names_from = sampleNumber, 
+    names_prefix = "s",
+    values_from = enc, 
+    values_fill = 0
+  )
+
+ehAll <- ehAll0 %>% 
+  unite(
+    all, 
+    sep = "") %>%
+  mutate(tag = substr(all, 1, 10),
+         encHistory = substr(all, 11, nchar(all)))
+
+# use 'tag' in ehHall for merging datasets
+```
+
+
 ### Wrangle data
 
 
 
 ### Explore data
+```{r}
+
+ggplot(cdWB_CMR0 %>% filter(enc ==1), aes(year)) +
+  geom_bar() +
+  facet_grid(river + season ~ species)
+  
+
+```
 
 
