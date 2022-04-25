@@ -79,6 +79,8 @@ ehAll <- ehAll0 %>%
   mutate(tag = substr(all, 1, 10),
          encHistory = substr(all, 11, nchar(all)))
 
+save(ehAll, file = './data/ehAll.RData')
+
 # use 'tag' in ehHall for merging datasets
 ```
 
