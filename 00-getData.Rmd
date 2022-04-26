@@ -32,3 +32,6 @@ getNew_cdWB_wanding0 <- FALSE
 getNew_cdWB_antenna0 <- FALSE
 ```
 
+
+
+need to add getting environmental data here

@@ -72,16 +72,37 @@ ehAll0 <- cdWB_CMR0 %>%
     values_fill = 0
   )
 
-ehAll <- ehAll0 %>% 
-  unite(
-    all, 
-    sep = "") %>%
-  mutate(tag = substr(all, 1, 10),
-         encHistory = substr(all, 11, nchar(all)))
 
-save(ehAll, file = './data/ehAll.RData')
+getEH <- function(d, f){ 
 
-# use 'tag' in ehHall for merging datasets
+  encs <- d %>%
+    filter(eval(f)) %>%
+    arrange(sampleNumber, tag) %>%
+    pivot_wider( 
+      id_cols = tag, 
+      names_from = sampleNumber, 
+      names_prefix = "s",
+      values_from = enc, 
+      values_fill = 0
+  )
+  
+  return
+  encs %>%
+    unite(
+      all, 
+      sep = "") %>%
+    mutate(tag = substr(all, 1, 10),
+           encHistory = substr(all, 11, nchar(all)))
+}
+
+# all fish
+save(getEH(cdWB_CMR0, TRUE), file = './data/ehAll.RData')
+
+spp <- expression(species %in% c("bkt", "bnt"))
+ehSpp <- getEH(cdWB_CMR0, spp)
+save(ehSpp, file = './data/ehBKTBNT.RData')
+
+
 ```
 
 
