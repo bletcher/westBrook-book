@@ -16,7 +16,11 @@ library(lubridate)
 library(validate)
 ```
 
-There are four main databases we want to create:    
+We have two types of databases: Environmental and fish
+
+The environmental database contains daily mean temperature and flow data. Flow data are from a flow extension model and are not tributary-specific. Temperature data are from tributary-specific loggers.
+
+There are four main fish databases we want to create:    
 1. **cdWB_electro0** West Brook electrofishing data, 3 species (brook trout, brown trout and Atlantic salmon), tagged and untagged fish  
 2. **cdWB_CMR0** West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals  
 3. **cdWB_wanding0** West Brook wanding (portable antenna) data, all tagged salmonids  
@@ -26,10 +30,14 @@ The "0" at the end of these file names indicates that they are the initial files
 
 The `getNew_...` variables determine whether the data are retrieved from the server. Change to 'TRUE' to get a new data frame, e.g. when there are new data on the server.
 ```{r switchesCD}
+getNew_envDataWB <- FALSE
+
 getNew_cdWB_electro0 <- FALSE
 getNew_cdWB_CMR0 <- FALSE
 getNew_cdWB_wanding0 <- FALSE
 getNew_cdWB_antenna0 <- FALSE
+
+getNew_encounterHistories <- FALSE
 ```
 
 

@@ -9,6 +9,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 library(getWBData)
 library(tidyverse)
 library(lubridate)
+library(kableExtra)
 
 ```
 
@@ -30,39 +31,10 @@ Factors to include in the model are
 
 ### Get environmental data
 
-```{r switchesEnv}
-getNew_envDataWB <- FALSE
-```
-
 West Brook environmental data (flow and temperature)
 ```{r envDataWB, cache = TRUE}
+load(file = './data/envDataWB.RData')
 
-if(getNew_envDataWB) {
-  
-  reconnect()
-  envDataWB <- tbl(conDplyr, "data_daily_temperature") %>% 
-    collect(n = Inf) %>% 
-    full_join(tbl(conDplyr, "data_flow_extension") %>% 
-    collect(n = Inf), by = c("river", "date")) %>% 
-    select(-source) %>% 
-    rename(temperature = daily_mean_temp, flow = qPredicted) %>%
-    mutate(dateDate = as_date(date),
-           yday = yday(dateDate))
-
-  save(envDataWB, file = './data/envDataWB.RData')
-  
-} else {
-  load(file = './data/envDataWB.RData')
-}
-str(envDataWB)
-
-ggplot(envDataWB, aes(date, flow)) +
-  geom_point() +
-  facet_wrap(~river)
-
-ggplot(envDataWB, aes(date, temperature)) +
-  geom_point(size = 0.5) +
-  facet_wrap(~river)
 ```
 
 

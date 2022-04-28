@@ -62,17 +62,6 @@ str(cdWB_CMR0)
 ### Make encounter history file
 ```{r enc hist}
 
-ehAll0 <- cdWB_CMR0 %>%
-  arrange(sampleNumber, tag) %>%
-  pivot_wider( 
-    id_cols = tag, 
-    names_from = sampleNumber, 
-    names_prefix = "s",
-    values_from = enc, 
-    values_fill = 0
-  )
-
-
 getEH <- function(d, f){ 
 
   encs <- d %>%
@@ -95,20 +84,28 @@ getEH <- function(d, f){
            encHistory = substr(all, 11, nchar(all)))
 }
 
-# all fish
-save(getEH(cdWB_CMR0, TRUE), file = './data/ehAll.RData')
+if (getNew_encounterHistories) {
 
-spp <- expression(species %in% c("bkt", "bnt"))
-ehSpp <- getEH(cdWB_CMR0, spp)
-save(ehSpp, file = './data/ehBKTBNT.RData')
+  # all fish
+  ehAll <- getEH(cdWB_CMR0, TRUE)
+  save(ehAll, file = './data/ehAll.RData')
+  
+  # brook and brown trout
+  # Put filter conditions in e
+  spp <- expression(species %in% c("bkt", "bnt"))
+  ehSpp <- getEH(cdWB_CMR0, spp)
+  save(ehSpp, file = './data/ehBKTBNT.RData')
+  
+  #area inside, trib
 
-
+}
 ```
 
 
 ### Wrangle data
+```{r}
 
-
+```
 
 ### Explore data
 ```{r}
@@ -119,5 +116,75 @@ ggplot(cdWB_CMR0 %>% filter(enc ==1), aes(year)) +
   
 
 ```
+
+
+### CMR metadata
+#### adapted from https://github.com/Conte-Ecology/westBrookData/blob/master/getWBData/vignettes/westBrookDataIntro.Rmd
+
+#### Column explanations
+*tag* PIT tag number, unique identifier, character
+
+*cohort* year the fish was born, assigned based on size at initial capture and size distributions of fish of known age
+
+*detectionDate* mostly self explanatory, but filled in for unobserved fish as the median capture date for all observed fish.
+
+*sampleName* An ordered identifier for sampling mostly for recognition by people who did the sampling. This is not very clean because early in the study samples were not taken at strictly seasonal intervals. sampleNumber is probably more useful and intuitive.
+
+*sampleNumber* A tidier identifier for samples that strictly increases by one for each season (4/yr)
+
+*river* River the fish was observed in. NA if the fish was not observed.
+
+  *west brook* The mainstem
+
+  *wb jimmy* Larger tributary that fish can move back and forth into from WB section 31 (Open Large from Letcher et al 2015)
+
+  *wb mitchell* Smaller tributary that fish can move back and forth into from WB section 35 (Open Small from Letcher et al 2015)
+
+  *wb obear* Smaller tributary that has a waterfall at its mouth, so fish can only move downstream into WB section 20 (Isolated Small from Letcher et al 2015)
+
+*section* Identifier for the 20m section that the fish was captured in. This is ordered from downstream to upstream starting at 1 within each river. 
+
+*area* inside = section 1:47 in the west brook, trib = tributary (not west brook), below = sections below inside sections, above = sections above the inside sections
+
+*observedLength* in mm
+
+*survey* shock = electroshocking survey
+
+*pass* electrofishing pass. 1 or 2 in the west brook (inside), 1 in tribs
+
+*observedWeight* in g wet weight
+
+*species*  
+bkt = brook trout (native, self-sustained population)  
+bnt = brown trout (non-native, self-sustained population)  
+ats = atlantic salmon (stocked through 2005, no reproduction)  
+
+*dateEmigrated* date of emigration from inside/tribs if observed to emigrate. Coded as emigrated if last observation was on PIT antenna or captured below or above 
+
+*sex* NA = unknown, f = female, m = male, p = precocious male (salmon only)
+
+*enc*  
+Logical, was the fish observed? (1 = yes, 0 = no)
+
+*ageInSamples* number of seasons since summer of the year of birth (1st summer = 0)
+
+*sampleIndex* sampleNumber rescaled to start at 1 and end at length(unique(sampleNumber)) for ease of looping in JAGS
+
+*tagIndex* ordered, unique individual identifier 1:N
+
+*year* of sample
+
+*season* 1 = spring, 2 = summer, 3 = fall, 4 = winter
+
+*proportionSampled* Occasionally the sample was not complete (e.g., skipped west brook but did the tributaries). This is the proportion of sections in the river of capture that were sampled.
+
+*lagDetectionDate* detection date lagged back one observation
+
+*meanTemperature* mean temperature between observation dates. If individual was not observed, median observation date for the sampling occasion was used.
+
+*meanFlow* mean flow between observation dates. If individual was not observed, median observation date for the sampling occasion was used.
+
+*knownZ* z is alive state, so this is 1 between first and last capture, and NA otherwise
+
 
 
