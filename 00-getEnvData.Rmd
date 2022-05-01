@@ -1,0 +1,39 @@
+## Get environmental data {#getEnvData}
+
+```{r globalGetEnvData, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r envData}
+if(getNew_envDataWB) {
+  
+  reconnect()
+  envDataWB <- tbl(conDplyr, "data_daily_temperature") %>% 
+    collect(n = Inf) %>% 
+    full_join(tbl(conDplyr, "data_flow_extension") %>% 
+                collect(n = Inf), by = c("river", "date")) %>% 
+    select(-source) %>% 
+    rename(temperature = daily_mean_temp, flow = qPredicted) %>%
+    mutate(dateDate = as_date(date),
+           yday = yday(dateDate))
+  
+  save(envDataWB, file = './data/envDataWB.RData')
+  
+} else {
+  load(file = './data/envDataWB.RData')
+}
+str(envDataWB)
+
+ggplot(envDataWB, aes(date, flow)) +
+  geom_point() +
+  facet_wrap(~river)
+
+ggplot(envDataWB, aes(date, temperature)) +
+  geom_point(size = 0.5) +
+  facet_wrap(~river)
+```
+
+
+
+need to add getting environmental data here
