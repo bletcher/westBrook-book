@@ -14,5 +14,7 @@ rmd_files:
 - 00-dataAntenna.Rmd
 - 01-models.Rmd
 - 01-modelsYOY.Rmd
+- 01-modelsFlow.Rmd
+- 01-modelsNimble.Rmd
 - 06-summary.Rmd
 - 17-references.Rmd

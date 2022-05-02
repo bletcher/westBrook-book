@@ -37,9 +37,6 @@ getNew_cdWB_CMR0 <- FALSE
 getNew_cdWB_wanding0 <- FALSE
 getNew_cdWB_antenna0 <- FALSE
 
-getNew_encounterHistories <- FALSE
+
 ```
 
-
-
-need to add getting environmental data here

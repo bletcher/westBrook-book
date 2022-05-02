@@ -1,11 +1,11 @@
 ## Flow model {#modelFlow}
 
-```{r globalModelsYOY, include=FALSE}
+```{r globalModelsFlow, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
 
-```{r librariesModelsYOY, echo = FALSE}
+```{r librariesModelsFlow, echo = FALSE}
 library(getWBData)
 library(tidyverse)
 library(lubridate)
@@ -18,7 +18,7 @@ library(lme4)
 dataFlow <- read.csv("./dataIn/flow/EcoDrought_Continuous_MA.csv")
 ```
 
-```{r filterData}
+```{r filterDataFlow}
 tibble(dataFlow)
 table(dataFlow$Site_Name)
 
@@ -26,9 +26,11 @@ d <- dataFlow %>%
   filter(Site_Name %in% c("Jimmy Brook", "Mitchell Brook", "Obear Brook Lower", "West Brook 0")) %>%
   mutate(date = mdy_hm(DateTime_EST),
          site = recode(Site_Name, "Jimmy Brook" = "OL", "Mitchell Brook" = "OS", "Obear Brook Lower" = "IS", "West Brook 0" = "WB"),
-         dischargeLog = log(Discharge_Hobo_cfs))
+         dischargeLog = log(Discharge_Hobo_cfs + 0.01))
   
   
+d %>% filter(is.infinite(dischargeLog))
+
 scaleCol <- function(d){
   return (d - mean(d, na.rm = TRUE)) / sd(d, na.rm = TRUE)
 }
@@ -57,10 +59,10 @@ ggplot(d, aes(date, dischargeLog, color = Site_Name)) +
   geom_point(size = 0.02) +
   facet_wrap(~Site_Name)
 
-
 ggpairs(dWide,
           columns = 6:9,
-          mapping = ggplot2::aes(color = as.factor(year)),
+          mapping = ggplot2::aes(color = as.factor(year), alpha = 0.7),
+          #diag = list(continuous = myDens),
           lower = list(continuous = wrap("points", alpha = 0.3, size=0.1), 
                        combo = wrap("dot", alpha = 0.4, size=0.2))
         )
@@ -82,7 +84,7 @@ ggpairs(dWide %>% filter(yday == 110),
 
 ```{r flowModels}
 
-mod0 <- lmer(OL ~ WB * yday + as.factor(year) + 1|yday, data = dWide)
+#mod0 <- lmer(OL ~ WB * yday + as.factor(year) + 1|yday, data = dWide)
 
 ```
 

@@ -1,0 +1,196 @@
+## Flow model {#modelNimble}
+
+```{r globalModelsNimble, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesModelsNimble, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(kableExtra)
+library(GGally)
+library(nimble)
+library(MCMCvis)
+```
+
+```{r}
+
+```
+
+
+### Read in data
+```{r}
+load('./models/dataOut/eh_2003_wb obear_40.RData')
+```
+
+### run model phi_p 
+```{r phi_p, cache=TRUE}
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
+
+y <- eh$eh
+
+hmm.phi_p <- nimbleCode({
+  phi ~ dunif(0, 1) # prior survival
+  p ~ dunif(0, 1) # prior detection
+  # likelihood
+  gamma[1,1] <- phi      # Pr(alive t -> alive t+1)
+  gamma[1,2] <- 1 - phi  # Pr(alive t -> dead t+1)
+  gamma[2,1] <- 0        # Pr(dead t -> alive t+1)
+  gamma[2,2] <- 1        # Pr(dead t -> dead t+1)
+  delta[1] <- 1          # Pr(alive t = 1) = 1
+  delta[2] <- 0          # Pr(dead t = 1) = 0
+  omega[1,1] <- 1 - p    # Pr(alive t -> non-detected t)
+  omega[1,2] <- p        # Pr(alive t -> detected t)
+  omega[2,1] <- 1        # Pr(dead t -> non-detected t)
+  omega[2,2] <- 0        # Pr(dead t -> detected t)
+  for (i in 1:N){
+    z[i,first[i]] ~ dcat(delta[1:2])
+    for (j in (first[i]+1):T){
+      z[i,j] ~ dcat(gamma[z[i,j-1], 1:2])
+      y[i,j] ~ dcat(omega[z[i,j], 1:2])
+    }
+  }
+})
+  
+first <- apply(y, 1, function(x) min(which(x !=0)))
+
+my.constants <- list(N = nrow(y), 
+                     T = ncol(y), 
+                     first = first)
+
+my.data <- list(y = y + 1)
+
+zinits <- y + 1 # non-detection -> alive
+zinits[zinits == 2] <- 1 # dead -> alive
+initial.values <- function() list(phi = runif(1,0,1),
+                                  p = runif(1,0,1),
+                                  z = zinits)
+
+
+parameters.to.save <- c("phi", "p", "z")  
+n.iter <- 5000
+n.burnin <- 1000
+n.chains <- 2
+
+start <- Sys.time()
+mcmc.phi_p <- nimbleMCMC(code = hmm.phi_p, 
+                        constants = my.constants,
+                        data = my.data,              
+                        inits = initial.values,
+                        monitors = parameters.to.save,
+                        niter = n.iter, 
+                        nburnin = n.burnin, 
+                        nchains = n.chains,
+                        WAIC = TRUE)
+end <- Sys.time()
+elapsed_phi_p <- end - start
+
+MCMCsummary(object = mcmc.phi_p, round = 2)
+MCMCplot(object = mcmc.phi_p)
+
+priors <- runif(3000, 0, 1)
+MCMCtrace(object = mcmc.phi_p,
+          ISB = FALSE,
+          exact = TRUE, 
+          params = c("phi", "p"),
+          pdf = FALSE, 
+          priors = priors)
+
+```
+
+### run model phiT_pT 
+```{r phiT_pT, cache=TRUE}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
+
+y <- eh$eh
+
+hmm.phiT_pT <- nimbleCode({
+  delta[1] <- 1                    # Pr(alive t = 1) = 1
+  delta[2] <- 0                    # Pr(dead t = 1) = 0
+  for (t in 1:(T-1)){ # loop over time
+    phi[t] ~ dunif(0, 1)           # prior survival
+    gamma[1,1,t] <- phi[t]         # Pr(alive t -> alive t+1)
+    gamma[1,2,t] <- 1 - phi[t]     # Pr(alive t -> dead t+1)
+    gamma[2,1,t] <- 0              # Pr(dead t -> alive t+1)
+    gamma[2,2,t] <- 1              # Pr(dead t -> dead t+1)
+    p[t] ~ dunif(0, 1)             # prior detection
+    omega[1,1,t] <- 1 - p[t]       # Pr(alive t -> non-detected t)
+    omega[1,2,t] <- p[t]           # Pr(alive t -> detected t)
+    omega[2,1,t] <- 1              # Pr(dead t -> non-detected t)
+    omega[2,2,t] <- 0              # Pr(dead t -> detected t)
+  }
+  # likelihood
+  for (i in 1:N){
+    z[i,first[i]] ~ dcat(delta[1:2])
+    for (j in (first[i]+1):T){
+      z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1])
+      y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1])
+    }
+  }
+})
+  
+first <- apply(y, 1, function(x) min(which(x !=0)))
+
+my.constants <- list(N = nrow(y), 
+                     T = ncol(y), 
+                     first = first)
+
+my.data <- list(y = y + 1)
+
+zinits <- y + 1 # non-detection -> alive
+zinits[zinits == 2] <- 1 # dead -> alive
+
+initial.values <- function() list(phi = runif(my.constants$T - 1, 0, 1),
+                                  p = runif(my.constants$T - 1, 0, 1),
+                                  z = zinits)
+
+parameters.to.save <- c("phi", "p")  
+n.iter <- 10000
+n.burnin <- 1000
+n.chains <- 2
+
+start <- Sys.time()
+mcmc.phiT_pT <- nimbleMCMC(code = hmm.phiT_pT, 
+                          constants = my.constants,
+                          data = my.data,              
+                          inits = initial.values,
+                          monitors = parameters.to.save,
+                          niter = n.iter, 
+                          nburnin = n.burnin, 
+                          nchains = n.chains
+                          #WAIC = TRUE
+                          )
+end <- Sys.time()
+elapsed_phiT_pT <- end - start
+
+
+MCMCsummary(object = mcmc.phiT_pT, round = 2)
+MCMCplot(object = mcmc.phiT_pT)
+
+priors <- runif(n.iter, 0, 1)
+MCMCtrace(object = mcmc.phiT_pT,
+          ISB = FALSE,
+          exact = TRUE, 
+          params = c("phi[1]", "phi[2]", "phi[3]", "phi[4]", "phi[5]", 
+                     "p[1]", "p[2]", "p[3]", "p[4]", "p[5]"),
+          pdf = FALSE, 
+          priors = priors)
+
+
+```
+
+
+### Compare models
+```{r compare models}
+
+data.frame(model = c("(phi,p)",
+                     "(phit,pt)"),
+           WAIC = c(mcmc.phi_p, 
+                    mcmc.phiT_pT))
+
+
+```
+
