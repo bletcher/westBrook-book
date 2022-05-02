@@ -13,6 +13,11 @@ library(validate)
 library(rlang)
 ```
 
+```{r}
+getNew_encounterHistories <- TRUE
+```
+
+
 ### Get data
 West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals
 ```{r CMR}
@@ -74,25 +79,36 @@ ehFilter <- function(data, cols, ops, vals) {
   data %>% dplyr::filter(!!!exprs)
 }
 
-getEH <- function(d, cols, ops, vals){
-  enc <- d %>%
+getEHDataWide <- function(d, cols, ops, vals, var, valueFill = 0){   
+  out <- d %>%
     ehFilter(cols, ops, vals) %>% 
     arrange(sampleNumber, tag) %>%
     pivot_wider(
       id_cols = tag,
       names_from = sampleNumber,
       names_prefix = "s",
-      values_from = enc,
-      values_fill = 0
+      values_from = eval(substitute(var)),
+      values_fill = valueFill
     )
+}
+
+getEH <- function(d, cols, ops, vals){
+  encWide <- getEHDataWide(d, cols, ops, vals, "enc")
+  eh <- as.matrix(encWide %>% select(-tag), nrow = nrow(encWide), ncol = ncol(encWide) - 1)
   
-  eh <- as.matrix(enc %>% select(-tag), nrow = nrow(enc), ncol = ncol(enc) - 1)
-  tags <- enc %>% select(tag)
+  flowWide <- getEHDataWide(d, cols, ops, vals, "meanFlow")
+  flowMatrix <- as.matrix(flowWide %>% select(-tag), nrow = nrow(flowWide), ncol = ncol(flowWide) - 1)
+  
+  temperatureWide <- getEHDataWide(d, cols, ops, vals, "meanTemperature")
+  temperatureMatrix <- as.matrix(temperatureWide %>% select(-tag), nrow = nrow(temperatureWide), ncol = ncol(temperatureWide) - 1)
+
+  
+  tags <- encWide %>% select(tag)
   data <- d %>%
     ehFilter(cols, ops, vals) %>% 
-    filter(enc == 1)
+    arrange(sampleNumber, tag)
   
-  return(list(eh = eh, tags = tags, data = data))
+  return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, tags = tags, data = data ))
 }
 
 if (getNew_encounterHistories) {
