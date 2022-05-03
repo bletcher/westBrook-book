@@ -11,6 +11,7 @@ library(tidyverse)
 library(lubridate)
 library(validate)
 library(rlang)
+library(stringi)
 ```
 
 ```{r}
@@ -113,6 +114,15 @@ getEH <- function(d, cols, ops, vals){
 
 if (getNew_encounterHistories) {
 
+    # read down through the cols, ops, vals variables for filter conditions
+  cols <- list( "river")
+  ops <- list("==")
+  vals <- list("wb obear")
+  
+  eh <- getEH(cdWB_CMR0, cols, ops, vals)
+  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
+  save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
+  
   # read down through the cols, ops, vals variables for filter conditions
   cols <- list("cohort", "river", "sampleNumber")
   ops <- list("==", "==", "<")
