@@ -312,6 +312,7 @@ MCMCtrace(object = mcmc.phiT_pT_cohort,
 
 y <- eh$eh
 nCohorts <- nrow(unique(eh$cohorts))
+nSeasons <- nrow(unique(eh$seasons))
 
 hmm.phiT_pT_cohort_flow <- nimbleCode({
   delta[1] <- 1                    # Pr(alive t = 1) = 1
@@ -319,7 +320,12 @@ hmm.phiT_pT_cohort_flow <- nimbleCode({
   
   for (i in 1:N){
     for (t in 1:(T-1)){ # loop over time
-      logit(phi[t,i]) <- betaPhi[t,cohort[i]] + betaFlow[cohort[i]] * flow[i,t]          # prior survival
+      logit(phi[t,i]) <- 
+        betaPhi[t,cohort[i]] + 
+        betaFlow[1,season[i]] * flow[i,t] +
+        betaFlow[2,season[i]] * flow[i,t] * flow[i,t]
+         # prior survival
+      
       gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
       gamma[1,2,t,i] <- 1 - phi[t,i]     # Pr(alive t -> dead t+1)
       gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1)
@@ -354,8 +360,9 @@ hmm.phiT_pT_cohort_flow <- nimbleCode({
     }
   }
   
-  for (c in 1:nCohorts){
-    betaFlow[c] ~ dnorm(0, 1)
+  for (s in 1:nSeasons){
+    betaFlow[1,s] ~ dnorm(0, 1)
+    betaFlow[2,s] ~ dnorm(0, 1)
   }    
   
   # likelihood
@@ -376,6 +383,7 @@ my.constants <- list(N = nrow(y),
                      first = first,
                      cohort = cohort, 
                      nCohorts = nCohorts,
+                     season = eh$seasons$season,
                      flow = eh$flow)
 
 my.data <- list(y = y + 1)
@@ -391,10 +399,10 @@ initial.values <- function() list(
   betaP =   array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
   betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
   betaPCohort =   array(runif(nCohorts, 0, 1),c(nCohorts)),
-  betaFlow = array(rnorm(nCohorts, 0, 1))
+  betaFlow = array(rnorm(2 * nCohorts, 0, 1), c(2, nCohorts))
 )
 
-parameters.to.save <- c("betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", "beta")  
+parameters.to.save <- c("betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", "betaFlow")  
 n.iter <- 5000
 n.burnin <- 1000
 n.chains <- 2
@@ -417,7 +425,7 @@ elapsed_phiT_pT_cohort_flow <- end - start
 
 MCMCsummary(object = mcmc.phiT_pT_cohort_flow, round = 2)
 #MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = "betaPhiOut")
-MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = "beta")# 
+MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = "betaFlow")# 
 MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = c("betaPhiCohortOut"))
 MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = c("betaPCohortOut"))
 
@@ -426,6 +434,13 @@ MCMCtrace(object = mcmc.phiT_pT_cohort_flow,
           #ISB = FALSE,
           #exact = TRUE, 
           params = c("betaPhiCohortOut"),
+          pdf = FALSE, 
+          priors = priors)
+
+MCMCtrace(object = mcmc.phiT_pT_cohort_flow,
+          #ISB = FALSE,
+          #exact = TRUE, 
+          params = c("betaFlow"),
           pdf = FALSE, 
           priors = priors)
 

@@ -123,9 +123,10 @@ getEH <- function(d, cols, ops, vals, occasionVar = "ageInSamples", maxOccasionV
     filter(ageInSamples > 0, get(occasionVar) <= maxOccasionValue) %>%
     arrange(eval(substitute(occasionVar)), tag)
   
-  cohorts <- tags %>% left_join(data %>% select(tag, cohort) %>% unique()) %>% select(cohort) 
+  cohorts <- tags %>% left_join(data %>% select(tag, cohort) %>% unique()) %>% select(cohort)
+  seasons <- tags %>% left_join(data %>% select(tag, season) %>% unique()) %>% select(season)
   
-  return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, tags = tags, cohorts = cohorts, data = data ))
+  return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, tags = tags, cohorts = cohorts, seasons = seasons, data = data ))
 }
 
 
