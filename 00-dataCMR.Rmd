@@ -1,3 +1,8 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 ## Capture-recapture data {#dataCMR}
 
 ```{r globalGetDataCMR, include=FALSE}
@@ -153,7 +158,7 @@ if (getNew_encounterHistories) {
   save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
 
   
-      # read down through the cols, ops, vals variables for filter conditions
+  # read down through the cols, ops, vals variables for filter conditions
   cols <- list("cohort", "river")
   ops <- list("%in%", "==")
   vals <- list(2002:2006, "wb obear")

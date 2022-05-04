@@ -22,7 +22,7 @@ library(MCMCvis)
 
 ### Read in data
 ```{r}
-load('./models/dataOut/eh_200320042005_wb obear.RData')
+load('./models/dataOut/eh_20022003200420052006_wb obear.RData')
 ```
 
 ### run model phi_p 
