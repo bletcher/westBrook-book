@@ -305,6 +305,7 @@ MCMCtrace(object = mcmc.phiT_pT_cohort,
 ```
 
 ### run model phiT_pT_cohort_flow 
+#### model is preliminary  - need to get complete scaled flow matrix
 ```{r phiT_pT_cohort_flow, cache=TRUE}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
@@ -318,7 +319,7 @@ hmm.phiT_pT_cohort_flow <- nimbleCode({
   
   for (i in 1:N){
     for (t in 1:(T-1)){ # loop over time
-      logit(phi[t,i]) <- betaPhi[t,cohort[i]] + beta[cohort[i]] * flow[i,t]          # prior survival
+      logit(phi[t,i]) <- betaPhi[t,cohort[i]] + betaFlow[cohort[i]] * flow[i,t]          # prior survival
       gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
       gamma[1,2,t,i] <- 1 - phi[t,i]     # Pr(alive t -> dead t+1)
       gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1)
@@ -354,7 +355,7 @@ hmm.phiT_pT_cohort_flow <- nimbleCode({
   }
   
   for (c in 1:nCohorts){
-    beta[c] ~ dnorm(0, 1)
+    betaFlow[c] ~ dnorm(0, 1)
   }    
   
   # likelihood
@@ -389,7 +390,8 @@ initial.values <- function() list(
   betaPhi = array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
   betaP =   array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
   betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
-  betaPCohort =   array(runif(nCohorts, 0, 1),c(nCohorts))
+  betaPCohort =   array(runif(nCohorts, 0, 1),c(nCohorts)),
+  betaFlow = array(rnorm(nCohorts, 0, 1))
 )
 
 parameters.to.save <- c("betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", "beta")  
