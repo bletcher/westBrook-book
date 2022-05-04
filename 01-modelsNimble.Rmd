@@ -93,6 +93,7 @@ MCMCtrace(object = mcmc.phi_p,
           pdf = FALSE, 
           priors = priors)
 
+gc()
 ```
 
 ### run model phiT_pT 
