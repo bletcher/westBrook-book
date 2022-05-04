@@ -89,6 +89,7 @@ ehFilter <- function(data, cols, ops, vals) {
 
 # var is the variable to put in the encounter history (e.g. 'enc' or 'temp')
 # occasionVar is the variable used to define samlping occasions (e.g. 'sampleNumber' or 'ageInsamples')
+# maxOccasionValue is the maximum value for occasion columns, in units of 'occasionVar'
 getEHDataWide <- function(d, cols, ops, vals, var, occasionVar = "ageInSamples", maxOccasionValue, valuesFill = 0){   
   d %>%
     ehFilter(cols, ops, vals) %>% 
@@ -98,7 +99,7 @@ getEHDataWide <- function(d, cols, ops, vals, var, occasionVar = "ageInSamples",
     pivot_wider(
       id_cols = tag,
       names_from = eval(substitute(occasionVar)),
-      names_prefix = substr(eval(substitute(var)), 1, 1), #"s",
+      names_prefix = substr(eval(substitute(occasionVar)), 1, 1), #"s",
       values_from = eval(substitute(var)),
       values_fill = valuesFill
     )
@@ -109,10 +110,10 @@ getEH <- function(d, cols, ops, vals, occasionVar = "ageInSamples", maxOccasionV
   encWide <- getEHDataWide(d, cols, ops, vals, "enc", occasionVar, maxOccasionValue)
   eh <- as.matrix(encWide %>% select(-tag), nrow = nrow(encWide), ncol = ncol(encWide) - 1)
   
-  flowWide <- getEHDataWide(d, cols, ops, vals, "meanFlow", occasionVar, maxOccasionValue)
+  flowWide <- getEHDataWide(d, cols, ops, vals, "meanFlow", occasionVar, maxOccasionValue, valuesFill = NA)
   flowMatrix <- as.matrix(flowWide %>% select(-tag), nrow = nrow(flowWide), ncol = ncol(flowWide) - 1)
   
-  temperatureWide <- getEHDataWide(d, cols, ops, vals, "meanTemperature", occasionVar, maxOccasionValue)
+  temperatureWide <- getEHDataWide(d, cols, ops, vals, "meanTemperature", occasionVar, maxOccasionValue, valuesFill = NA)
   temperatureMatrix <- as.matrix(temperatureWide %>% select(-tag), nrow = nrow(temperatureWide), ncol = ncol(temperatureWide) - 1)
 
   tags <- encWide %>% select(tag)
@@ -159,9 +160,21 @@ if (getNew_encounterHistories) {
 
   
   # read down through the cols, ops, vals variables for filter conditions
+  
+  
   cols <- list("cohort", "river")
   ops <- list("%in%", "==")
   vals <- list(2002:2006, "wb obear")
+  
+  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "ageInSamples", maxOccasionValue = 10)
+  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
+  save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
+
+  # all cohorts 2002:2014
+  cdWB_CMR0 %>% filter(river == "wb obear") %>% group_by(cohort) %>%summarize(n = n())
+  cols <- list("cohort", "river")
+  ops <- list("%in%", "==")
+  vals <- list(2002:2014, "wb obear")
   
   eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "ageInSamples", maxOccasionValue = 10)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
