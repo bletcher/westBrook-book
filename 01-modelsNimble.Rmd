@@ -6,25 +6,30 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 
 ```{r librariesModelsNimble, echo = FALSE}
-#library(getWBData)
+library(getWBData)
 library(tidyverse)
 library(lubridate)
 library(kableExtra)
-#library(GGally)
+library(GGally)
 library(nimble)
 library(MCMCvis)
 ```
 
+```{r}
+
+```
+
+
 ### Read in data
 ```{r}
-load('./data/ehOBCohort2003.RData')
+load('./models/dataOut/eh_200320042005_wb obear.RData')
 ```
 
 ### run model phi_p 
 ```{r phi_p, cache=TRUE}
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 
-y <- ehOBCohort2003$eh
+y <- eh$eh
 
 hmm.phi_p <- nimbleCode({
   phi ~ dunif(0, 1) # prior survival
@@ -48,7 +53,7 @@ hmm.phi_p <- nimbleCode({
     }
   }
 })
-
+  
 first <- apply(y, 1, function(x) min(which(x !=0)))
 
 my.constants <- list(N = nrow(y), 
@@ -71,14 +76,14 @@ n.chains <- 2
 
 start <- Sys.time()
 mcmc.phi_p <- nimbleMCMC(code = hmm.phi_p, 
-                         constants = my.constants,
-                         data = my.data,              
-                         inits = initial.values,
-                         monitors = parameters.to.save,
-                         niter = n.iter, 
-                         nburnin = n.burnin, 
-                         nchains = n.chains,
-                         WAIC = TRUE)
+                        constants = my.constants,
+                        data = my.data,              
+                        inits = initial.values,
+                        monitors = parameters.to.save,
+                        niter = n.iter, 
+                        nburnin = n.burnin, 
+                        nchains = n.chains,
+                        WAIC = TRUE)
 end <- Sys.time()
 elapsed_phi_p <- end - start
 
@@ -93,7 +98,6 @@ MCMCtrace(object = mcmc.phi_p,
           pdf = FALSE, 
           priors = priors)
 
-gc()
 ```
 
 ### run model phiT_pT 
@@ -101,7 +105,7 @@ gc()
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 
-y <- ehOBCohort2003$eh
+y <- eh$eh
 
 hmm.phiT_pT <- nimbleCode({
   delta[1] <- 1                    # Pr(alive t = 1) = 1
@@ -127,7 +131,7 @@ hmm.phiT_pT <- nimbleCode({
     }
   }
 })
-
+  
 first <- apply(y, 1, function(x) min(which(x !=0)))
 
 my.constants <- list(N = nrow(y), 
@@ -139,25 +143,26 @@ my.data <- list(y = y + 1)
 zinits <- y + 1 # non-detection -> alive
 zinits[zinits == 2] <- 1 # dead -> alive
 
-initial.values <- function() list(phi = runif(my.constants$T-1,0,1),
-                                  p = runif(my.constants$T-1,0,1),
+initial.values <- function() list(phi = runif(my.constants$T - 1, 0, 1),
+                                  p = runif(my.constants$T - 1, 0, 1),
                                   z = zinits)
 
-parameters.to.save <- c("phi", "p", "z")  
-n.iter <- 5000
+parameters.to.save <- c("phi", "p")  
+n.iter <- 10000
 n.burnin <- 1000
 n.chains <- 2
 
 start <- Sys.time()
 mcmc.phiT_pT <- nimbleMCMC(code = hmm.phiT_pT, 
-                           constants = my.constants,
-                           data = my.data,              
-                           inits = initial.values,
-                           monitors = parameters.to.save,
-                           niter = n.iter, 
-                           nburnin = n.burnin, 
-                           nchains = n.chains,
-                           WAIC = TRUE)
+                          constants = my.constants,
+                          data = my.data,              
+                          inits = initial.values,
+                          monitors = parameters.to.save,
+                          niter = n.iter, 
+                          nburnin = n.burnin, 
+                          nchains = n.chains
+                          #WAIC = TRUE
+                          )
 end <- Sys.time()
 elapsed_phiT_pT <- end - start
 
@@ -169,7 +174,129 @@ priors <- runif(n.iter, 0, 1)
 MCMCtrace(object = mcmc.phiT_pT,
           ISB = FALSE,
           exact = TRUE, 
-          params = c("phi"),
+          params = c("phi[1]", "phi[2]", "phi[3]", "phi[4]", "phi[5]", 
+                     "p[1]", "p[2]", "p[3]", "p[4]", "p[5]"),
+          pdf = FALSE, 
+          priors = priors)
+
+
+```
+
+### run model phiT_pT_cohort 
+```{r phiT_pT_cohort, cache=TRUE}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
+
+y <- eh$eh
+nCohorts <- nrow(unique(eh$cohorts))
+
+hmm.phiT_pT_cohort <- nimbleCode({
+  delta[1] <- 1                    # Pr(alive t = 1) = 1
+  delta[2] <- 0                    # Pr(dead t = 1) = 0
+  
+  for (i in 1:N){
+    for (t in 1:(T-1)){ # loop over time
+      logit(phi[t,i]) <- betaPhi[t,cohort[i]]           # prior survival
+      gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
+      gamma[1,2,t,i] <- 1 - phi[t,i]     # Pr(alive t -> dead t+1)
+      gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1)
+      gamma[2,2,t,i] <- 1              # Pr(dead t -> dead t+1)
+      
+      logit(p[t,i]) <- betaP[t,cohort[i]]             # prior detection
+      omega[1,1,t,i] <- 1 - p[t,i]       # Pr(alive t -> non-detected t)
+      omega[1,2,t,i] <- p[t,i]           # Pr(alive t -> detected t)
+      omega[2,1,t,i] <- 1              # Pr(dead t -> non-detected t)
+      omega[2,2,t,i] <- 0              # Pr(dead t -> detected t)
+    }
+  }
+  
+  
+  for (c in 1:nCohorts){
+    # mean values
+    betaPhiCohort[c] ~ dnorm(0,1)
+    betaPCohort[c] ~ dnorm(0,1)
+    for (t in 1:(T-1)){ 
+      betaPhi[t,c] ~ dnorm(betaPhiCohort[c], 1)
+      betaP[t,c] ~ dnorm(betaPCohort[c], 1)
+    }
+  }
+  
+  # back-transform for examining output
+  for (c in 1:nCohorts){
+      betaPhiCohortOut[c] <- 1/(1 + exp(-betaPhiCohort[c]))
+      betaPCohortOut[c] <- 1/(1 + exp(-betaPCohort[c]))
+    for (t in 1:(T-1)){ 
+      betaPhiOut[t,c] <- 1/(1 + exp(-betaPhi[t,c]))
+      betaPOut[t,c] <- 1/(1 + exp(-betaP[t,c])) 
+    }
+  }
+  
+  # likelihood
+  for (i in 1:N){
+    z[i,first[i]] ~ dcat(delta[1:2])
+    for (j in (first[i]+1):T){
+      z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
+      y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
+    }
+  }
+})
+  
+first <- apply(y, 1, function(x) min(which(x !=0)))
+cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+
+my.constants <- list(N = nrow(y), 
+                     T = ncol(y), 
+                     first = first,
+                     cohort = cohort, 
+                     nCohorts = nCohorts)
+
+my.data <- list(y = y + 1)
+
+zinits <- y + 1 # non-detection -> alive
+zinits[zinits == 2] <- 1 # dead -> alive
+
+initial.values <- function() list(
+  phi = array(runif((my.constants$T - 1) * my.constants$N, 0, 1),c((my.constants$T - 1), my.constants$N)),
+  p = array(runif((my.constants$T - 1) * my.constants$N, 0, 1),c((my.constants$T - 1), my.constants$N)),
+  z = zinits,
+  betaPhi = array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
+  betaP = array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
+  betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
+  betaPCohort = array(runif(nCohorts, 0, 1),c(nCohorts))
+)
+
+parameters.to.save <- c("betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut")  
+n.iter <- 5000
+n.burnin <- 1000
+n.chains <- 2
+
+start <- Sys.time()
+mcmc.phiT_pT_cohort <- nimbleMCMC(
+  code = hmm.phiT_pT_cohort, 
+  constants = my.constants,
+  data = my.data,              
+  inits = initial.values,
+  monitors = parameters.to.save,
+  niter = n.iter, 
+  nburnin = n.burnin, 
+  nchains = n.chains
+  #WAIC = TRUE
+)
+end <- Sys.time()
+elapsed_phiT_pT_cohort <- end - start
+
+
+MCMCsummary(object = mcmc.phiT_pT_cohort, round = 2)
+MCMCplot(object = mcmc.phiT_pT_cohort, params = "betaPhiOut")
+MCMCplot(object = mcmc.phiT_pT_cohort, params = "betaPOut")# 
+MCMCplot(object = mcmc.phiT_pT_cohort, params = c("betaPhiCohortOut"))
+MCMCplot(object = mcmc.phiT_pT_cohort, params = c( "betaPCohortOut"))
+
+priors <- runif(n.iter, 0, 1)
+MCMCtrace(object = mcmc.phiT_pT_cohort,
+          #ISB = FALSE,
+          #exact = TRUE, 
+          params = c("betaPhiOut"),
           pdf = FALSE, 
           priors = priors)
 

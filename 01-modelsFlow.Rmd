@@ -27,8 +27,8 @@ d <- dataFlow %>%
   mutate(date = mdy_hm(DateTime_EST),
          site = recode(Site_Name, "Jimmy Brook" = "OL", "Mitchell Brook" = "OS", "Obear Brook Lower" = "IS", "West Brook 0" = "WB"),
          dischargeLog = log(Discharge_Hobo_cfs + 0.01))
-
-
+  
+  
 d %>% filter(is.infinite(dischargeLog))
 
 scaleCol <- function(d){
@@ -39,15 +39,15 @@ dWide <- d %>%
   pivot_wider(id_cols = date, 
               values_from = dischargeLog, 
               names_from = site
-  ) %>%
+             ) %>%
   mutate(
-    OLScaled = scaleCol(OL),
-    ISScaled = scaleCol(IS),
-    OSScaled = scaleCol(OS),
-    WBScaled = scaleCol(WB),
-    yday = yday(date),
-    year = year(date)
-  )
+         OLScaled = scaleCol(OL),
+         ISScaled = scaleCol(IS),
+         OSScaled = scaleCol(OS),
+         WBScaled = scaleCol(WB),
+         yday = yday(date),
+         year = year(date)
+        )
 
 
 
@@ -60,26 +60,26 @@ ggplot(d, aes(date, dischargeLog, color = Site_Name)) +
   facet_wrap(~Site_Name)
 
 ggpairs(dWide,
-        columns = 6:9,
-        mapping = ggplot2::aes(color = as.factor(year), alpha = 0.7),
-        #diag = list(continuous = myDens),
-        lower = list(continuous = wrap("points", alpha = 0.3, size=0.1), 
-                     combo = wrap("dot", alpha = 0.4, size=0.2))
-)
+          columns = 6:9,
+          mapping = ggplot2::aes(color = as.factor(year), alpha = 0.7),
+          #diag = list(continuous = myDens),
+          lower = list(continuous = wrap("points", alpha = 0.3, size=0.1), 
+                       combo = wrap("dot", alpha = 0.4, size=0.2))
+        )
 
 ggpairs(dWide %>% filter(yday > 90, yday < 300),
-        columns = 6:9,
-        mapping = ggplot2::aes(color = as.factor(year)),
-        lower = list(continuous = wrap("points", alpha = 0.3, size=0.1), 
-                     combo = wrap("dot", alpha = 0.4, size=0.2))
-)
+          columns = 6:9,
+          mapping = ggplot2::aes(color = as.factor(year)),
+          lower = list(continuous = wrap("points", alpha = 0.3, size=0.1), 
+                       combo = wrap("dot", alpha = 0.4, size=0.2))
+        )
 
 ggpairs(dWide %>% filter(yday == 110),
-        columns = 8:11,
-        mapping = ggplot2::aes(color = as.factor(year)),
-        lower = list(continuous = wrap("points", alpha = 0.3, size=0.2), 
-                     combo = wrap("dot", alpha = 0.4, size=0.2))
-)
+          columns = 8:11,
+          mapping = ggplot2::aes(color = as.factor(year)),
+          lower = list(continuous = wrap("points", alpha = 0.3, size=0.2), 
+                       combo = wrap("dot", alpha = 0.4, size=0.2))
+        )
 ```
 
 ```{r flowModels}
