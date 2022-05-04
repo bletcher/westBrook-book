@@ -84,11 +84,10 @@ ehFilter <- function(data, cols, ops, vals) {
 
 # var is the variable to put in the encounter history (e.g. 'enc' or 'temp')
 # occasionVar is the variable used to define samlping occasions (e.g. 'sampleNumber' or 'ageInsamples')
-getEHDataWide <- function(d, cols, ops, vals, var, occasionVar = "ageInSamples", valuesFill = 0){   
-  
-  out <- d %>%
+getEHDataWide <- function(d, cols, ops, vals, var, occasionVar = "ageInSamples", maxOccasionValue, valuesFill = 0){   
+  d %>%
     ehFilter(cols, ops, vals) %>% 
-    filter(ageInSamples > 0) %>%
+    filter(ageInSamples > 0, get(occasionVar) <= maxOccasionValue) %>%
     #arrange(eval(substitute(occasionVar)), tag) %>%
     arrange(get(occasionVar)) %>% #need this to get correct order of columns. eval(substitute(occasionVar)) doesn;'t work 
     pivot_wider(
@@ -101,21 +100,21 @@ getEHDataWide <- function(d, cols, ops, vals, var, occasionVar = "ageInSamples",
 }
 
 # occasionVar is the variable used to define sampling occasions (e.g. sampleNumber or ageInsamples)
-getEH <- function(d, cols, ops, vals, occasionVar = "ageInSamples"){
-  encWide <- getEHDataWide(d, cols, ops, vals, "enc", occasionVar)
+getEH <- function(d, cols, ops, vals, occasionVar = "ageInSamples", maxOccasionValue){
+  encWide <- getEHDataWide(d, cols, ops, vals, "enc", occasionVar, maxOccasionValue)
   eh <- as.matrix(encWide %>% select(-tag), nrow = nrow(encWide), ncol = ncol(encWide) - 1)
   
-  flowWide <- getEHDataWide(d, cols, ops, vals, "meanFlow", occasionVar)
+  flowWide <- getEHDataWide(d, cols, ops, vals, "meanFlow", occasionVar, maxOccasionValue)
   flowMatrix <- as.matrix(flowWide %>% select(-tag), nrow = nrow(flowWide), ncol = ncol(flowWide) - 1)
   
-  temperatureWide <- getEHDataWide(d, cols, ops, vals, "meanTemperature", occasionVar)
+  temperatureWide <- getEHDataWide(d, cols, ops, vals, "meanTemperature", occasionVar, maxOccasionValue)
   temperatureMatrix <- as.matrix(temperatureWide %>% select(-tag), nrow = nrow(temperatureWide), ncol = ncol(temperatureWide) - 1)
 
   tags <- encWide %>% select(tag)
   
   data <- d %>%
     ehFilter(cols, ops, vals) %>% 
-    filter(ageInSamples > 0) %>%
+    filter(ageInSamples > 0, get(occasionVar) <= maxOccasionValue) %>%
     arrange(eval(substitute(occasionVar)), tag)
   
   cohorts <- tags %>% left_join(data %>% select(tag, cohort) %>% unique()) %>% select(cohort) 
@@ -131,7 +130,7 @@ if (getNew_encounterHistories) {
   ops <- list("==")
   vals <- list("wb obear")
   
-  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "sampleNumber")
+  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "sampleNumber", maxOccasionValue = 200)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
   
@@ -140,7 +139,7 @@ if (getNew_encounterHistories) {
   ops <- list("==", "==", "<")
   vals <- list(2003, "wb obear", 40)
   
-  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "sampleNumber")
+  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "sampleNumber", maxOccasionValue = 200)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
 
@@ -149,7 +148,7 @@ if (getNew_encounterHistories) {
   ops <- list("%in%", "==", "<")
   vals <- list(2003:2005, "wb obear", 400)
   
-  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "sampleNumber")
+  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "sampleNumber", maxOccasionValue = 200)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
 
@@ -159,7 +158,7 @@ if (getNew_encounterHistories) {
   ops <- list("%in%", "==")
   vals <- list(2002:2006, "wb obear")
   
-  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "ageInSamples")
+  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "ageInSamples", maxOccasionValue = 10)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
 
