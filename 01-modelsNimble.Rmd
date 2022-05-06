@@ -408,7 +408,7 @@ initial.values <- function() list(
   betaP =   array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
   betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
   betaPCohort =   array(runif(nCohorts, 0, 1),c(nCohorts)),
-  betaFlow = array(rnorm(2 * nCohorts, 0, 1), c(2, nCohorts))
+  betaFlow = array(rnorm(2 * 4, 0, 1), c(2, 4))
 )
 
 parameters.to.save <- c("betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", "betaFlow")  
