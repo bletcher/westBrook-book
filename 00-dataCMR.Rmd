@@ -21,13 +21,214 @@ library(stringi)
 
 ```{r}
 getNew_encounterHistories <- TRUE
+
+# maximum ageInSamples for both createCmrData and getEH
+maxAgeInSamples <- 12
 ```
 
+### Temporary home for updated functions
+```{r}
+
+addEnvironmental <- function(coreData, sampleFlow = F, funName = "mean") {
+  func <- get(funName)
+  whichDrainage <- "west"
+  if (all(!unique(coreData$river) %in% c("west brook", "wb jimmy", 
+                                         "wb mitchell", "wb obear"))) {
+    whichDrainage <- "stanley"
+  }
+  if (whichDrainage == "west") {
+    envData <- tbl(conDplyr, "data_daily_temperature") %>% 
+      collect(n = Inf) %>% 
+      full_join(tbl(conDplyr, "data_flow_extension") %>% 
+      collect(n = Inf), by = c("river", "date")) %>% 
+      select(-source) %>% 
+      dplyr::filter(date <= max(coreData$detectionDate), 
+                    date >= min(coreData$detectionDate)) %>% 
+      rename(temperature = daily_mean_temp, flow = qPredicted) %>% 
+      data.frame()
+  }
+  else {
+    envData <- tbl(conDplyr, "stanley_environmental") %>% 
+      filter(section == 11) %>% 
+      select(datetime, temperature, depth) %>% 
+      collect(n = Inf) %>% 
+      rename(flow = depth, date = datetime) %>% 
+      data.frame()
+    warning("Depth was inserted into flow column because that is what is available in Stanley")
+  }
+  
+  coreData <- coreData %>% 
+    group_by(tag) %>% 
+    arrange(ageInSamples) %>%
+    mutate(lagDetectionDate = lead(detectionDate)) %>% 
+    ungroup()
+  
+  if (whichDrainage == "west") {
+    getIntervalMean <- function(start, end, r, e, fun = func) {
+      d <- envData$date
+      if (e == "Temperature") {
+        envCol <- "temperature"
+        if (is.na(r)) 
+          meanVar <- fun(envData[d >= start & d <= end, envCol], na.rm = T)
+        if (!is.na(r)) 
+          meanVar <- fun(envData[d >= start & d <= end & envData$river == r, envCol], na.rm = T)
+      }
+      # will need to make this river-specific
+      if (e == "Flow") {
+        envCol <- "flow"
+        meanVar <- fun(envData[d >= start & d <= end, envCol], na.rm = T)
+      }
+      return(meanVar)
+    }
+    
+    coreDataUniqueDates <- coreData %>% 
+      select(river, detectionDate, lagDetectionDate) %>% 
+      unique() %>% 
+      group_by(river, detectionDate, lagDetectionDate) %>% 
+      mutate(meanTemperature = getIntervalMean(detectionDate, lagDetectionDate, river, "Temperature"), 
+             meanFlow =        getIntervalMean(detectionDate, lagDetectionDate, river, "Flow")) %>% 
+      ungroup()
+    
+    coreData <- left_join(coreData, coreDataUniqueDates, 
+                          by = c("detectionDate", "river", "lagDetectionDate"))
+  }
+  else {
+    getIntervalMean <- function(start, end, e, fun = func) {
+      d <- envData$date
+      meanEnv <- fun(envData[d >= start & d <= end, tolower(e)], 
+                     na.rm = T)
+      return(meanEnv)
+    }
+    
+    coreDataUniqueDates <- coreData %>% 
+      select(detectionDate, lagDetectionDate) %>% 
+      unique() %>% 
+      group_by(detectionDate, lagDetectionDate) %>% 
+      mutate(meanTemperature = getIntervalMean(detectionDate, lagDetectionDate, "Temperature"), 
+             meanFlow = getIntervalMean(detectionDate, lagDetectionDate, "Flow")) %>% 
+      ungroup()
+    
+    coreData <- left_join(coreData, coreDataUniqueDates, 
+                          by = c("detectionDate", "lagDetectionDate"))
+  }
+  
+  if (sampleFlow) {
+    coreData <- coreData %>% 
+      mutate(date = as.Date(detectionDate)) %>% 
+      filter(enc == 1) %>% select(sampleName, date) %>% 
+      group_by(sampleName, date) %>% summarize(n = n()) %>% 
+      ungroup() %>% 
+      left_join(envData %>% 
+                  filter(!is.na(flow)) %>% 
+                                mutate(date = as.Date(date)) %>% 
+                  select(date, flow) %>% 
+                                rename(flowForP = flow) %>% 
+                  unique(), by = c("date")) %>% 
+      group_by(sampleName) %>% summarize(flowForP = sum(flowForP * n)/(sum(n))) %>% 
+      ungroup() %>% 
+      right_join(coreData, by = "sampleName")
+  }
+  names(coreData)[which(names(coreData) == "meanTemperature")] <- paste0(funName, "Temperature")
+  names(coreData)[which(names(coreData) == "meanFlow")] <- paste0(funName,  "Flow")
+  return(coreData)
+}
+
+getKnown <- function(x) {
+  firstObs <- min(which(x == 1))
+  lastObs <- max(which(x == 1))
+  known <- rep(0, length(x))
+  known[firstObs:lastObs] <- 1
+  if (lastObs != length(known)) {
+    known[(lastObs + 1):length(known)] <- NA
+  }
+  return(known)
+}
+
+addKnownZ2 <- function(d) {
+  d %>% 
+    group_by(tag) %>%
+    arrange(sampleNumber) %>%
+    mutate(knownZ = getKnown(enc)) %>%
+    ungroup() %>%
+    arrange(tag, sampleNumber)
+}
+
+addFirstLast <- function(d){
+  firstLast <- d %>% 
+    group_by(tag) %>%
+    filter(knownZ == 1) %>%
+    summarize(firstObserved = min(sampleNumber, na.rm = TRUE),
+              lastObserved = max(sampleNumber, na.rm = TRUE)) %>%
+    ungroup()
+  
+  left_join(d, firstLast) %>%
+    mutate(isFirstObserved = sampleNumber == firstObserved,
+           isLastObserved = sampleNumber == lastObserved)
+}    
+
+fillRiver <- function (data, location = T){
+  fillLocation <- function(location) {
+    known <- which(!is.na(location))
+    unknown <- which(is.na(location))
+    nKnown <- length(unique(location[known]))
+    if (nKnown == 1) {
+      location[unknown] <- location[known[1]]
+    }
+    else {
+      for (i in unknown) {
+        location[i] <- location[known[max(which(i > known))]]
+      }
+    }
+    return(location)
+  }
+    if (location) {
+    data <- data %>% 
+      group_by(tag) %>% 
+      mutate(river = fillLocation(river)) %>% 
+      ungroup()
+  }
+
+  return(data)
+}
+
+scale_this <- function(x){
+  (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+}
+
+scaleEnvData <- function(d){
+  tmp <- d %>%
+    group_by(river, season) %>% 
+    summarize(meanMeanFlow = mean(meanFlow, na.rm = TRUE),
+              sdMeanFlow = sd(meanFlow, na.rm = TRUE),
+              meanMeanTemperature = mean(meanTemperature, na.rm = TRUE),
+              sdMeanTemperature = sd(meanTemperature, na.rm = TRUE)
+    ) %>%
+    ungroup()
+  
+  out <- left_join(d, tmp) %>%
+    mutate(
+      meanFlowScaled = (meanFlow - meanMeanFlow) / sdMeanFlow,
+      meanTemperatureScaled = (meanTemperature - meanMeanTemperature) / sdMeanTemperature
+    )  
+}
+
+getNeverCaptured <- function(d){
+  d %>%
+    filter(ageInSamples > 0 & ageInSamples <= maxOccasionValue) %>%
+    group_by(tag) %>%
+    summarize(sumEnc = sum(enc, na.rm = TRUE)) %>%
+    filter(sumEnc == 0) %>%
+    select(tag)
+}
+
+`%notin%` <- Negate(`%in%`)
+```
+ 
 
 ### Get data
 West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals
 ```{r CMR}
-source('./rForSourcing/envFunctions.R')
+#source('./rForSourcing/envFunctions.R')
 
 if(getNew_cdWB_CMR0) {
   cdWB_CMR0 <- 
@@ -55,15 +256,21 @@ if(getNew_cdWB_CMR0) {
                   area %in% c("trib","inside","below","above"), 
                   !is.na(sampleNumber) 
                   ) %>%
-    createCmrData(maxAgeInSamples = 20, 
+    createCmrData(maxAgeInSamples = maxAgeInSamples, 
                   inside = F, 
                   censorDead = F, 
-                  censorEmigrated = T) %>% # may want to change censorEmigrated = T to = F
+                  censorEmigrated = F) %>% # may want to change censorEmigrated = T to = F
+    # sample 83 is the last tagging sample
+    filter(sampleNumber <= 83) %>%
     addSampleProperties() %>%
-    addEnvironmentalDaily() %>%
-    addEnvironmentalInterval() %>%
-    addKnownZ() %>%
-    fillSizeLocation(size = F) #assumes fish stay in same location until observed elsewhere
+    addEnvironmental() %>%
+    # these functions do not work for CMR data - they separate out shock and non-shock samples
+    #addEnvironmentalDaily() %>%
+    #addEnvironmentalInterval() %>%
+    addKnownZ2() %>%
+    addFirstLast() %>%
+    fillRiver() %>%
+    scaleEnvData()
 
   save(cdWB_CMR0, file = './data/cdWB_CMR0.RData')
   
@@ -87,97 +294,82 @@ ehFilter <- function(data, cols, ops, vals) {
   data %>% dplyr::filter(!!!exprs)
 }
 
+
 # var is the variable to put in the encounter history (e.g. 'enc' or 'temp')
-# occasionVar is the variable used to define samlping occasions (e.g. 'sampleNumber' or 'ageInsamples')
+# occasionVar is now fixed to ageInSamples
 # maxOccasionValue is the maximum value for occasion columns, in units of 'occasionVar'
-getEHDataWide <- function(d, cols, ops, vals, var, occasionVar = "ageInSamples", maxOccasionValue, valuesFill = 0){   
+getEHDataWide_AIS <- function(d, cols, ops, vals, var, maxOccasionValue, valuesFill = 0){   
   d %>%
     ehFilter(cols, ops, vals) %>% 
-    filter(ageInSamples > 0, get(occasionVar) <= maxOccasionValue) %>%
-    #arrange(eval(substitute(occasionVar)), tag) %>%
-    arrange(get(occasionVar)) %>% #need this to get correct order of columns. eval(substitute(occasionVar)) doesn;'t work 
+    #filter(ageInSamples > 0, ageInSamples <= maxOccasionValue) %>%
+    arrange(ageInSamples) %>% #need this to get correct order of columns. 
     pivot_wider(
       id_cols = tag,
-      names_from = eval(substitute(occasionVar)),
-      names_prefix = substr(eval(substitute(occasionVar)), 1, 1), #"s",
+      names_from = ageInSamples,
+      names_prefix = "ais_",
       values_from = eval(substitute(var)),
       values_fill = valuesFill
     )
 }
 
-# occasionVar is the variable used to define sampling occasions (e.g. sampleNumber or ageInsamples)
-getEH <- function(d, cols, ops, vals, occasionVar = "ageInSamples", maxOccasionValue){
-  encWide <- getEHDataWide(d, cols, ops, vals, "enc", occasionVar, maxOccasionValue)
+getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue){
+
+  d <- dIn %>% 
+    filter(ageInSamples > 0, ageInSamples <= maxOccasionValue)
+ 
+  neverCaptured <- getNeverCaptured(d)
+  
+  d <- d %>%
+    filter(tag %notin% neverCaptured$tag)
+  
+  encWide <- getEHDataWide_AIS(d, cols, ops, vals, "enc", maxOccasionValue, valuesFill = 0)
   eh <- as.matrix(encWide %>% select(-tag), nrow = nrow(encWide), ncol = ncol(encWide) - 1)
   
-  flowWide <- getEHDataWide(d, cols, ops, vals, "meanFlow", occasionVar, maxOccasionValue, valuesFill = NA)
+  flowWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanFlowScaled", maxOccasionValue, valuesFill = NA)
   flowMatrix <- as.matrix(flowWide %>% select(-tag), nrow = nrow(flowWide), ncol = ncol(flowWide) - 1)
   
-  temperatureWide <- getEHDataWide(d, cols, ops, vals, "meanTemperature", occasionVar, maxOccasionValue, valuesFill = NA)
+  temperatureWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanTemperatureScaled", maxOccasionValue, valuesFill = NA)
   temperatureMatrix <- as.matrix(temperatureWide %>% select(-tag), nrow = nrow(temperatureWide), ncol = ncol(temperatureWide) - 1)
 
+  riverWide <- getEHDataWide_AIS(d, cols, ops, vals, "river", maxOccasionValue, valuesFill = NA)
+  riverMatrix <- as.matrix(riverWide %>% select(-tag), nrow = nrow(riverWide), ncol = ncol(riverWide) - 1)
+  
   tags <- encWide %>% select(tag)
   
   data <- d %>%
     ehFilter(cols, ops, vals) %>% 
-    filter(ageInSamples > 0, get(occasionVar) <= maxOccasionValue) %>%
-    arrange(eval(substitute(occasionVar)), tag)
+    filter(ageInSamples > 0, ageInSamples <= maxOccasionValue) %>%
+    arrange(tag, ageInSamples)
   
   cohorts <- tags %>% left_join(data %>% select(tag, cohort) %>% unique()) %>% select(cohort)
   seasons <- tags %>% left_join(data %>% select(tag, season) %>% unique()) %>% select(season)
+  first <- apply(eh, 1, function(x) min(which(x != 0)))
+  last <- apply(eh, 1, function(x) max(which(x != 0)))
   
-  return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, tags = tags, cohorts = cohorts, seasons = seasons, data = data ))
+  return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, river = riverMatrix, 
+              tags = tags, cohorts = cohorts, seasons = seasons, first = first, last = last, data = data ))
 }
 
 
 if (getNew_encounterHistories) {
 
   # read down through the cols, ops, vals variables for filter conditions
-  cols <- list( "river")
-  ops <- list("==")
-  vals <- list("wb obear")
-  
-  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "sampleNumber", maxOccasionValue = 200)
-  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
-  save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
-  
-  # read down through the cols, ops, vals variables for filter conditions
-  cols <- list("cohort", "river", "sampleNumber")
-  ops <- list("==", "==", "<")
-  vals <- list(2003, "wb obear", 40)
-  
-  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "sampleNumber", maxOccasionValue = 200)
-  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
-  save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
-
-    # read down through the cols, ops, vals variables for filter conditions
-  cols <- list("cohort", "river", "sampleNumber")
-  ops <- list("%in%", "==", "<")
-  vals <- list(2003:2005, "wb obear", 400)
-  
-  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "sampleNumber", maxOccasionValue = 200)
-  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
-  save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
-
-  
-  # read down through the cols, ops, vals variables for filter conditions
-  
-  
   cols <- list("cohort", "river")
   ops <- list("%in%", "==")
   vals <- list(2002:2006, "wb obear")
   
-  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "ageInSamples", maxOccasionValue = 10)
+  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxOccasionValue = maxAgeInSamples)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
 
+  
   # all cohorts 2002:2014
-  cdWB_CMR0 %>% filter(river == "wb obear") %>% group_by(cohort) %>%summarize(n = n())
+  cdWB_CMR0 %>% filter(river == "wb obear") %>% group_by(cohort) %>% summarize(n = n())
   cols <- list("cohort", "river")
   ops <- list("%in%", "==")
   vals <- list(2002:2014, "wb obear")
   
-  eh <- getEH(cdWB_CMR0, cols, ops, vals, occasionVar = "ageInSamples", maxOccasionValue = 10)
+  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxOccasionValue = maxAgeInSamples)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
 

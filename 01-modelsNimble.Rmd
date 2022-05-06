@@ -45,20 +45,23 @@ hmm.phi_p <- nimbleCode({
   omega[1,2] <- p        # Pr(alive t -> detected t)
   omega[2,1] <- 1        # Pr(dead t -> non-detected t)
   omega[2,2] <- 0        # Pr(dead t -> detected t)
+  
   for (i in 1:N){
     z[i,first[i]] ~ dcat(delta[1:2])
-    for (j in (first[i]+1):T){
+    for (j in (first[i]+1):last[i]){
       z[i,j] ~ dcat(gamma[z[i,j-1], 1:2])
       y[i,j] ~ dcat(omega[z[i,j], 1:2])
     }
   }
 })
   
-first <- apply(y, 1, function(x) min(which(x !=0)))
+first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+last <- eh$last
 
 my.constants <- list(N = nrow(y), 
                      T = ncol(y), 
-                     first = first)
+                     first = first,
+                     last = last)
 
 my.data <- list(y = y + 1)
 
@@ -125,18 +128,20 @@ hmm.phiT_pT <- nimbleCode({
   # likelihood
   for (i in 1:N){
     z[i,first[i]] ~ dcat(delta[1:2])
-    for (j in (first[i]+1):T){
+    for (j in (first[i]+1):last[i]){
       z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1])
       y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1])
     }
   }
 })
   
-first <- apply(y, 1, function(x) min(which(x !=0)))
+first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+last <- eh$last
 
 my.constants <- list(N = nrow(y), 
                      T = ncol(y), 
-                     first = first)
+                     first = first,
+                     last = last)
 
 my.data <- list(y = y + 1)
 
@@ -234,19 +239,21 @@ hmm.phiT_pT_cohort <- nimbleCode({
   # likelihood
   for (i in 1:N){
     z[i,first[i]] ~ dcat(delta[1:2])
-    for (j in (first[i]+1):T){
+    for (j in (first[i]+1):last[i]){
       z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
       y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
     }
   }
 })
   
-first <- apply(y, 1, function(x) min(which(x !=0)))
+first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+last <- eh$last
 cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
 
 my.constants <- list(N = nrow(y), 
                      T = ncol(y), 
                      first = first,
+                     last = last,
                      cohort = cohort, 
                      nCohorts = nCohorts,
                      flow = eh$flow)
@@ -368,19 +375,21 @@ hmm.phiT_pT_cohort_flow <- nimbleCode({
   # likelihood
   for (i in 1:N){
     z[i,first[i]] ~ dcat(delta[1:2])
-    for (j in (first[i]+1):T){
+    for (j in (first[i]+1):last[i]){
       z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
       y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
     }
   }
 })
   
-first <- apply(y, 1, function(x) min(which(x !=0)))
+first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+last <- eh$last
 cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
 
 my.constants <- list(N = nrow(y), 
                      T = ncol(y), 
                      first = first,
+                     last = last,
                      cohort = cohort, 
                      nCohorts = nCohorts,
                      season = eh$seasons$season,
@@ -394,7 +403,7 @@ zinits[zinits == 2] <- 1 # dead -> alive
 initial.values <- function() list(
   phi = array(runif((my.constants$T - 1) * my.constants$N, 0, 1),c((my.constants$T - 1), my.constants$N)),
   p =   array(runif((my.constants$T - 1) * my.constants$N, 0, 1),c((my.constants$T - 1), my.constants$N)),
-  z = zinits,
+ # z = zinits,
   betaPhi = array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
   betaP =   array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
   betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
