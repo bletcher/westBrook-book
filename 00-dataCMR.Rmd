@@ -12,11 +12,11 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 ```{r librariesDataCMR, echo = FALSE}
 library(getWBData)
-library(tidyverse)
 library(lubridate)
 library(validate)
 library(rlang)
 library(stringi)
+library(tidyverse)
 ```
 
 ```{r}
@@ -344,7 +344,7 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue){
   cohorts <- tags %>% left_join(data %>% select(tag, cohort) %>% unique()) %>% select(cohort)
   seasons <- tags %>% left_join(data %>% select(tag, season) %>% unique()) %>% select(season)
   first <- apply(eh, 1, function(x) min(which(x != 0)))
-  last <- apply(eh, 1, function(x) max(which(x != 0)))
+  last <- apply(riverMatrix, 1, function(x) max(which(!is.na(x))))
   
   return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, river = riverMatrix, 
               tags = tags, cohorts = cohorts, seasons = seasons, first = first, last = last, data = data ))
@@ -365,6 +365,7 @@ if (getNew_encounterHistories) {
   
   # all cohorts 2002:2014
   cdWB_CMR0 %>% filter(river == "wb obear") %>% group_by(cohort) %>% summarize(n = n())
+
   cols <- list("cohort", "river")
   ops <- list("%in%", "==")
   vals <- list(2002:2014, "wb obear")

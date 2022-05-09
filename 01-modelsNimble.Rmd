@@ -22,7 +22,8 @@ library(MCMCvis)
 
 ### Read in data
 ```{r}
-load('./models/dataOut/eh_20022003200420052006_wb obear.RData')
+#load('./models/dataOut/eh_20022003200420052006_wb obear.RData')
+load('./models/dataOut/eh_2002200320042005200620072008200920102011201220132014_wb obear.RData')
 ```
 
 ### run model phi_p 
@@ -328,6 +329,7 @@ hmm.phiT_pT_cohort_flow <- nimbleCode({
   for (i in 1:N){
     for (t in 1:(T-1)){ # loop over time
       logit(phi[t,i]) <- 
+        betaInt +
         betaPhi[t,cohort[i]] + 
         betaFlow[1,season[i]] * flow[i,t] +
         betaFlow[2,season[i]] * flow[i,t] * flow[i,t]
@@ -346,6 +348,7 @@ hmm.phiT_pT_cohort_flow <- nimbleCode({
     }
   }
   
+  betaInt ~ dnorm(0,1)
   
   for (c in 1:nCohorts){
     # mean values
@@ -401,6 +404,7 @@ zinits <- y + 1 # non-detection -> alive
 zinits[zinits == 2] <- 1 # dead -> alive
 
 initial.values <- function() list(
+  betaInt = rnorm(1, 0, 1),
   phi = array(runif((my.constants$T - 1) * my.constants$N, 0, 1),c((my.constants$T - 1), my.constants$N)),
   p =   array(runif((my.constants$T - 1) * my.constants$N, 0, 1),c((my.constants$T - 1), my.constants$N)),
  # z = zinits,
@@ -411,7 +415,7 @@ initial.values <- function() list(
   betaFlow = array(rnorm(2 * 4, 0, 1), c(2, 4))
 )
 
-parameters.to.save <- c("betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", "betaFlow")  
+parameters.to.save <- c("betaInt", "betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", "betaFlow")  
 n.iter <- 5000
 n.burnin <- 1000
 n.chains <- 2
