@@ -11,6 +11,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 
 ```{r librariesDataCMR, echo = FALSE}
+library(data.table)
 library(getWBData)
 library(lubridate)
 library(validate)
@@ -212,13 +213,24 @@ scaleEnvData <- function(d){
     )  
 }
 
-getNeverCaptured <- function(d){
+getNeverCaptured <- function(d, maxOccasionValue){
   d %>%
-    filter(ageInSamples > 0 & ageInSamples <= maxOccasionValue) %>%
+    #filter(ageInSamples > 0 & ageInSamples <= maxOccasionValue) %>%
+    filter(ageInSamples %in% 1:maxOccasionValue) %>%
     group_by(tag) %>%
     summarize(sumEnc = sum(enc, na.rm = TRUE)) %>%
     filter(sumEnc == 0) %>%
     select(tag)
+}
+
+addRiverTagged <- function(d){
+  d1 <- d %>% 
+    filter(isFirstObserved) %>%
+    mutate(riverTagged = river) %>%
+    select(tag, riverTagged)
+  
+  return(left_join(d, d1))
+
 }
 
 `%notin%` <- Negate(`%in%`)
@@ -256,7 +268,7 @@ if(getNew_cdWB_CMR0) {
                   area %in% c("trib","inside","below","above"), 
                   !is.na(sampleNumber) 
                   ) %>%
-    createCmrData(maxAgeInSamples = maxAgeInSamples, 
+    createCmrData(maxAgeInSamples = maxAgeInSamples + 1, # +1 so we get env data for the last interval
                   inside = F, 
                   censorDead = F, 
                   censorEmigrated = F) %>% # may want to change censorEmigrated = T to = F
@@ -270,6 +282,7 @@ if(getNew_cdWB_CMR0) {
     addKnownZ2() %>%
     addFirstLast() %>%
     fillRiver() %>%
+    addRiverTagged() %>%
     scaleEnvData()
 
   save(cdWB_CMR0, file = './data/cdWB_CMR0.RData')
@@ -312,16 +325,25 @@ getEHDataWide_AIS <- function(d, cols, ops, vals, var, maxOccasionValue, valuesF
     )
 }
 
-getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue){
+getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort = 1E10){
 
   d <- dIn %>% 
-    filter(ageInSamples > 0, ageInSamples <= maxOccasionValue)
- 
-  neverCaptured <- getNeverCaptured(d)
+    #filter(ageInSamples > 0, ageInSamples <= maxOccasionValue)
+    filter(ageInSamples %in% 1:maxOccasionValue)
   
+  # Fish with no observed occasions
+  neverCaptured <- getNeverCaptured(d, maxOccasionValue)
   d <- d %>%
     filter(tag %notin% neverCaptured$tag)
   
+  # limit data to first 'maxIndexByCohort' individuals
+  d <- d %>%
+    group_by(cohort) %>%
+    mutate(indexByCohort = rleid(tag)) %>%
+    filter(indexByCohort <= maxIndexByCohort) %>%
+    ungroup()
+
+
   encWide <- getEHDataWide_AIS(d, cols, ops, vals, "enc", maxOccasionValue, valuesFill = 0)
   eh <- as.matrix(encWide %>% select(-tag), nrow = nrow(encWide), ncol = ncol(encWide) - 1)
   
@@ -338,14 +360,16 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue){
   
   data <- d %>%
     ehFilter(cols, ops, vals) %>% 
-    filter(ageInSamples > 0, ageInSamples <= maxOccasionValue) %>%
+    #filter(ageInSamples > 0, ageInSamples <= maxOccasionValue) %>%
+    filter(ageInSamples %in% 1:maxOccasionValue) %>%
     arrange(tag, ageInSamples)
   
   cohorts <- tags %>% left_join(data %>% select(tag, cohort) %>% unique()) %>% select(cohort)
   seasons <- tags %>% left_join(data %>% select(tag, season) %>% unique()) %>% select(season)
   first <- apply(eh, 1, function(x) min(which(x != 0)))
   last <- apply(riverMatrix, 1, function(x) max(which(!is.na(x))))
-  
+  last <- ifelse(last == maxOccasionValue, last, last - 1)
+
   return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, river = riverMatrix, 
               tags = tags, cohorts = cohorts, seasons = seasons, first = first, last = last, data = data ))
 }
@@ -354,23 +378,16 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue){
 if (getNew_encounterHistories) {
 
   # read down through the cols, ops, vals variables for filter conditions
-  cols <- list("cohort", "river")
-  ops <- list("%in%", "==")
-  vals <- list(2002:2006, "wb obear")
-  
-  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxOccasionValue = maxAgeInSamples)
-  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
-  save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
 
   
   # all cohorts 2002:2014
   cdWB_CMR0 %>% filter(river == "wb obear") %>% group_by(cohort) %>% summarize(n = n())
 
-  cols <- list("cohort", "river")
-  ops <- list("%in%", "==")
+  cols <- list("cohort",  "riverTagged")
+  ops <-  list("%in%",    "==")
   vals <- list(2002:2014, "wb obear")
-  
-  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxOccasionValue = maxAgeInSamples)
+                                                               # only include first x fish per cohort
+  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples) #, maxIndexByCohort = 200)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
 
