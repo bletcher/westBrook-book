@@ -23,7 +23,7 @@ library(MCMCvis)
 ### Read in data
 ```{r}
 #load('./models/dataOut/eh_20022003200420052006_wb obear.RData')
-load('./models/dataOut/eh_2002200320042005200620072008200920102011201220132014_wb obear.RData')
+load('./models/cmrFlowWB/dataOut/eh_2002200320042005200620072008200920102011201220132014_wb obear.RData')
 ```
 
 ### run model phi_p 
@@ -107,7 +107,8 @@ mcmc.phi_p <- runMCMC(
 
 end <- Sys.time()
 elapsed_phi_p <- end - start
-save(mcmc.phi_p, file = paste0('./models/runsOut/mcmc_phi_p_', substr(end,1,13), '.RData'))
+toSave <- list(mcmc = mcmc.phi_p, elapsed = elapsed_phi_p)
+save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phi_p_', substr(end,1,13), '.RData'))
 
 MCMCsummary(object = mcmc.phi_p, round = 2)
 MCMCplot(object = mcmc.phi_p)
@@ -206,7 +207,8 @@ mcmc.phiT_pT <- runMCMC(
 
 end <- Sys.time()
 elapsed_phiT_pT <- end - start
-save(mcmc.phiT_pT, file = paste0('./models/runsOut/mcmc_phiT_pT_', substr(end,1,13), '.RData'))
+toSave <- list(mcmc = mcmc.phiT_pT, elapsed = elapsed_phi_p)
+save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_', substr(end,1,13), '.RData'))
 
 MCMCsummary(object = mcmc.phiT_pT, round = 2)
 MCMCplot(object = mcmc.phiT_pT)
@@ -341,7 +343,8 @@ mcmc.phiT_pT_cohort <- runMCMC(
 
 end <- Sys.time()
 elapsed_phiT_pT_cohort <- end - start
-save(mcmc.phiT_pT_cohort, file = paste0('./models/runsOut/mcmc_phiT_pT_cohort_', substr(end,1,13), '.RData'))
+toSave <- list(mcmc = mcmc.phiT_pT_cohort, elapsed = elapsed_phi_p)
+save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_', substr(end,1,13), '.RData'))
 
 MCMCsummary(object = mcmc.phiT_pT_cohort, round = 2)
 #MCMCplot(object = mcmc.phiT_pT_cohort, params = "betaPhiOut")
@@ -500,7 +503,8 @@ mcmc.phiT_pT_cohort_flow <- runMCMC(
 
 end <- Sys.time()
 elapsed_phiT_pT_cohort_flow <- end - start
-save(mcmc.phiT_pT_cohort_flow, file = paste0('./models/runsOut/mcmc_phiT_pT_cohort_flow_', substr(end,1,13), '.RData'))
+toSave <- list(mcmc = mcmc.phiT_pT_cohort_flow, elapsed = elapsed_phi_p)
+save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flow_', substr(end,1,13), '.RData'))
 
 # could consider forward algo to speed up convergence (https://oliviergimenez.github.io/banana-book/hmmcapturerecapture.html#nimble-implementation-1)
 
