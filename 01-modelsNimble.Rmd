@@ -59,44 +59,60 @@ hmm.phi_p <- nimbleCode({
 first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
 last <- eh$last
 
-my.constants <- list(N = nrow(y), 
+myConstants <- list(N = nrow(y), 
                      T = ncol(y), 
                      first = first,
                      last = last)
 
-my.data <- list(y = y + 1)
+myData <- list(y = y + 1)
 
 zinits <- y + 1 # non-detection -> alive
 zinits[zinits == 2] <- 1 # dead -> alive
-initial.values <- function() list(phi = runif(1,0,1),
+initialValues <- function() list(phi = runif(1,0,1),
                                   p = runif(1,0,1),
                                   z = zinits
                                   )
 
 
-parameters.to.save <- c("phi", "p")  
-n.iter <- 5000
-n.burnin <- 1000
-n.chains <- 2
+parametersToSave <- c("phi", "p")  
+nIter <- 5000
+nBurnin <- 1000
+nChains <- 2
 
 start <- Sys.time()
-mcmc.phi_p <- nimbleMCMC(code = hmm.phi_p, 
-                        constants = my.constants,
-                        data = my.data,              
-                        inits = initial.values,
-                        monitors = parameters.to.save,
-                        niter = n.iter, 
-                        nburnin = n.burnin, 
-                        nchains = n.chains
-                        #WAIC = TRUE
-                        )
+
+Rmodel <- nimbleModel(
+  code = hmm.phi_p, 
+  constants = myConstants,
+  data = myData,              
+  inits = initialValues(),
+  calculate = FALSE
+)
+conf <- configureMCMC(
+  Rmodel,
+  monitors = parametersToSave
+)
+
+Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+Cmodel <- compileNimble(Rmodel)
+Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+
+mcmc.phi_p <- runMCMC(
+  Cmcmc, 
+  niter = nIter, 
+  nburnin = nBurnin, 
+  thin = thinRate, 
+  nchains = nChains
+)
+
 end <- Sys.time()
 elapsed_phi_p <- end - start
+save(mcmc.phi_p, file = paste0('./models/runsOut/mcmc_phi_p_', substr(end,1,13), '.RData'))
 
 MCMCsummary(object = mcmc.phi_p, round = 2)
 MCMCplot(object = mcmc.phi_p)
 
-priors <- runif(n.iter * n.chains, 0, 1)
+priors <- runif(nIter * nChains, 0, 1)
 MCMCtrace(object = mcmc.phi_p,
           ISB = FALSE,
           exact = TRUE, 
@@ -141,44 +157,61 @@ hmm.phiT_pT <- nimbleCode({
 first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
 last <- eh$last
 
-my.constants <- list(N = nrow(y), 
+myConstants <- list(N = nrow(y), 
                      T = ncol(y), 
                      first = first,
                      last = last)
 
-my.data <- list(y = y + 1)
+myData <- list(y = y + 1)
 
 zinits <- y + 1 # non-detection -> alive
 zinits[zinits == 2] <- 1 # dead -> alive
 
-initial.values <- function() list(phi = runif(my.constants$T - 1, 0, 1),
-                                  p = runif(my.constants$T - 1, 0, 1),
+initialValues <- function() list(phi = runif(myConstants$T - 1, 0, 1),
+                                  p = runif(myConstants$T - 1, 0, 1),
                                   z = zinits)
 
-parameters.to.save <- c("phi", "p")  
-n.iter <- 5000
-n.burnin <- 1000
-n.chains <- 2
+parametersToSave <- c("phi", "p")  
+nIter <- 5000
+nBurnin <- 1000
+nChains <- 2
 
 start <- Sys.time()
-mcmc.phiT_pT <- nimbleMCMC(code = hmm.phiT_pT, 
-                          constants = my.constants,
-                          data = my.data,              
-                          inits = initial.values,
-                          monitors = parameters.to.save,
-                          niter = n.iter, 
-                          nburnin = n.burnin, 
-                          nchains = n.chains
-                          #WAIC = TRUE
-                          )
+
+Rmodel <- nimbleModel(
+  code = hmm.phiT_pT, 
+  constants = myConstants,
+  data = myData,              
+  inits = initialValues(),
+  calculate = FALSE
+)
+conf <- configureMCMC(
+  Rmodel,
+  monitors = parametersToSave
+)
+
+Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+Cmodel <- compileNimble(Rmodel)
+Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+
+mcmc.phiT_pT <- runMCMC(
+  Cmcmc, 
+  niter = nIter, 
+  nburnin = nBurnin, 
+  thin = thinRate, 
+  nchains = nChains
+)
+
+
+
 end <- Sys.time()
 elapsed_phiT_pT <- end - start
-
+save(mcmc.phiT_pT, file = paste0('./models/runsOut/mcmc_phiT_pT_', substr(end,1,13), '.RData'))
 
 MCMCsummary(object = mcmc.phiT_pT, round = 2)
 MCMCplot(object = mcmc.phiT_pT)
 
-priors <- runif(n.iter * n.chains, 0, 1)
+priors <- runif(nIter * nChains, 0, 1)
 MCMCtrace(object = mcmc.phiT_pT,
           ISB = FALSE,
           exact = TRUE, 
@@ -253,7 +286,7 @@ first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
 last <- eh$last
 cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
 
-my.constants <- list(N = nrow(y), 
+myConstants <- list(N = nrow(y), 
                      T = ncol(y), 
                      first = first,
                      last = last,
@@ -261,41 +294,54 @@ my.constants <- list(N = nrow(y),
                      nCohorts = nCohorts
                      )
 
-my.data <- list(y = y + 1)
+myData <- list(y = y + 1)
 
 zinits <- y + 1 # non-detection -> alive
 zinits[zinits == 2] <- 1 # dead -> alive
 
-initial.values <- function() list(
-  phi = array(runif((my.constants$T - 1) * my.constants$N, 0, 1),c((my.constants$T - 1), my.constants$N)),
-  p = array(runif((my.constants$T - 1) * my.constants$N, 0, 1),c((my.constants$T - 1), my.constants$N)),
+initialValues <- function() list(
+  phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+  p = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
   z = zinits,
-  betaPhi = array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
-  betaP = array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
+  betaPhi = array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+  betaP = array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
   betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
   betaPCohort = array(runif(nCohorts, 0, 1),c(nCohorts))
 )
 
-parameters.to.save <- c("betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut")  
-n.iter <- 5000
-n.burnin <- 1000
-n.chains <- 2
+parametersToSave <- c("betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut")  
+nIter <- 5000
+nBurnin <- 1000
+nChains <- 2
 
 start <- Sys.time()
-mcmc.phiT_pT_cohort <- nimbleMCMC(
+Rmodel <- nimbleModel(
   code = hmm.phiT_pT_cohort, 
-  constants = my.constants,
-  data = my.data,              
-  inits = initial.values,
-  monitors = parameters.to.save,
-  niter = n.iter, 
-  nburnin = n.burnin, 
-  nchains = n.chains
-  #WAIC = TRUE
+  constants = myConstants,
+  data = myData,              
+  inits = initialValues(),
+  calculate = FALSE
 )
+conf <- configureMCMC(
+  Rmodel,
+  monitors = parametersToSave
+)
+
+Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+Cmodel <- compileNimble(Rmodel)
+Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+
+mcmc.phiT_pT_cohort <- runMCMC(
+  Cmcmc, 
+  niter = nIter, 
+  nburnin = nBurnin, 
+  thin = thinRate, 
+  nchains = nChains
+)
+
 end <- Sys.time()
 elapsed_phiT_pT_cohort <- end - start
-
+save(mcmc.phiT_pT_cohort, file = paste0('./models/runsOut/mcmc_phiT_pT_cohort_', substr(end,1,13), '.RData'))
 
 MCMCsummary(object = mcmc.phiT_pT_cohort, round = 2)
 #MCMCplot(object = mcmc.phiT_pT_cohort, params = "betaPhiOut")
@@ -303,7 +349,7 @@ MCMCsummary(object = mcmc.phiT_pT_cohort, round = 2)
 MCMCplot(object = mcmc.phiT_pT_cohort, params = c("betaPhiCohortOut"))
 MCMCplot(object = mcmc.phiT_pT_cohort, params = c("betaPCohortOut"))
 
-priors <- runif(n.iter * n.chains, 0, 1)
+priors <- runif(nIter * nChains, 0, 1)
 MCMCtrace(object = mcmc.phiT_pT_cohort,
           #ISB = FALSE,
           #exact = TRUE, 
@@ -315,7 +361,6 @@ MCMCtrace(object = mcmc.phiT_pT_cohort,
 ```
 
 ### run model phiT_pT_cohort_flow 
-#### model is preliminary  - need to get complete scaled flow matrix
 ```{r phiT_pT_cohort_flow, cache=TRUE}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
@@ -391,7 +436,7 @@ first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
 last <- eh$last
 cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
 
-my.constants <- list(N = nrow(y), 
+myConstants <- list(N = nrow(y), 
                      T = ncol(y), 
                      first = first,
                      last = last,
@@ -401,45 +446,63 @@ my.constants <- list(N = nrow(y),
                      flow = eh$flow
                      )
 
-my.data <- list(y = y + 1)
+myData <- list(y = y + 1)
 
 zinits <- y + 1 # non-detection -> alive
 zinits[zinits == 2] <- 1 # dead -> alive
 
 zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
 
-initial.values <- function() list(
+initialValues <- function() list(
   betaInt = rnorm(1, 0, 1),
-  phi = array(runif((my.constants$T - 1) * my.constants$N, 0, 1),c((my.constants$T - 1), my.constants$N)),
-  p =   array(runif((my.constants$T - 1) * my.constants$N, 0, 1),c((my.constants$T - 1), my.constants$N)),
+  phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+  p =   array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
   z = zInitsNA,
-  betaPhi = array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
-  betaP =   array(runif((my.constants$T - 1) * nCohorts, 0, 1),c((my.constants$T - 1), nCohorts)),
+  betaPhi = array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+  betaP =   array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
   betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
   betaPCohort =   array(runif(nCohorts, 0, 1),c(nCohorts)),
   betaFlow = array(rnorm(2 * 4, 0, 1), c(2, 4))
 )
 
-parameters.to.save <- c("betaInt", "betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", "betaFlow")  
-n.iter <- 5000
-n.burnin <- 1000
-n.chains <- 2
+parametersToSave <- c("betaInt", "betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", "betaFlow")  
+nIter <- 20000
+nBurnin <- 10000
+nChains <- 2
+thinRate <- 5
 
-start <- Sys.time()
-mcmc.phiT_pT_cohort_flow <- nimbleMCMC(
+start = Sys.time()
+
+Rmodel <- nimbleModel(
   code = hmm.phiT_pT_cohort_flow, 
-  constants = my.constants,
-  data = my.data,              
-  inits = initial.values,
-  monitors = parameters.to.save,
-  niter = n.iter, 
-  nburnin = n.burnin, 
-  nchains = n.chains
-  #WAIC = TRUE
+  constants = myConstants,
+  data = myData,              
+  inits = initialValues(),
+  calculate = FALSE
 )
+conf <- configureMCMC(
+  Rmodel,
+  monitors = parametersToSave
+)
+
+Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+Cmodel <- compileNimble(Rmodel)
+Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+
+mcmc.phiT_pT_cohort_flow <- runMCMC(
+  Cmcmc, 
+  niter = nIter, 
+  nburnin = nBurnin, 
+  thin = thinRate, 
+  nchains = nChains
+)
+
+
 end <- Sys.time()
 elapsed_phiT_pT_cohort_flow <- end - start
+save(mcmc.phiT_pT_cohort_flow, file = paste0('./models/runsOut/mcmc_phiT_pT_cohort_flow_', substr(end,1,13), '.RData'))
 
+# could consider forward algo to speed up convergence (https://oliviergimenez.github.io/banana-book/hmmcapturerecapture.html#nimble-implementation-1)
 
 MCMCsummary(object = mcmc.phiT_pT_cohort_flow, round = 2)
 #MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = "betaPhiOut")
@@ -447,7 +510,7 @@ MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = "betaFlow")#
 MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = c("betaPhiCohortOut"))
 MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = c("betaPCohortOut"))
 
-priors <- runif(n.iter * n.chains, 0, 1)
+priors <- runif(nIter * nChains, 0, 1)
 MCMCtrace(object = mcmc.phiT_pT_cohort_flow,
           #ISB = FALSE,
           #exact = TRUE, 
@@ -462,6 +525,43 @@ MCMCtrace(object = mcmc.phiT_pT_cohort_flow,
           pdf = FALSE, 
           priors = priors)
 
+# run more iterations
+nIterAdd <- 5000
+Cmcmc$run(nIterAdd, reset = FALSE)
+more_samples <- as.matrix(Cmcmc$mvSamples)
+
+MCMCtrace(object = more_samples,
+          #ISB = FALSE,
+          #exact = TRUE, 
+          params = c("betaFlow"),
+          pdf = FALSE, 
+          priors = priors)
+
+
+
+
+
+#################################################
+#################################################
+# start <- Sys.time()
+# mcmc.phiT_pT_cohort_flow <- nimbleMCMC(
+#   code = hmm.phiT_pT_cohort_flow, 
+#   constants = myConstants,
+#   data = myData,              
+#   inits = initialValues(),
+#   monitors = parametersToSave,
+#   niter = nIter, 
+#   nburnin = nBurnin, 
+#   nchains = nChains
+#   #WAIC = TRUE
+# )
+# end <- Sys.time()
+# elapsed_phiT_pT_cohort_flow <- end - start
+# save(elapsed_phiT_pT_cohort_flow, file = paste0('./models/runsOut/elapsed_phiT_pT_cohort_flow_', substr(end,1,13), '.RData'))
+
+
+#################################################
+#################################################
 
 ```
 

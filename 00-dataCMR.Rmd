@@ -375,7 +375,7 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
 }
 
 
-if (getNew_encounterHistories) {
+#if (getNew_encounterHistories) {
 
   # read down through the cols, ops, vals variables for filter conditions
 
@@ -391,7 +391,7 @@ if (getNew_encounterHistories) {
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/dataOut/', fileName, '.RData'))
 
-}
+#}
 
 
 ```
