@@ -120,8 +120,9 @@ if (rerunSurivalModels) {
     nCohorts = nCohorts
   )
   save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phi_p_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowWB/runsOut/mcmc_phi_p_mostRecent.RData')
 } else {
-  #load
+  load('./models/cmrFlowWB/runsOut/mcmc_phi_p_mostRecent.RData')
 }
 
 if(plotMCMCOutput) {
@@ -141,7 +142,7 @@ if(plotMCMCOutput) {
 
 ### run model phi_p, with isYOY 
 ### not working as of 5/12/22 - initialization problems
-```{r phiT_pT_cohort, cache=TRUE}
+```{r phiT_pT_cohortisYOY, cache=TRUE}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 if (rerunSurivalModels) {
@@ -266,8 +267,9 @@ if (rerunSurivalModels) {
       nCohorts = nCohorts
     )
   save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_isYOY_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowWB/runsOut/mcmc_phiT_pT_isYOY_mostRecent.RData')
 } else {
-  #load
+  load('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_isYOY_mostRecent.RData')
 }
   
 if(plotMCMCOutput) {  
@@ -297,6 +299,8 @@ if(plotMCMCOutput) {
 if (rerunSurivalModels) {
 
   y <- eh$eh
+  nSeasons <- nrow(unique(eh$seasons))
+  nCohorts <- nrow(unique(eh$cohorts))
   
   hmm.phiT_pT <- nimbleCode({
     delta[1] <- 1                    # Pr(alive t = 1) = 1
@@ -344,6 +348,7 @@ if (rerunSurivalModels) {
   nIter <- 5000
   nBurnin <- 1000
   nChains <- 2
+  thinRate <- 5
   
   start <- Sys.time()
   
@@ -386,8 +391,9 @@ if (rerunSurivalModels) {
       nCohorts = nCohorts
     )
   save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowWB/runsOut/mcmc_phiT_pT_mostRecent.RData')
 } else {
-  #load
+  load('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_mostRecent.RData')
 }
   
 if (plotMCMCOutput) {  
@@ -537,8 +543,9 @@ if (rerunSurivalModels) {
       nCohorts = nCohorts
     )
   save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_mostRecent.RData')
 } else {
-  #load
+  load('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_mostRecent.RData')
 }
   
 if(plotMCMCOutput) {  
@@ -715,8 +722,9 @@ if (rerunSurivalModels) {
     nCohorts = nCohorts
   )
   save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flow_', substr(end,1,13), '.RData'))
+    save(toSave, file = './models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flow_mostRecent.RData')
 } else {
-  #load
+  load('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flow_mostRecent.RData')
 }
 # could consider forward algo to speed up convergence (https://oliviergimenez.github.io/banana-book/hmmcapturerecapture.html#nimble-implementation-1)
 
@@ -764,8 +772,6 @@ if(plotMCMCOutput) {
    #     betaFlow[1,season[i]] * flow[i,t] +
    #     betaFlow[2,season[i]] * flow[i,t] * flow[i,t]
 
-# load current flow model
-load("C:/Users/bletcher/OneDrive - DOI/projects/westBrook-book/models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flow_2022-05-12 10.RData")
 
 getPredictionsFlow <- function(mcmc, everyNIters = 10, flowStep = 0.5){
 
@@ -849,7 +855,7 @@ ggplot(predFlow %>% filter(season ==1), aes(flow, predPhi, group = iter)) +
 
 ### run model phiT_pT_cohort_flowCohort
 #### Flow effects vary by cohort
-```{r phiT_pT_cohort_flow, cache=TRUE}
+```{r phiT_pT_cohort_flowCohort, cache=TRUE}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 if (rerunSurivalModels) {
@@ -996,7 +1002,7 @@ if (rerunSurivalModels) {
   elapsed_phiT_pT_cohort_flowCohort <- end - start
   toSave <- list(
     mcmc = mcmc.phiT_pT_cohort_flowCohort, 
-    elapsed = elapsed_phi_p_flowCohort, 
+    elapsed = elapsed_phiT_pT_cohort_flowCohort, 
     myConstants = myConstants, 
     nIter = nIter, 
     nBurnin = nBurnin,
@@ -1005,8 +1011,9 @@ if (rerunSurivalModels) {
     nCohorts = nCohorts
   )
   save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flowCohort_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flowCohort_mostRecent.RData')
 } else {
-  #load
+  load('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flowCohort_mostRecent.RData')
 }
 # could consider forward algo to speed up convergence (https://oliviergimenez.github.io/banana-book/hmmcapturerecapture.html#nimble-implementation-1)
 
@@ -1014,19 +1021,19 @@ if(plotMCMCOutput) {
 
   MCMCsummary(object = mcmc.phiT_pT_cohort_flow, round = 2)
   #MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = "betaPhiOut")
-  MCMCplot(object = mcmc_phiT_pT_cohort_flowCohort, params = "betaFlow")# 
-  MCMCplot(object = mcmc_phiT_pT_cohort_flowCohort, params = c("betaPhiCohortOut"))
-  MCMCplot(object = mcmc_phiT_pT_cohort_flowCohort, params = c("betaPCohortOut"))
+  MCMCplot(object = mcmc.phiT_pT_cohort_flowCohort, params = "betaFlow")# 
+  MCMCplot(object = mcmc.phiT_pT_cohort_flowCohort, params = c("betaPhiCohortOut"))
+  MCMCplot(object = mcmc.phiT_pT_cohort_flowCohort, params = c("betaPCohortOut"))
   
   priors <- runif(nIter * nChains, 0, 1)
-  MCMCtrace(object = mcmc_phiT_pT_cohort_flowCohort,
+  MCMCtrace(object = mcmc.phiT_pT_cohort_flowCohort,
             #ISB = FALSE,
             #exact = TRUE, 
             params = c("betaPhiCohortOut"),
             pdf = FALSE, 
             priors = priors)
   
-  MCMCtrace(object = mcmc_phiT_pT_cohort_flowCohort,
+  MCMCtrace(object = mcmc.phiT_pT_cohort_flowCohort,
             #ISB = FALSE,
             #exact = TRUE, 
             params = c("betaFlow"),
@@ -1045,6 +1052,103 @@ if(plotMCMCOutput) {
 #           params = c("betaFlow"),
 #           pdf = FALSE, 
 #           priors = priors)
+
+```
+
+### Get flow effect estimates
+#### Flow effects vary across cohorts
+```{r}
+   #     betaInt +
+   #     betaPhi[t,cohort[i]] + 
+   #     betaFlow[1,season[i],cohort[i]] * flow[i,t] +
+   #     betaFlow[2,season[i],cohort[i]] * flow[i,t] * flow[i,t]
+
+# load current flow model
+#load("C:/Users/bletcher/OneDrive - DOI/projects/westBrook-book/models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flow_2022-05-12 10.RData")
+
+getPredictionsFlowCohort <- function(toSave, everyNIters = 10, flowStep = 0.5){
+
+  mcmc <- toSave$mcmc
+  ## betaInt
+  predictorsBetaInt <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters)
+  )
+  for(i in 1:nrow(predictorsBetaInt)){
+    predictorsBetaInt$betaInt[i] <- mcmc$chain1[[ predictorsBetaInt[i, "iter"], "betaInt" ]]
+  }
+  
+  
+  ## betaFlow
+  predictorsBetaFlow <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    season = 1:toSave$nSeasons,
+    cohort = 1:toSave$nCohorts
+  )
+  
+  for(i in 1:nrow(predictorsBetaFlow)){
+    predictorsBetaFlow$betaFlow1[i] <- mcmc$chain1[[predictorsBetaFlow[i, "iter"], 
+                                                   paste0("betaFlow[1, ", predictorsBetaFlow[i, "season"],
+                                                          ", ",           predictorsBetaFlow[i, "cohort"],
+                                                          "]")
+                                                  ]]
+    predictorsBetaFlow$betaFlow2[i] <- mcmc$chain1[[predictorsBetaFlow[i, "iter"], 
+                                                   paste0("betaFlow[2, ", predictorsBetaFlow[i, "season"],
+                                                          ", ",           predictorsBetaFlow[i, "cohort"],
+                                                          "]")
+                                                  ]]
+  }
+  
+  ## betaPhi
+  predictorsBetaPhi <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    cohort = 1:toSave$nCohorts
+  )
+  
+  # this step is very slow for some reason......
+  for(i in 1:nrow(predictorsBetaPhi)){
+    predictorsBetaPhi$betaPhi[i] <- mcmc$chain1[[predictorsBetaPhi[i, "iter"], 
+                                                   paste0("betaPhiCohort[", predictorsBetaPhi[i, "cohort"],
+                                                          "]")
+                                                ]]
+  }
+
+  predictorsAll <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    cohort = 1:toSave$nCohorts,
+    season = 1:toSave$nSeasons,
+    flow = seq(-1.5, 1.5, flowStep)
+  )
+  
+  preds <- predictorsAll %>%
+    left_join(predictorsBetaInt) %>%
+    left_join(predictorsBetaFlow) %>%
+    left_join(predictorsBetaPhi) %>%
+    mutate(predPhi = plogis(betaInt + betaPhi + betaFlow1 * flow + betaFlow2 * flow^2))
+  
+  return(preds)
+}
+
+predFlowCohort <- getPredictionsFlowCohort(toSave, everyNIters = 2)
+
+```
+
+### Plot flow predictions
+```{r}
+ggplot(predFlowCohort, aes(flow, predPhi, group = iter)) +
+  geom_line(alpha = 0.025) +
+  facet_grid(season ~ cohort)
+
+ggplot(predFlowCohort %>% filter(season ==1, cohort == 6), aes(flow, predPhi, group = iter)) +
+  geom_line(alpha = 0.5) +
+  facet_grid(cohort ~ season)
+
+ggplot(predFlowCohort %>% filter(cohort == 3), aes(flow, predPhi, group = iter)) +
+  geom_line(alpha = 0.1) +
+  facet_wrap( ~ season)
+
+ggplot(predFlowCohort %>% filter(season ==1), aes(flow, predPhi, group = iter)) +
+  geom_line(alpha = 0.1) +
+  facet_wrap(~ cohort)
 
 ```
 
