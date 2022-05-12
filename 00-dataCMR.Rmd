@@ -233,6 +233,12 @@ addRiverTagged <- function(d){
 
 }
 
+addIsYOY <- function(d){
+  d %>%
+    mutate(isYOY = ifelse(ageInSamples <= 3, 1, 2))
+
+}
+
 `%notin%` <- Negate(`%in%`)
 ```
  
@@ -283,7 +289,8 @@ if(getNew_cdWB_CMR0) {
     addFirstLast() %>%
     fillRiver() %>%
     addRiverTagged() %>%
-    scaleEnvData()
+    scaleEnvData() %>%
+    addIsYOY()
 
   save(cdWB_CMR0, file = './data/cdWB_CMR0.RData')
   
@@ -356,6 +363,9 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   riverWide <- getEHDataWide_AIS(d, cols, ops, vals, "river", maxOccasionValue, valuesFill = NA)
   riverMatrix <- as.matrix(riverWide %>% select(-tag), nrow = nrow(riverWide), ncol = ncol(riverWide) - 1)
   
+  isYOYWide <- getEHDataWide_AIS(d, cols, ops, vals, "isYOY", maxOccasionValue, valuesFill = NA)
+  isYOYMatrix <- as.matrix(isYOYWide %>% select(-tag), nrow = nrow(riverWide), ncol = ncol(riverWide) - 1)
+  
   tags <- encWide %>% select(tag)
   
   data <- d %>%
@@ -370,8 +380,9 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   last <- apply(riverMatrix, 1, function(x) max(which(!is.na(x))))
   last <- ifelse(last == maxOccasionValue, last, last - 1)
 
-  return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, river = riverMatrix, 
-              tags = tags, cohorts = cohorts, seasons = seasons, first = first, last = last, data = data ))
+  return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, river = riverMatrix,
+              isYOY = isYOYMatrix, tags = tags, cohorts = cohorts, seasons = seasons, 
+              first = first, last = last, data = data ))
 }
 
 
