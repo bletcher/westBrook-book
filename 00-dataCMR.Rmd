@@ -398,7 +398,7 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   ops <-  list("%in%",    "==")
   vals <- list(2002:2014, "wb obear")
                                                                # only include first x fish per cohort
-  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples) #, maxIndexByCohort = 200)
+  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)#, maxIndexByCohort = 200)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/cmrFlowWB/dataOut/', fileName, '.RData'))
 
