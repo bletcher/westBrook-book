@@ -15,7 +15,7 @@ library(lme4)
 ```
 
 ```{r readInFlowData}
-dataFlow <- read.csv("./dataIn/flow/EcoDrought_Continuous_MA.csv")
+dataFlow <- read.csv("./dataIn/wbFlow/EcoDrought_Continuous_MA.csv")
 ```
 
 ```{r filterDataFlow}
@@ -53,7 +53,7 @@ dWide <- d %>%
 
 ```
 
-```{r flowPlots}
+```{r flowPlots, cache = TRUE}
 
 ggplot(d, aes(date, dischargeLog, color = Site_Name)) +
   geom_point(size = 0.02) +

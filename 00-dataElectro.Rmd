@@ -15,6 +15,8 @@ library(lubridate)
 #library(validate)
 
 # devtools::install_github('bletcher/getPrepareWBData')
+# use this if command above doesn't work: options(download.file.method = "wininet")
+
 library(getPrepareWBData) # this has functions for preparing West Brook data
 ```
 

@@ -4,6 +4,10 @@
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
+```{r}
+library(tidyverse)
+```
+
 
 ```{r envData}
 if(getNew_envDataWB) {

@@ -1,7 +1,7 @@
-## Flow effects on survival (phi) models {#modelNimble}
+## Flow effects on survival (phi) models {#modelCMR_Flow}
 
 ```{r globalModelsNimble, include=FALSE}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE)
 ```
 
 
@@ -33,6 +33,9 @@ load('./models/cmrFlowWB/dataOut/eh_20022003200420052006200720082009201020112012
 
 if (rerunSurivalModels) {
   y <- eh$eh
+  
+  nSeasons <- nrow(unique(eh$seasons))
+  nCohorts <- nrow(unique(eh$cohorts))
   
   hmm.phi_p <- nimbleCode({
     phi ~ dunif(0, 1) # prior survival
@@ -80,6 +83,7 @@ if (rerunSurivalModels) {
   nIter <- 5000
   nBurnin <- 1000
   nChains <- 2
+  thinRate = 5
   
   start <- Sys.time()
   
@@ -131,7 +135,7 @@ if(plotMCMCOutput) {
   #MCMCsummary(object = mcmc.phi_p, round = 2)
   MCMCplot(object = toSave$mcmc)
   
-  priors <- runif(toSave.nIter * toSave.nChains, 0, 1)
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
   MCMCtrace(object = toSave$mcmc,
             ISB = FALSE,
             exact = TRUE, 
@@ -509,6 +513,7 @@ if (rerunSurivalModels) {
   nIter <- 5000
   nBurnin <- 1000
   nChains <- 2
+  thinRate = 5
   
   start <- Sys.time()
   Rmodel <- nimbleModel(
@@ -1165,7 +1170,7 @@ ggplot(predFlowCohort, aes(flow, predPhi, group = iter)) +
 
 ### run model phiT_pT_cohort_flowCohortHier
 #### Flow effects vary by cohort, hierarchical across cohorts
-```{r phiT_pT_cohort_flowCohort, cache=TRUE}
+```{r phiT_pT_cohort_flowCohortHier, cache=TRUE}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 if (rerunSurivalModels) {
@@ -1283,8 +1288,8 @@ if (rerunSurivalModels) {
                         "betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", 
                         "betaFlow",
                         "betaFlowCohort", "betaFlowTop")  
-  nIter <- 20000
-  nBurnin <- 10000
+  nIter <- 30000
+  nBurnin <- 15000
   nChains <- 2
   thinRate <- 5
   
