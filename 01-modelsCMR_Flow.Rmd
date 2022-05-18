@@ -1,5 +1,13 @@
 ## Flow effects on survival (phi) models {#modelCMR_Flow}
 
+The goal of this modelling exercise is to evaluate the effect of new tributary-specific stream flow estimates on survival of brook trout and brown trout. We will compare survival across the WB and tributaries with flow input data as 1) single flow estimate for all locations (historical approach) and 2) hindcasted flows for each tributary based on new tributary-specific flows which are available since 2000.
+
+The goal is to find the best structure for the survival model, then compare survival estimates with tributary-specific flow to estimates with common flow across locations.
+
+Structure options include
+[species, cohort, season, isYOY, flow, flow^2]
+
+
 ```{r globalModelsNimble, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE)
 ```
@@ -149,150 +157,153 @@ if(plotMCMCOutput) {
 ### run model phi_p, with isYOY 
 ### not working as of 5/12/22 - initialization problems
 ```{r phiT_pT_cohortisYOY, cache=TRUE}
-# 
-# # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
-# if (rerunSurivalModels) {
-# 
-#   y <- eh$eh
-#   
-#   hmm.phiT_pT_isYOY <- nimbleCode({
-#     delta[1] <- 1                    # Pr(alive t = 1) = 1
-#     delta[2] <- 0                    # Pr(dead t = 1) = 0
-#     
-#     for (i in 1:N){
-#       for (t in 1:(T-1)){ # loop over time
-#         logit(phi[t,i]) <- betaPhi[isYOY[i,t]]           # prior survival
-#         gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
-#         gamma[1,2,t,i] <- 1 - phi[t,i]     # Pr(alive t -> dead t+1)
-#         gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1)
-#         gamma[2,2,t,i] <- 1              # Pr(dead t -> dead t+1)
-#         
-#         logit(p[t,i]) <- betaP[isYOY[i,t]]             # prior detection
-#         omega[1,1,t,i] <- 1 - p[t,i]       # Pr(alive t -> non-detected t)
-#         omega[1,2,t,i] <- p[t,i]           # Pr(alive t -> detected t)
-#         omega[2,1,t,i] <- 1              # Pr(dead t -> non-detected t)
-#         omega[2,2,t,i] <- 0              # Pr(dead t -> detected t)
-#       }
-#     }
-#     
-#     
-#     for (c in 1:2){
-#       # mean values
-#      # betaPhiIsYOY[c] ~ dnorm(0,1)
-#     #  betaPIsYOY[c] ~ dnorm(0,1)
-#      # for (t in 1:(T-1)){ 
-#         betaPhi[c] ~ dnorm(0, 1)
-#         betaP[c] ~ dnorm(0, 1)
-#       #}
-#     }
-#     
-#     # back-transform for examining output
-#     for (c in 1:2){
-#      #   betaPhiIsYOYOut[c] <- 1/(1 + exp(-betaPhiIsYOY[c]))
-#     #    betaPIsYOYOut[c] <- 1/(1 + exp(-betaPIsYOY[c]))
-#      # for (t in 1:(T-1)){ 
-#         betaPhiOut[c] <- 1/(1 + exp(-betaPhi[c]))
-#         betaPOut[c] <- 1/(1 + exp(-betaP[c])) 
-#     #  }
-#     }
-#     
-#     # likelihood
-#     for (i in 1:N){
-#       z[i,first[i]] ~ dcat(delta[1:2])
-#       for (j in (first[i]+1):last[i]){
-#         z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
-#         y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
-#       }
-#     }
-#   })
-#     
-#   first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
-#   last <- eh$last
-#   
-#   myConstants <- list(N = nrow(y), 
-#                        T = ncol(y), 
-#                        first = first,
-#                        last = last,
-#                        isYOY = eh$isYOY
-#                        )
-#   
-#   myData <- list(y = y + 1)
-#   
-#   zinits <- y + 1 # non-detection -> alive
-#   zinits[zinits == 2] <- 1 # dead -> alive
-#   
-#   initialValues <- function() list(
-#     phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
-#     p = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
-#     z = zinits,
-#     betaPhi = array(runif(2, 0, 1),c(2)),
-#     betaP = array(runif(2, 0, 1),c(2))
-#   )
-#   
-#   parametersToSave <- c("betaPhiOut", "betaPOut", "betaPhiisYOYOut", "betaPisYOYOut")  
-#   nIter <- 5000
-#   nBurnin <- 1000
-#   nChains <- 2
-#   
-#   start <- Sys.time()
-#   Rmodel <- nimbleModel(
-#     code = hmm.phiT_pT_isYOY, 
-#     constants = myConstants,
-#     data = myData,              
-#     inits = initialValues(),
-#     calculate = FALSE
-#   )
-#   conf <- configureMCMC(
-#     Rmodel,
-#     monitors = parametersToSave
-#   )
-#   
-#   Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
-#   Cmodel <- compileNimble(Rmodel)
-#   Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
-#   
-#   mcmc.phiT_pT_isYOY <- runMCMC(
-#     Cmcmc, 
-#     niter = nIter, 
-#     nburnin = nBurnin, 
-#     thin = thinRate, 
-#     nchains = nChains
-#   )
-#   
-#   end <- Sys.time()
-#   elapsed_phiT_pT_isYOY <- end - start
-#   
-#     toSave <- list(
-#       mcmc = mcmc.phiT_pT_isYOY, 
-#       elapsed = elapsed_phiT_pT_isYOY, 
-#       myConstants = myConstants, 
-#       nIter = nIter, 
-#       nBurnin = nBurnin,
-#       thinRate = thinRate, 
-#       nSeasons = nSeasons, 
-#       nCohorts = nCohorts
-#     )
-#   save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_isYOY_', substr(end,1,13), '.RData'))
-#   save(toSave, file = './models/cmrFlowWB/runsOut/mcmc_phiT_pT_isYOY_mostRecent.RData')
-# } else {
-#   load('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_isYOY_mostRecent.RData')
-# }
-#   
-# if(plotMCMCOutput) {  
-#   MCMCsummary(object = mcmc.phiT_pT_isYOY, round = 2)
-#   #MCMCplot(object = mcmc.phiT_pT_isYOY, params = "betaPhiOut")
-#   #MCMCplot(object = mcmc.phiT_pT_isYOY, params = "betaPOut")# 
-#   MCMCplot(object = mcmc.phiT_pT_isYOY, params = c("betaPhiisYOYOut"))
-#   MCMCplot(object = mcmc.phiT_pT_isYOY, params = c("betaPisYOYOut"))
-#   
-#   priors <- runif(nIter * nChains, 0, 1)
-#   MCMCtrace(object = mcmc.phiT_pT_isYOY,
-#             #ISB = FALSE,
-#             #exact = TRUE, 
-#             params = c("betaPhiisYOYOut"),
-#             pdf = FALSE, 
-#             priors = priors)
-# }
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
+if (rerunSurivalModels) {
+
+  y <- eh$eh
+  nSeasons <- nrow(unique(eh$seasons))
+  nCohorts <- nrow(unique(eh$cohorts))
+  
+  hmm.phiT_pT_isYOY <- nimbleCode({
+    delta[1] <- 1                    # Pr(alive t = 1) = 1
+    delta[2] <- 0                    # Pr(dead t = 1) = 0
+
+    for (i in 1:N){
+      for (t in 1:(T-1)){ # loop over time
+        logit(phi[t,i]) <- betaPhi[isYOY[i,t]]           # prior survival
+        gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
+        gamma[1,2,t,i] <- 1 - phi[t,i]     # Pr(alive t -> dead t+1)
+        gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1)
+        gamma[2,2,t,i] <- 1              # Pr(dead t -> dead t+1)
+
+        logit(p[t,i]) <- betaP[isYOY[i,t]]             # prior detection
+        omega[1,1,t,i] <- 1 - p[t,i]       # Pr(alive t -> non-detected t)
+        omega[1,2,t,i] <- p[t,i]           # Pr(alive t -> detected t)
+        omega[2,1,t,i] <- 1              # Pr(dead t -> non-detected t)
+        omega[2,2,t,i] <- 0              # Pr(dead t -> detected t)
+      }
+    }
+
+
+    for (y in 1:2){
+      # mean values
+     # betaPhiIsYOY[c] ~ dnorm(0,1)
+    #  betaPIsYOY[c] ~ dnorm(0,1)
+     # for (t in 1:(T-1)){
+        betaPhi[y] ~ dnorm(0, 1)
+        betaP[y] ~ dnorm(0, 1)
+      #}
+    }
+
+    # back-transform for examining output
+    for (y in 1:2){
+     #   betaPhiIsYOYOut[c] <- 1/(1 + exp(-betaPhiIsYOY[c]))
+    #    betaPIsYOYOut[c] <- 1/(1 + exp(-betaPIsYOY[c]))
+     # for (t in 1:(T-1)){
+        betaPhiOut[y] <- 1/(1 + exp(-betaPhi[y]))
+        betaPOut[y] <- 1/(1 + exp(-betaP[y]))
+    #  }
+    }
+
+    # likelihood
+    for (i in 1:N){
+      z[i,first[i]] ~ dcat(delta[1:2])
+      for (j in (first[i]+1):last[i]){
+        z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
+        y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
+      }
+    }
+  })
+
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+
+  myConstants <- list(N = nrow(y),
+                       T = ncol(y),
+                       first = first,
+                       last = last,
+                       isYOY = eh$isYOY
+                       )
+
+  myData <- list(y = y + 1)
+
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+
+  initialValues <- function() list(
+    phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    p = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    z = zinits,
+    betaPhi = array(runif(2, 0, 1),c(2)),
+    betaP = array(runif(2, 0, 1),c(2))
+  )
+
+  parametersToSave <- c("betaPhiOut", "betaPOut", "betaPhiisYOYOut", "betaPisYOYOut")
+  nIter <- 5000
+  nBurnin <- 1000
+  nChains <- 2
+  thinRate <- 5
+
+  start <- Sys.time()
+  Rmodel <- nimbleModel(
+    code = hmm.phiT_pT_isYOY,
+    constants = myConstants,
+    data = myData,
+    inits = initialValues(),
+    calculate = FALSE
+  )
+  conf <- configureMCMC(
+    Rmodel,
+    monitors = parametersToSave
+  )
+
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+
+  mcmc.phiT_pT_isYOY <- runMCMC(
+    Cmcmc,
+    niter = nIter,
+    nburnin = nBurnin,
+    thin = thinRate,
+    nchains = nChains
+  )
+
+  end <- Sys.time()
+  elapsed_phiT_pT_isYOY <- end - start
+
+    toSave <- list(
+      mcmc = mcmc.phiT_pT_isYOY,
+      elapsed = elapsed_phiT_pT_isYOY,
+      myConstants = myConstants,
+      nIter = nIter,
+      nBurnin = nBurnin,
+      thinRate = thinRate,
+      nSeasons = nSeasons,
+      nCohorts = nCohorts
+    )
+  save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_isYOY_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowWB/runsOut/mcmc_phiT_pT_isYOY_mostRecent.RData')
+} else {
+  load('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_isYOY_mostRecent.RData')
+}
+
+if(plotMCMCOutput) {
+  MCMCsummary(object = mcmc.phiT_pT_isYOY, round = 2)
+  #MCMCplot(object = mcmc.phiT_pT_isYOY, params = "betaPhiOut")
+  #MCMCplot(object = mcmc.phiT_pT_isYOY, params = "betaPOut")#
+  MCMCplot(object = mcmc.phiT_pT_isYOY, params = c("betaPhiisYOYOut"))
+  MCMCplot(object = mcmc.phiT_pT_isYOY, params = c("betaPisYOYOut"))
+
+  priors <- runif(nIter * nChains, 0, 1)
+  MCMCtrace(object = mcmc.phiT_pT_isYOY,
+            #ISB = FALSE,
+            #exact = TRUE,
+            params = c("betaPhiisYOYOut"),
+            pdf = FALSE,
+            priors = priors)
+}
 
 ```
 
@@ -1345,12 +1356,20 @@ if(plotMCMCOutput) {
 
   #MCMCsummary(object = mcmc.phiT_pT_cohort_flowHier, round = 2)
   #MCMCplot(object = mcmc.phiT_pT_cohort_flowHier, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaFlowTop")
   MCMCplot(object = toSave$mcmc, params = "betaFlow")# 
   MCMCplot(object = toSave$mcmc, params = c("betaPhiCohortOut"))
   MCMCplot(object = toSave$mcmc, params = c("betaPCohortOut"))
   MCMCplot(object = toSave$mcmc, params = c("betaFlowCohort"))
   
   priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaFlowTop"),
+            pdf = FALSE, 
+            priors = priors)
+  
   MCMCtrace(object = toSave$mcmc,
             #ISB = FALSE,
             #exact = TRUE, 
@@ -1413,6 +1432,43 @@ ggplot(predFlowCohortHier, aes(flow, predPhi, group = iter)) +
 
 ```
 
+### BetaflowTop predictions
+```{r}
+
+getPredictionsFlowTop <- function(toSave, everyNIters = 10, flowStep = 0.5){
+
+  mcmc <- toSave$mcmc
+  
+  ## betaFlow
+  predictorsBetaFlowTop <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    var = 1:2,
+     flow = seq(-1.5, 1.5, flowStep)
+  )
+  
+  for(i in 1:nrow(predictorsBetaFlowTop)){
+    predictorsBetaFlowTop$betaFlowTop1[i] <- mcmc$chain1[[predictorsBetaFlowTop[i, "iter"], 
+                                                         1
+                                                        ]]
+    predictorsBetaFlowTop$betaFlowTop2[i] <- mcmc$chain1[[predictorsBetaFlowTop[i, "iter"], 
+                                                         2
+                                                        ]]
+  }
+
+  preds <- predictorsBetaFlowTop %>%
+    mutate(predPhi = plogis(betaFlowTop1 * flow + betaFlowTop2 * flow * flow))
+  
+  return(preds)
+}
+
+predBetaFlowTop <- getPredictionsFlowTop(toSave, everyNIters = 10)
+
+ggplot(predBetaFlowTop, aes( flow, predPhi, group = iter)) +
+  geom_line()
+
+ggplot(predBetaFlowTop, aes(betaFlowTop1, betaFlowTop2)) +
+  geom_point()
+```
 
 
 ### Compare models

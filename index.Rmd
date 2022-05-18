@@ -12,6 +12,9 @@ bibliography:
 biblio-style: apalike
 link-citations: yes
 description: This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA
+cover-image: images/westBrook.jpg
+favicon: images/favicon.ico
+github-repo: bletcher/westBrook-book
 ---
 
 # Introduction

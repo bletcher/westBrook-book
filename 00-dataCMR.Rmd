@@ -17,6 +17,7 @@ library(lubridate)
 library(validate)
 library(rlang)
 library(stringi)
+library(writexl)
 library(tidyverse)
 ```
 
@@ -399,10 +400,18 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   ops <-  list("%in%",    "==")
   vals <- list(2002:2014, "wb obear")
                                                                # only include first x fish per cohort
-  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples, maxIndexByCohort = 100)
+  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)#, maxIndexByCohort = 100)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/cmrFlowWB/dataOut/', fileName, '.RData'))
-
+  
+  # output for Xioawei
+  for (i in seq_along(eh)){
+    write.csv(eh[[i]], file = paste0('./models/cmrFlowWB/dataOut/', 
+                                     names(eh)[i], 
+                                     ".csv"), 
+              row.names = F)
+  }
+  
 #}
 
 
