@@ -345,7 +345,7 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   d <- d %>%
     filter(tag %notin% neverCaptured$tag)
   
-  # limit data to first 'maxIndexByCohort' individuals
+  # limit data to first 'maxIndexByCohort' individuals for each cohort
   d <- d %>%
     group_by(cohort) %>%
     mutate(indexByCohort = rleid(tag)) %>%
@@ -366,7 +366,7 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   riverMatrix <- as.matrix(riverWide %>% select(-tag), nrow = nrow(riverWide), ncol = ncol(riverWide) - 1)
   
   isYOYWide <- getEHDataWide_AIS(d, cols, ops, vals, "isYOY", maxOccasionValue, valuesFill = NA)
-  isYOYMatrix <- as.matrix(isYOYWide %>% select(-tag), nrow = nrow(riverWide), ncol = ncol(riverWide) - 1)
+  isYOYMatrix <- as.matrix(isYOYWide %>% select(-tag), nrow = nrow(isYOYWide), ncol = ncol(riverWide) - 1)
   
   tags <- encWide %>% select(tag)
   
@@ -384,7 +384,7 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
 
   return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, river = riverMatrix,
               isYOY = isYOYMatrix, tags = tags, cohorts = cohorts, seasons = seasons, 
-              first = first, last = last, data = data ))
+              first = first, last = last, data = data))
 }
 
 

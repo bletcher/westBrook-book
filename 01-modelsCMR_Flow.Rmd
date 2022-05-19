@@ -24,7 +24,7 @@ library(tidyverse)
 ```
 
 ```{r}
-rerunSurivalModels <- TRUE
+rerunSurivalModels <- FALSE
 plotMCMCOutput <- TRUE
 ```
 
@@ -187,23 +187,14 @@ if (rerunSurivalModels) {
 
 
     for (y in 1:2){
-      # mean values
-     # betaPhiIsYOY[c] ~ dnorm(0,1)
-    #  betaPIsYOY[c] ~ dnorm(0,1)
-     # for (t in 1:(T-1)){
         betaPhi[y] ~ dnorm(0, 1)
         betaP[y] ~ dnorm(0, 1)
-      #}
     }
 
     # back-transform for examining output
     for (y in 1:2){
-     #   betaPhiIsYOYOut[c] <- 1/(1 + exp(-betaPhiIsYOY[c]))
-    #    betaPIsYOYOut[c] <- 1/(1 + exp(-betaPIsYOY[c]))
-     # for (t in 1:(T-1)){
         betaPhiOut[y] <- 1/(1 + exp(-betaPhi[y]))
         betaPOut[y] <- 1/(1 + exp(-betaP[y]))
-    #  }
     }
 
     # likelihood
@@ -220,26 +211,27 @@ if (rerunSurivalModels) {
   last <- eh$last
 
   myConstants <- list(N = nrow(y),
-                       T = ncol(y),
-                       first = first,
-                       last = last,
-                       isYOY = eh$isYOY
-                       )
+                      T = ncol(y),
+                      first = first,
+                      last = last,
+                      isYOY = eh$isYOY
+                      )
 
   myData <- list(y = y + 1)
 
   zinits <- y + 1 # non-detection -> alive
   zinits[zinits == 2] <- 1 # dead -> alive
+  zInitsNA <- ifelse(is.na(eh$isYOY), NA, 1)
 
   initialValues <- function() list(
     phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
-    p = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
-    z = zinits,
+    p =   array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    z = zInitsNA,
     betaPhi = array(runif(2, 0, 1),c(2)),
-    betaP = array(runif(2, 0, 1),c(2))
+    betaP =   array(runif(2, 0, 1),c(2))
   )
 
-  parametersToSave <- c("betaPhiOut", "betaPOut", "betaPhiisYOYOut", "betaPisYOYOut")
+  parametersToSave <- c("betaPhiOut", "betaPOut")
   nIter <- 5000
   nBurnin <- 1000
   nChains <- 2
