@@ -356,16 +356,16 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   encWide <- getEHDataWide_AIS(d, cols, ops, vals, "enc", maxOccasionValue, valuesFill = 0)
   eh <- as.matrix(encWide %>% select(-tag), nrow = nrow(encWide), ncol = ncol(encWide) - 1)
   
-  flowWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanFlowScaled", maxOccasionValue, valuesFill = NA)
+  flowWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanFlowScaled", maxOccasionValue, valuesFill = 0)
   flowMatrix <- as.matrix(flowWide %>% select(-tag), nrow = nrow(flowWide), ncol = ncol(flowWide) - 1)
   
-  temperatureWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanTemperatureScaled", maxOccasionValue, valuesFill = NA)
+  temperatureWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanTemperatureScaled", maxOccasionValue, valuesFill = 0)
   temperatureMatrix <- as.matrix(temperatureWide %>% select(-tag), nrow = nrow(temperatureWide), ncol = ncol(temperatureWide) - 1)
 
-  riverWide <- getEHDataWide_AIS(d, cols, ops, vals, "river", maxOccasionValue, valuesFill = NA)
+  riverWide <- getEHDataWide_AIS(d, cols, ops, vals, "river", maxOccasionValue, valuesFill = "none")
   riverMatrix <- as.matrix(riverWide %>% select(-tag), nrow = nrow(riverWide), ncol = ncol(riverWide) - 1)
   
-  isYOYWide <- getEHDataWide_AIS(d, cols, ops, vals, "isYOY", maxOccasionValue, valuesFill = NA)
+  isYOYWide <- getEHDataWide_AIS(d, cols, ops, vals, "isYOY", maxOccasionValue, valuesFill = 2)
   isYOYMatrix <- as.matrix(isYOYWide %>% select(-tag), nrow = nrow(isYOYWide), ncol = ncol(riverWide) - 1)
   
   tags <- encWide %>% select(tag)
