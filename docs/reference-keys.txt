@@ -50,14 +50,13 @@ models-with-extreme-flow-events-droughts
 models-based-on-individual-observations
 are-flow-and-temperature-correlated-for-individual-observations
 modelFlow
-modelNimble
+modelCMR_Flow
 read-in-encounter-history-eh-data
 run-model-phi_p
 single-estimates-of-phi-and-p-across-time-cohorts-flow
-run-model-phi_p-with-isyoy
-not-working-as-of-51222---initialization-problems
 run-model-phit_pt
 phi-and-p-vary-by-sampling-occasion-time
+run-model-phit_pt-with-isyoy
 run-model-phit_pt_cohort
 phi-and-p-vary-by-time-and-there-is-a-cohort-effect-on-phi
 run-model-phit_pt_cohort_flow
@@ -75,5 +74,6 @@ flow-effects-vary-by-cohort-hierarchical-across-cohorts
 get-flow-effect-estimates-2
 flow-effects-vary-across-cohorts---hierarchical
 plot-flowcohorthier-predictions
+betaflowtop-predictions
 compare-models
 final-words
