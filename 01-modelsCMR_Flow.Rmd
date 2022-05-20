@@ -36,7 +36,7 @@ load('./models/cmrFlowWB/dataOut/eh_20022003200420052006200720082009201020112012
 
 ### run model phi_p 
 #### Single estimates of phi and p (across, time, cohorts, flow)
-```{r phi_p, cache=TRUE}
+```{r phi_p}
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 
 if (rerunSurivalModels) {
@@ -155,7 +155,7 @@ if(plotMCMCOutput) {
 
 ### run model phiT_pT
 #### Phi and p vary by sampling occasion (time)
-```{r phiT_pT, cache=TRUE}
+```{r phiT_pT}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 if (rerunSurivalModels) {
@@ -278,7 +278,7 @@ if (plotMCMCOutput) {
 ```
 
 ### run model phiT_pT, with isYOY 
-```{r phiT_pT_cohortisYOY, cache=TRUE}
+```{r phiT_pT_cohortisYOY}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 if (rerunSurivalModels) {
@@ -445,7 +445,7 @@ if(plotMCMCOutput) {
 
 ### run model phiT_pT_cohort
 #### Phi and p vary by time and there is a cohort effect on phi
-```{r phiT_pT_cohort, cache=TRUE}
+```{r phiT_pT_cohort}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 if (rerunSurivalModels) {
@@ -603,7 +603,7 @@ if(plotMCMCOutput) {
 
 ### run model phiT_pT_cohort_flow
 #### Add mean flow over the interval as a survival effect
-```{r phiT_pT_cohort_flow, cache=TRUE}
+```{r phiT_pT_cohort_flow}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 if (rerunSurivalModels) {
@@ -892,7 +892,7 @@ ggplot(predFlow, aes(flow, predPhi, group = iter)) +
 
 ### run model phiT_pT_cohort_flowCohort
 #### Flow effects vary by cohort
-```{r phiT_pT_cohort_flowCohort, cache=TRUE}
+```{r phiT_pT_cohort_flowCohort}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 if (rerunSurivalModels) {
@@ -1193,7 +1193,7 @@ ggplot(predFlowCohort, aes(flow, predPhi, group = iter)) +
 
 ### run model phiT_pT_cohort_flowCohortHier
 #### Flow effects vary by cohort, hierarchical across cohorts
-```{r phiT_pT_cohort_flowCohortHier, cache=TRUE}
+```{r phiT_pT_cohort_flowCohortHier}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 if (rerunSurivalModels) {
