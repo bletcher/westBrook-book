@@ -631,10 +631,9 @@ Answer: because they are outside the study area (area = ‘above’ or ‘below�
 ##  9 1bf0fe8b79 bkt     west brook 2001-09-06 12:00:00           27     4                 1             58
 ## 10 1bf0fe9504 bkt     west brook 2001-09-07 12:00:00           27     3                 1             58
 ## # … with 54 more rows, and 19 more variables: observedWeight &lt;dbl&gt;, area &lt;chr&gt;, section &lt;dbl&gt;,
-## #   season &lt;dbl&gt;, isYOY &lt;lgl&gt;, date &lt;date&gt;, yday &lt;int&gt;, year &lt;int&gt;, spawnDate &lt;date&gt;,
-## #   emergeDate &lt;date&gt;, oneMonthDate &lt;date&gt;, threeMonthDate &lt;date&gt;, fiveMonthDate &lt;date&gt;,
-## #   spawn_emerge &lt;list&gt;, emerge_detect &lt;list&gt;, spawn_detect &lt;list&gt;, oneMonth &lt;list&gt;, threeMonth &lt;list&gt;,
-## #   fiveMonth &lt;list&gt;</code></pre>
+## #   season &lt;dbl&gt;, isYOY &lt;lgl&gt;, date &lt;date&gt;, yday &lt;int&gt;, year &lt;int&gt;, spawnDate &lt;date&gt;, emergeDate &lt;date&gt;,
+## #   oneMonthDate &lt;date&gt;, threeMonthDate &lt;date&gt;, fiveMonthDate &lt;date&gt;, spawn_emerge &lt;list&gt;,
+## #   emerge_detect &lt;list&gt;, spawn_detect &lt;list&gt;, oneMonth &lt;list&gt;, threeMonth &lt;list&gt;, fiveMonth &lt;list&gt;</code></pre>
 <div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="models.html#cb54-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(cfirstObs2000_2001BKT, <span class="fu">aes</span>(observedLength, <span class="at">color =</span> <span class="fu">is.na</span>(tag))) <span class="sc">+</span></span>
 <span id="cb54-2"><a href="models.html#cb54-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_freqpoly</span>() <span class="sc">+</span></span>
 <span id="cb54-3"><a href="models.html#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">60</span>)</span></code></pre></div>
@@ -747,10 +746,8 @@ Answer: because they are outside the study area (area = ‘above’ or ‘below�
 ## Multiple R-squared:  0.6966, Adjusted R-squared:  0.6383 
 ## F-statistic: 11.94 on 5 and 26 DF,  p-value: 4.544e-06</code></pre>
 <p>Relative importance for main effects model</p>
-<pre><code>##      factor(species) meanFTime_sumFScaled meanTTime_sumTScaled       meanYdayScaled 
-##           0.00395522           0.24940595           0.19990058           0.06280977 
-##     meanCount_Scaled 
-##           0.18053989</code></pre>
+<pre><code>##      factor(species) meanFTime_sumFScaled meanTTime_sumTScaled       meanYdayScaled     meanCount_Scaled 
+##           0.00395522           0.24940595           0.19990058           0.06280977           0.18053989</code></pre>
 </div>
 <div id="models-with-flow-and-temperature-from-previous-three-months" class="section level4 hasAnchor" number="3.1.6.2">
 <h4><span class="header-section-number">3.1.6.2</span> Models with flow and temperature from previous <em>three</em> months<a href="models.html#models-with-flow-and-temperature-from-previous-three-months" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -791,10 +788,8 @@ Answer: because they are outside the study area (area = ‘above’ or ‘below�
 ## Multiple R-squared:  0.6388, Adjusted R-squared:  0.5694 
 ## F-statistic: 9.197 on 5 and 26 DF,  p-value: 3.902e-05</code></pre>
 <p>Relative importance for main effects model</p>
-<pre><code>##      factor(species) meanFTime_sumFScaled meanTTime_sumTScaled       meanYdayScaled 
-##          0.004325792          0.281631981          0.060776249          0.066333713 
-##     meanCount_Scaled 
-##          0.225756051</code></pre>
+<pre><code>##      factor(species) meanFTime_sumFScaled meanTTime_sumTScaled       meanYdayScaled     meanCount_Scaled 
+##          0.004325792          0.281631981          0.060776249          0.066333713          0.225756051</code></pre>
 </div>
 <div id="models-with-flow-and-temperature-from-previous-five-months" class="section level4 hasAnchor" number="3.1.6.3">
 <h4><span class="header-section-number">3.1.6.3</span> Models with flow and temperature from previous <em>five</em> months<a href="models.html#models-with-flow-and-temperature-from-previous-five-months" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -835,10 +830,8 @@ Answer: because they are outside the study area (area = ‘above’ or ‘below�
 ## Multiple R-squared:  0.5668, Adjusted R-squared:  0.4835 
 ## F-statistic: 6.805 on 5 and 26 DF,  p-value: 0.0003537</code></pre>
 <p>Relative importance for main effects model</p>
-<pre><code>##      factor(species) meanFTime_sumFScaled meanTTime_sumTScaled       meanYdayScaled 
-##          0.004330339          0.226812955          0.017322018          0.107186866 
-##     meanCount_Scaled 
-##          0.211177826</code></pre>
+<pre><code>##      factor(species) meanFTime_sumFScaled meanTTime_sumTScaled       meanYdayScaled     meanCount_Scaled 
+##          0.004330339          0.226812955          0.017322018          0.107186866          0.211177826</code></pre>
 r-squared values and AICs for 1st, 2nd (2-way interactions) and 3rd (3-way interactions) order models
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
@@ -1775,27 +1768,25 @@ count_Scaled 0.028031531</p>
 <div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="models.html#cb124-1" aria-hidden="true" tabindex="-1"></a>dataFlow <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;./dataIn/wbFlow/EcoDrought_Continuous_MA.csv&quot;</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="models.html#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(dataFlow)</span></code></pre></div>
 <pre><code>## # A tibble: 582,388 × 9
-##    Station_No Site_Name  DateTime_EST GageHeight_Hobo… Discharge_Hobo_… WaterTemperatur… AirPressure_PSI
-##         &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;                   &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;
-##  1    1171000 Avery Bro… 2/20/2020 0…             4.17             5.37             32.0              NA
-##  2    1171000 Avery Bro… 2/20/2020 0…             4.17             5.3              32.0              NA
-##  3    1171000 Avery Bro… 2/20/2020 0…             4.16             5.17             32.0              NA
-##  4    1171000 Avery Bro… 2/20/2020 0…             4.17             5.27             32.0              NA
-##  5    1171000 Avery Bro… 2/20/2020 1…             4.17             5.3              32.0              NA
-##  6    1171000 Avery Bro… 2/20/2020 1…             4.15             4.94             31.9              NA
-##  7    1171000 Avery Bro… 2/20/2020 1…             4.13             4.56             31.9              NA
-##  8    1171000 Avery Bro… 2/20/2020 1…             4.1              4.14             31.9              NA
-##  9    1171000 Avery Bro… 2/20/2020 2…             4.08             3.84             31.9              NA
-## 10    1171000 Avery Bro… 2/20/2020 2…             4.09             4.02             31.9              NA
+##    Station_No Site_Name   DateTime_EST  GageHeight_Hobo… Discharge_Hobo_… WaterTemperatur… AirPressure_PSI
+##         &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;                    &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;
+##  1    1171000 Avery Brook 2/20/2020 0:…             4.17             5.37             32.0              NA
+##  2    1171000 Avery Brook 2/20/2020 0:…             4.17             5.3              32.0              NA
+##  3    1171000 Avery Brook 2/20/2020 0:…             4.16             5.17             32.0              NA
+##  4    1171000 Avery Brook 2/20/2020 0:…             4.17             5.27             32.0              NA
+##  5    1171000 Avery Brook 2/20/2020 1:…             4.17             5.3              32.0              NA
+##  6    1171000 Avery Brook 2/20/2020 1:…             4.15             4.94             31.9              NA
+##  7    1171000 Avery Brook 2/20/2020 1:…             4.13             4.56             31.9              NA
+##  8    1171000 Avery Brook 2/20/2020 1:…             4.1              4.14             31.9              NA
+##  9    1171000 Avery Brook 2/20/2020 2:…             4.08             3.84             31.9              NA
+## 10    1171000 Avery Brook 2/20/2020 2:…             4.09             4.02             31.9              NA
 ## # … with 582,378 more rows, and 2 more variables: AirTemperature_HOBO_degF &lt;dbl&gt;, X &lt;lgl&gt;</code></pre>
 <div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="models.html#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dataFlow<span class="sc">$</span>Site_Name)</span></code></pre></div>
 <pre><code>## 
-##          Avery Brook          Jimmy Brook       Mitchell Brook    Obear Brook Lower 
-##                56536                57849                56978                60392 
-##      Sanderson Brook         West Brook 0     West Brook Lower West Brook Reservoir 
-##                55336                58548                61279                61059 
-##     West Brook Upper   West Whately Brook 
-##                57301                57110</code></pre>
+##          Avery Brook          Jimmy Brook       Mitchell Brook    Obear Brook Lower      Sanderson Brook 
+##                56536                57849                56978                60392                55336 
+##         West Brook 0     West Brook Lower West Brook Reservoir     West Brook Upper   West Whately Brook 
+##                58548                61279                61059                57301                57110</code></pre>
 <div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="models.html#cb129-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> dataFlow <span class="sc">%&gt;%</span></span>
 <span id="cb129-2"><a href="models.html#cb129-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Site_Name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Jimmy Brook&quot;</span>, <span class="st">&quot;Mitchell Brook&quot;</span>, <span class="st">&quot;Obear Brook Lower&quot;</span>, <span class="st">&quot;West Brook 0&quot;</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb129-3"><a href="models.html#cb129-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">mdy_hm</span>(DateTime_EST),</span>
