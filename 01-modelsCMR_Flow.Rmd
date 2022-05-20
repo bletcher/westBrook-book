@@ -9,7 +9,7 @@ Structure options include
 
 
 ```{r globalModelsNimble, include=FALSE}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
 
