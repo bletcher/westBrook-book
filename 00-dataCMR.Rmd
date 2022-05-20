@@ -43,7 +43,7 @@ addEnvironmental <- function(coreData, sampleFlow = F, funName = "mean") {
       collect(n = Inf) %>% 
       full_join(tbl(conDplyr, "data_flow_extension") %>% 
       collect(n = Inf), by = c("river", "date")) %>% 
-      select(-source) %>% 
+      dplyr::select(-source) %>% 
       dplyr::filter(date <= max(coreData$detectionDate), 
                     date >= min(coreData$detectionDate)) %>% 
       rename(temperature = daily_mean_temp, flow = qPredicted) %>% 
@@ -52,7 +52,7 @@ addEnvironmental <- function(coreData, sampleFlow = F, funName = "mean") {
   else {
     envData <- tbl(conDplyr, "stanley_environmental") %>% 
       filter(section == 11) %>% 
-      select(datetime, temperature, depth) %>% 
+      dplyr::select(datetime, temperature, depth) %>% 
       collect(n = Inf) %>% 
       rename(flow = depth, date = datetime) %>% 
       data.frame()
@@ -84,7 +84,7 @@ addEnvironmental <- function(coreData, sampleFlow = F, funName = "mean") {
     }
     
     coreDataUniqueDates <- coreData %>% 
-      select(river, detectionDate, lagDetectionDate) %>% 
+      dplyr::select(river, detectionDate, lagDetectionDate) %>% 
       unique() %>% 
       group_by(river, detectionDate, lagDetectionDate) %>% 
       mutate(meanTemperature = getIntervalMean(detectionDate, lagDetectionDate, river, "Temperature"), 
@@ -103,7 +103,7 @@ addEnvironmental <- function(coreData, sampleFlow = F, funName = "mean") {
     }
     
     coreDataUniqueDates <- coreData %>% 
-      select(detectionDate, lagDetectionDate) %>% 
+      dplyr::select(detectionDate, lagDetectionDate) %>% 
       unique() %>% 
       group_by(detectionDate, lagDetectionDate) %>% 
       mutate(meanTemperature = getIntervalMean(detectionDate, lagDetectionDate, "Temperature"), 
@@ -117,13 +117,13 @@ addEnvironmental <- function(coreData, sampleFlow = F, funName = "mean") {
   if (sampleFlow) {
     coreData <- coreData %>% 
       mutate(date = as.Date(detectionDate)) %>% 
-      filter(enc == 1) %>% select(sampleName, date) %>% 
+      filter(enc == 1) %>% dplyr::select(sampleName, date) %>% 
       group_by(sampleName, date) %>% summarize(n = n()) %>% 
       ungroup() %>% 
       left_join(envData %>% 
                   filter(!is.na(flow)) %>% 
                                 mutate(date = as.Date(date)) %>% 
-                  select(date, flow) %>% 
+                  dplyr::select(date, flow) %>% 
                                 rename(flowForP = flow) %>% 
                   unique(), by = c("date")) %>% 
       group_by(sampleName) %>% summarize(flowForP = sum(flowForP * n)/(sum(n))) %>% 
@@ -221,14 +221,14 @@ getNeverCaptured <- function(d, maxOccasionValue){
     group_by(tag) %>%
     summarize(sumEnc = sum(enc, na.rm = TRUE)) %>%
     filter(sumEnc == 0) %>%
-    select(tag)
+    dplyr::select(tag)
 }
 
 addRiverTagged <- function(d){
   d1 <- d %>% 
     filter(isFirstObserved) %>%
     mutate(riverTagged = river) %>%
-    select(tag, riverTagged)
+    dplyr::select(tag, riverTagged)
   
   return(left_join(d, d1))
 
@@ -354,21 +354,25 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
 
 
   encWide <- getEHDataWide_AIS(d, cols, ops, vals, "enc", maxOccasionValue, valuesFill = 0)
-  eh <- as.matrix(encWide %>% select(-tag), nrow = nrow(encWide), ncol = ncol(encWide) - 1)
+  eh <- as.matrix(encWide %>% dplyr::select(-tag), nrow = nrow(encWide), ncol = ncol(encWide) - 1)
   
-  flowWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanFlowScaled", maxOccasionValue, valuesFill = 0)
-  flowMatrix <- as.matrix(flowWide %>% select(-tag), nrow = nrow(flowWide), ncol = ncol(flowWide) - 1)
+  flowFill <- 0
+  flowWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanFlowScaled", maxOccasionValue, valuesFill = flowFill)
+  flowMatrix <- as.matrix(flowWide %>% dplyr::select(-tag), nrow = nrow(flowWide), ncol = ncol(flowWide) - 1)
+  flowMatrix <- ifelse(is.finite(flowMatrix), flowMatrix, flowFill)
   
-  temperatureWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanTemperatureScaled", maxOccasionValue, valuesFill = 0)
-  temperatureMatrix <- as.matrix(temperatureWide %>% select(-tag), nrow = nrow(temperatureWide), ncol = ncol(temperatureWide) - 1)
-
+  temperatureFill <- 0
+  temperatureWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanTemperatureScaled", maxOccasionValue, valuesFill = temperatureFill)
+  temperatureMatrix <- as.matrix(temperatureWide %>% dplyr::select(-tag), nrow = nrow(temperatureWide), ncol = ncol(temperatureWide) - 1)
+  temperatureMatrix <- ifelse(is.finite(temperatureMatrix), temperatureMatrix, temperatureFill)
+  
   riverWide <- getEHDataWide_AIS(d, cols, ops, vals, "river", maxOccasionValue, valuesFill = "none")
-  riverMatrix <- as.matrix(riverWide %>% select(-tag), nrow = nrow(riverWide), ncol = ncol(riverWide) - 1)
+  riverMatrix <- as.matrix(riverWide %>% dplyr::select(-tag), nrow = nrow(riverWide), ncol = ncol(riverWide) - 1)
   
   isYOYWide <- getEHDataWide_AIS(d, cols, ops, vals, "isYOY", maxOccasionValue, valuesFill = 2)
-  isYOYMatrix <- as.matrix(isYOYWide %>% select(-tag), nrow = nrow(isYOYWide), ncol = ncol(riverWide) - 1)
+  isYOYMatrix <- as.matrix(isYOYWide %>% dplyr::select(-tag), nrow = nrow(isYOYWide), ncol = ncol(riverWide) - 1)
   
-  tags <- encWide %>% select(tag)
+  tags <- encWide %>% dplyr::select(tag)
   
   data <- d %>%
     ehFilter(cols, ops, vals) %>% 
@@ -376,8 +380,8 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
     filter(ageInSamples %in% 1:maxOccasionValue) %>%
     arrange(tag, ageInSamples)
   
-  cohorts <- tags %>% left_join(data %>% select(tag, cohort) %>% unique()) %>% select(cohort)
-  seasons <- tags %>% left_join(data %>% select(tag, season) %>% unique()) %>% select(season)
+  cohorts <- tags %>% left_join(data %>% dplyr::select(tag, cohort) %>% unique()) %>% dplyr::select(cohort)
+  seasons <- tags %>% left_join(data %>% dplyr::select(tag, season) %>% unique()) %>% dplyr::select(season)
   first <- apply(eh, 1, function(x) min(which(x != 0)))
   last <- apply(riverMatrix, 1, function(x) max(which(!is.na(x))))
   last <- ifelse(last == maxOccasionValue, last, last - 1)
