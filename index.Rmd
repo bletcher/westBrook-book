@@ -21,7 +21,7 @@ github-repo: bletcher/westBrook-book
 
 This book describes accessing, cleaning, and analyzing data from the West Brook Study in Whateley MA, USA.
 
-Use `bookdown::render_book("index.Rmd", "bookdown::gitbook")` to force html book. `bookdown::preview_chapter("01-modelsCMR_Flow.Rmd", "bookdown::gitbook")` to update just one chapter (01-modelsYOY.Rmd as example here). 
+Use `bookdown::render_book("index.Rmd", "bookdown::gitbook")` to force html book. `bookdown::preview_chapter("01-modelsCMR_Flow.Rmd", "bookdown::gitbook")` to update just one chapter (01-modelsCMR_Flow.Rmd as example here). 
 
 Use `clean_book()` to clean up temporary files.
 

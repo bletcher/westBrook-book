@@ -24,7 +24,7 @@ library(tidyverse)
 ```
 
 ```{r}
-rerunSurivalModels <- TRUE
+rerunSurivalModels <- FALSE
 plotMCMCOutput <- TRUE
 ```
 
