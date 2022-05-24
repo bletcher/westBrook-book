@@ -24,7 +24,7 @@ library(tidyverse)
 ```
 
 ```{r}
-rerunSurivalModels <- FALSE
+rerunSurivalModels <- TRUE
 plotMCMCOutput <- TRUE
 ```
 
@@ -611,6 +611,7 @@ if (rerunSurivalModels) {
   y <- eh$eh
   nCohorts <- nrow(unique(eh$cohorts))
   nSeasons <- nrow(unique(eh$seasons))
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
   
   hmm.phiT_pT_cohort_flow <- nimbleCode({
     delta[1] <- 1                    # Pr(alive t = 1) = 1
@@ -621,8 +622,8 @@ if (rerunSurivalModels) {
         logit(phi[t,i]) <- 
           betaInt +
           betaPhi[t,cohort[i]] + 
-          betaFlow[1,season[i]] * flow[i,t] +
-          betaFlow[2,season[i]] * flow[i,t] * flow[i,t]
+          betaFlow[1,season[t]] * flow[i,t] +
+          betaFlow[2,season[t]] * flow[i,t] * flow[i,t]
            # prior survival
         
         gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
@@ -685,7 +686,7 @@ if (rerunSurivalModels) {
                        last = last,
                        cohort = cohort, 
                        nCohorts = nCohorts,
-                       season = eh$seasons$season,
+                       season = seasonArray, #eh$seasons$season,
                        flow = eh$flow
                        )
   
@@ -900,6 +901,7 @@ if (rerunSurivalModels) {
   y <- eh$eh
   nCohorts <- nrow(unique(eh$cohorts))
   nSeasons <- nrow(unique(eh$seasons))
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
   
   hmm.phiT_pT_cohort_flowCohort <- nimbleCode({
     delta[1] <- 1                    # Pr(alive t = 1) = 1
@@ -910,8 +912,8 @@ if (rerunSurivalModels) {
         logit(phi[t,i]) <- 
           betaInt +
           betaPhi[t,cohort[i]] + 
-          betaFlow[1,season[i],cohort[i]] * flow[i,t] +
-          betaFlow[2,season[i],cohort[i]] * flow[i,t] * flow[i,t]
+          betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+          betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
            # prior survival
         
         gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
@@ -976,7 +978,7 @@ if (rerunSurivalModels) {
                        last = last,
                        cohort = cohort, 
                        nCohorts = nCohorts,
-                       season = eh$seasons$season,
+                       season = seasonArray, #eh$seasons$season,
                        flow = eh$flow
                        )
   
@@ -1201,6 +1203,7 @@ if (rerunSurivalModels) {
   y <- eh$eh
   nCohorts <- nrow(unique(eh$cohorts))
   nSeasons <- nrow(unique(eh$seasons))
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
   
   hmm.phiT_pT_cohort_flowCohortHier <- nimbleCode({
     delta[1] <- 1                    # Pr(alive t = 1) = 1
@@ -1211,8 +1214,8 @@ if (rerunSurivalModels) {
         logit(phi[t,i]) <- 
           betaInt +
           betaPhi[t,cohort[i]] + 
-          betaFlow[1,season[i],cohort[i]] * flow[i,t] +
-          betaFlow[2,season[i],cohort[i]] * flow[i,t] * flow[i,t]
+          betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+          betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
            # prior survival
         
         gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
@@ -1281,7 +1284,7 @@ if (rerunSurivalModels) {
                        last = last,
                        cohort = cohort, 
                        nCohorts = nCohorts,
-                       season = eh$seasons$season,
+                       season = seasonArray, #eh$seasons$season,
                        flow = eh$flow
                        )
   
