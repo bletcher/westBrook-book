@@ -29,13 +29,13 @@ plotMCMCOutput <- TRUE
 ```
 
 
-### Read in encounter history (eh) data
 ```{r}
 load('./models/cmrFlowWB/dataOut/eh_2002200320042005200620072008200920102011201220132014_wb obear.RData')
 ```
 
-### run model phi_p 
-#### Single estimates of phi and p (across, time, cohorts, flow)
+### Model phi_p 
+Single estimates of phi and p (across, time, cohorts, flow)
+#### Set up and run model
 ```{r phi_p}
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
 
@@ -153,8 +153,9 @@ if(plotMCMCOutput) {
 }
 ```
 
-### run model phiT_pT
-#### Phi and p vary by sampling occasion (time)
+### Model phiT_pT
+Phi and p vary by sampling occasion (time)
+#### Set up and run model
 ```{r phiT_pT}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
@@ -277,7 +278,8 @@ if (plotMCMCOutput) {
 
 ```
 
-### run model phiT_pT, with isYOY 
+### Model phiT_pT_isYOY
+Add structure for isYOY. This was important for the integrated growth/survival model, but probably not relevant here since we are estimating phi and p for each ageInSamples
 ```{r phiT_pT_cohortisYOY}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
@@ -443,8 +445,9 @@ if(plotMCMCOutput) {
 ```
 
 
-### run model phiT_pT_cohort
-#### Phi and p vary by time and there is a cohort effect on phi
+### Model phiT_pT_cohort
+Phi and p vary by time and there is a cohort effect on phi
+#### Set up and run model
 ```{r phiT_pT_cohort}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
@@ -601,8 +604,17 @@ if(plotMCMCOutput) {
 
 ```
 
-### run model phiT_pT_cohort_flow
-#### Add mean flow over the interval as a survival effect
+#### Plot phi against flow data phiT_pT_cohort
+```{r plot phi and raw flow}
+phiOut <- MCMCsummary(toSave$mcmc, params = 'betaPhiOut')
+
+
+```
+
+
+### Model phiT_pT_cohort_flow
+Add mean flow over the interval as a survival effect
+#### Set up and run model
 ```{r phiT_pT_cohort_flow}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
@@ -802,13 +814,13 @@ if(plotMCMCOutput) {
 
 ```
 
-### Get flow effect estimates
-#### Flow effects fixed across cohorts
+#### Get flow effect estimates
+Flow effects fixed across cohorts
 ```{r}
    #     betaInt +
    #     betaPhi[t,cohort[i]] + 
-   #     betaFlow[1,season[i]] * flow[i,t] +
-   #     betaFlow[2,season[i]] * flow[i,t] * flow[i,t]
+   #     betaFlow[1,season[t]] * flow[i,t] +
+   #     betaFlow[2,season[t]] * flow[i,t] * flow[i,t]
 
 
 getPredictionsFlow <- function(mcmc, everyNIters = 10, flowStep = 0.5){
@@ -871,7 +883,7 @@ predFlow <- getPredictionsFlow(toSave$mcmc, everyNIters = 2)
 
 ```
 
-### Plot flow predictions
+#### Plot flow predictions phiT_pT_cohort_flow
 ```{r}
 ggplot(predFlow, aes(flow, predPhi, group = iter)) +
   geom_line(alpha = 0.025) +
@@ -891,8 +903,9 @@ ggplot(predFlow, aes(flow, predPhi, group = iter)) +
 
 ```
 
-### run model phiT_pT_cohort_flowCohort
-#### Flow effects vary by cohort
+### Model phiT_pT_cohort_flowCohort
+Flow effects vary by cohort
+#### Set up and run model
 ```{r phiT_pT_cohort_flowCohort}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
@@ -1096,13 +1109,13 @@ if(plotMCMCOutput) {
 
 ```
 
-### Get flow effect estimates
-#### Flow effects vary across cohorts
+#### Get flow effect estimates
+Flow effects vary across cohorts
 ```{r}
    #     betaInt +
    #     betaPhi[t,cohort[i]] + 
-   #     betaFlow[1,season[i],cohort[i]] * flow[i,t] +
-   #     betaFlow[2,season[i],cohort[i]] * flow[i,t] * flow[i,t]
+   #     betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+   #     betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
 
 # load current flow model
 #load("C:/Users/bletcher/OneDrive - DOI/projects/westBrook-book/models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flow_2022-05-12 10.RData")
@@ -1173,7 +1186,7 @@ predFlowCohort <- getPredictionsFlowCohort(toSave, everyNIters = 2)
 
 ```
 
-### Plot flow predictions
+#### Plot flow predictions phiT_pT_cohort_flowCohort
 ```{r}
 ggplot(predFlowCohort, aes(flow, predPhi, group = iter)) +
   geom_line(alpha = 0.025) +
@@ -1193,8 +1206,9 @@ ggplot(predFlowCohort, aes(flow, predPhi, group = iter)) +
 
 ```
 
-### run model phiT_pT_cohort_flowCohortHier
-#### Flow effects vary by cohort, hierarchical across cohorts
+### Model phiT_pT_cohort_flowCohortHier
+Flow effects vary by cohort, hierarchical across cohorts
+#### Set up and run model
 ```{r phiT_pT_cohort_flowCohortHier}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
@@ -1414,20 +1428,20 @@ if(plotMCMCOutput) {
 
 ```
 
-### Get flow effect estimates
-#### Flow effects vary across cohorts - hierarchical
+#### Get flow effect estimates
+Flow effects vary across cohorts - hierarchical
 ```{r}
    #     betaInt +
    #     betaPhi[t,cohort[i]] + 
-   #     betaFlow[1,season[i],cohort[i]] * flow[i,t] +
-   #     betaFlow[2,season[i],cohort[i]] * flow[i,t] * flow[i,t]
+   #     betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+   #     betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
 
 load('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_cohort_flowCohortHier_mostRecent.RData')
 predFlowCohortHier <- getPredictionsFlowCohort(toSave, everyNIters = 2)
 
 ```
 
-### Plot flowCohortHier predictions
+#### Plot predictions
 ```{r}
 ggplot(predFlowCohortHier, aes(flow, predPhi, group = iter)) +
   geom_line(alpha = 0.025) +
@@ -1447,7 +1461,7 @@ ggplot(predFlowCohortHier, aes(flow, predPhi, group = iter)) +
 
 ```
 
-### BetaflowTop predictions
+#### BetaflowTop predictions
 ```{r}
 
 getPredictionsFlowTop <- function(toSave, everyNIters = 10, flowStep = 0.5){
@@ -1478,8 +1492,9 @@ getPredictionsFlowTop <- function(toSave, everyNIters = 10, flowStep = 0.5){
 
 predBetaFlowTop <- getPredictionsFlowTop(toSave, everyNIters = 10)
 
-ggplot(predBetaFlowTop, aes( flow, predPhi, group = iter)) +
-  geom_line()
+ggplot(predBetaFlowTop, aes(flow, predPhi, group = iter)) +
+  geom_line() #+
+  #facet_wrap(~iter)
 
 ggplot(predBetaFlowTop, aes(betaFlowTop1, betaFlowTop2)) +
   geom_point()

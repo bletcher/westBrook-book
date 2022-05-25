@@ -23,7 +23,7 @@
 <meta name="author" content="Ben Letcher" />
 
 
-<meta name="date" content="2022-05-24" />
+<meta name="date" content="2022-05-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -52,8 +52,6 @@
 <link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
 <link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
-<script src="libs/kePrint-0.0.1/kePrint.js"></script>
-<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">
@@ -185,22 +183,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.2" data-path="models.html"><a href="models.html#modelFlow"><i class="fa fa-check"></i><b>3.2</b> Flow model</a></li>
 <li class="chapter" data-level="3.3" data-path="models.html"><a href="models.html#modelCMR_Flow"><i class="fa fa-check"></i><b>3.3</b> Flow effects on survival (phi) models</a>
 <ul>
-<li class="chapter" data-level="3.3.1" data-path="models.html"><a href="models.html#read-in-encounter-history-eh-data"><i class="fa fa-check"></i><b>3.3.1</b> Read in encounter history (eh) data</a></li>
-<li class="chapter" data-level="3.3.2" data-path="models.html"><a href="models.html#run-model-phi_p"><i class="fa fa-check"></i><b>3.3.2</b> run model phi_p</a></li>
-<li class="chapter" data-level="3.3.3" data-path="models.html"><a href="models.html#run-model-phit_pt"><i class="fa fa-check"></i><b>3.3.3</b> run model phiT_pT</a></li>
-<li class="chapter" data-level="3.3.4" data-path="models.html"><a href="models.html#run-model-phit_pt-with-isyoy"><i class="fa fa-check"></i><b>3.3.4</b> run model phiT_pT, with isYOY</a></li>
-<li class="chapter" data-level="3.3.5" data-path="models.html"><a href="models.html#run-model-phit_pt_cohort"><i class="fa fa-check"></i><b>3.3.5</b> run model phiT_pT_cohort</a></li>
-<li class="chapter" data-level="3.3.6" data-path="models.html"><a href="models.html#run-model-phit_pt_cohort_flow"><i class="fa fa-check"></i><b>3.3.6</b> run model phiT_pT_cohort_flow</a></li>
-<li class="chapter" data-level="3.3.7" data-path="models.html"><a href="models.html#get-flow-effect-estimates"><i class="fa fa-check"></i><b>3.3.7</b> Get flow effect estimates</a></li>
-<li class="chapter" data-level="3.3.8" data-path="models.html"><a href="models.html#plot-flow-predictions"><i class="fa fa-check"></i><b>3.3.8</b> Plot flow predictions</a></li>
-<li class="chapter" data-level="3.3.9" data-path="models.html"><a href="models.html#run-model-phit_pt_cohort_flowcohort"><i class="fa fa-check"></i><b>3.3.9</b> run model phiT_pT_cohort_flowCohort</a></li>
-<li class="chapter" data-level="3.3.10" data-path="models.html"><a href="models.html#get-flow-effect-estimates-1"><i class="fa fa-check"></i><b>3.3.10</b> Get flow effect estimates</a></li>
-<li class="chapter" data-level="3.3.11" data-path="models.html"><a href="models.html#plot-flow-predictions-1"><i class="fa fa-check"></i><b>3.3.11</b> Plot flow predictions</a></li>
-<li class="chapter" data-level="3.3.12" data-path="models.html"><a href="models.html#run-model-phit_pt_cohort_flowcohorthier"><i class="fa fa-check"></i><b>3.3.12</b> run model phiT_pT_cohort_flowCohortHier</a></li>
-<li class="chapter" data-level="3.3.13" data-path="models.html"><a href="models.html#get-flow-effect-estimates-2"><i class="fa fa-check"></i><b>3.3.13</b> Get flow effect estimates</a></li>
-<li class="chapter" data-level="3.3.14" data-path="models.html"><a href="models.html#plot-flowcohorthier-predictions"><i class="fa fa-check"></i><b>3.3.14</b> Plot flowCohortHier predictions</a></li>
-<li class="chapter" data-level="3.3.15" data-path="models.html"><a href="models.html#betaflowtop-predictions"><i class="fa fa-check"></i><b>3.3.15</b> BetaflowTop predictions</a></li>
-<li class="chapter" data-level="3.3.16" data-path="models.html"><a href="models.html#compare-models"><i class="fa fa-check"></i><b>3.3.16</b> Compare models</a></li>
+<li class="chapter" data-level="3.3.1" data-path="models.html"><a href="models.html#model-phi_p"><i class="fa fa-check"></i><b>3.3.1</b> Model phi_p</a></li>
+<li class="chapter" data-level="3.3.2" data-path="models.html"><a href="models.html#model-phit_pt"><i class="fa fa-check"></i><b>3.3.2</b> Model phiT_pT</a></li>
+<li class="chapter" data-level="3.3.3" data-path="models.html"><a href="models.html#model-phit_pt_isyoy"><i class="fa fa-check"></i><b>3.3.3</b> Model phiT_pT_isYOY</a></li>
+<li class="chapter" data-level="3.3.4" data-path="models.html"><a href="models.html#model-phit_pt_cohort"><i class="fa fa-check"></i><b>3.3.4</b> Model phiT_pT_cohort</a></li>
+<li class="chapter" data-level="3.3.5" data-path="models.html"><a href="models.html#model-phit_pt_cohort_flow"><i class="fa fa-check"></i><b>3.3.5</b> Model phiT_pT_cohort_flow</a></li>
+<li class="chapter" data-level="3.3.6" data-path="models.html"><a href="models.html#model-phit_pt_cohort_flowcohort"><i class="fa fa-check"></i><b>3.3.6</b> Model phiT_pT_cohort_flowCohort</a></li>
+<li class="chapter" data-level="3.3.7" data-path="models.html"><a href="models.html#model-phit_pt_cohort_flowcohorthier"><i class="fa fa-check"></i><b>3.3.7</b> Model phiT_pT_cohort_flowCohortHier</a></li>
+<li class="chapter" data-level="3.3.8" data-path="models.html"><a href="models.html#compare-models"><i class="fa fa-check"></i><b>3.3.8</b> Compare models</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>4</b> Final Words</a></li>
