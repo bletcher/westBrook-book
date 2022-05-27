@@ -135,13 +135,23 @@ if (rerunSurivalModels) {
   )
   save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phi_p_', substr(end,1,13), '.RData'))
   save(toSave, file = './models/cmrFlowWB/runsOut/mcmc_phi_p_mostRecent.RData')
+  
+  # output for Xioawei
+  for (i in seq_along(toSave)){
+    write.csv(toSave[[i]], file = paste0('./models/cmrFlowWB/runsOut/phi_p/', 
+                                     names(toSave)[i], 
+                                     ".csv"), 
+              row.names = F)
+  }
+  write.csv(MCMCsummary(toSave$mcmc), file = './models/cmrFlowWB/runsOut/phi_p/mcmcSummary.csv')
+  
 } else {
   load('./models/cmrFlowWB/runsOut/mcmc_phi_p_mostRecent.RData')
 }
 
 if(plotMCMCOutput) {
-  #MCMCsummary(object = mcmc.phi_p, round = 2)
   MCMCplot(object = toSave$mcmc)
+  MCMCsummary(object = toSave$mcmc, round = 3)
   
   priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
   MCMCtrace(object = toSave$mcmc,
@@ -257,14 +267,24 @@ if (rerunSurivalModels) {
     )
   save(toSave, file = paste0('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_', substr(end,1,13), '.RData'))
   save(toSave, file = './models/cmrFlowWB/runsOut/mcmc_phiT_pT_mostRecent.RData')
+  
+  # output for Xioawei
+  for (i in seq_along(toSave)){
+    write.csv(toSave[[i]], file = paste0('./models/cmrFlowWB/runsOut/phiT_pT/', 
+                                     names(toSave)[i], 
+                                     ".csv"), 
+              row.names = F)
+  }
+  write.csv(MCMCsummary(toSave$mcmc), file = './models/cmrFlowWB/runsOut/phiT_pT/mcmcSummary.csv')
+  
 } else {
   load('./models/cmrFlowWB/runsOut/mcmc_phiT_pT_mostRecent.RData')
 }
   
 if (plotMCMCOutput) {  
-  #MCMCsummary(object = mcmc.phiT_pT, round = 2)
   MCMCplot(object = toSave$mcmc)
-  
+  MCMCsummary(object = toSave$mcmc, round = 3)
+
   priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
   MCMCtrace(object = toSave$mcmc,
             #ISB = FALSE,
@@ -277,6 +297,13 @@ if (plotMCMCOutput) {
 }
 
 ```
+
+```{r}
+#meanPost <- MCMCpstr(toSave$mcmc)
+#sdPost <- MCMCpstr(toSave$mcmc, func = sd)
+
+```
+
 
 ### Model phiT_pT_cohort  
 Phi and p vary by time and there is a cohort effect on phi  

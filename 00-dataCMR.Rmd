@@ -21,7 +21,7 @@ library(writexl)
 library(tidyverse)
 ```
 
-```{r}
+```{r CMR_global variables}
 getNew_encounterHistories <- TRUE
 
 # maximum ageInSamples for both createCmrData and getEH
