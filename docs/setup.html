@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Setup | The West Brook Story</title>
+  <meta name="description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Setup | The West Brook Story" />
+  <meta property="og:type" content="book" />
+  <meta property="og:image" content="/images/westBrook.jpg" />
+  <meta property="og:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
+  <meta name="github-repo" content="bletcher/westBrook-book" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Setup | The West Brook Story" />
+  
+  <meta name="twitter:description" content="This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA" />
+  <meta name="twitter:image" content="/images/westBrook.jpg" />
+
+<meta name="author" content="Ben Letcher" />
+
+
+<meta name="date" content="2022-05-31" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+<link rel="prev" href="index.html"/>
+<link rel="next" href="getData.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#the-west-brook"><i class="fa fa-check"></i><b>1.1</b> The West Brook</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="setup.html"><a href="setup.html"><i class="fa fa-check"></i><b>2</b> Setup</a></li>
+<li class="chapter" data-level="3" data-path="getData.html"><a href="getData.html"><i class="fa fa-check"></i><b>3</b> Get data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="getData.html"><a href="getData.html#getEnvData"><i class="fa fa-check"></i><b>3.1</b> Get environmental data</a></li>
+<li class="chapter" data-level="3.2" data-path="getData.html"><a href="getData.html#dataElectro"><i class="fa fa-check"></i><b>3.2</b> Electrofishing data</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="getData.html"><a href="getData.html#get-data"><i class="fa fa-check"></i><b>3.2.1</b> Get data</a></li>
+<li class="chapter" data-level="3.2.2" data-path="getData.html"><a href="getData.html#wrangle-data"><i class="fa fa-check"></i><b>3.2.2</b> Wrangle data</a></li>
+<li class="chapter" data-level="3.2.3" data-path="getData.html"><a href="getData.html#explore-data"><i class="fa fa-check"></i><b>3.2.3</b> Explore data</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="getData.html"><a href="getData.html#dataCMR"><i class="fa fa-check"></i><b>3.3</b> Capture-recapture data</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="getData.html"><a href="getData.html#temporary-home-for-updated-functions"><i class="fa fa-check"></i><b>3.3.1</b> Temporary home for updated functions</a></li>
+<li class="chapter" data-level="3.3.2" data-path="getData.html"><a href="getData.html#get-data-1"><i class="fa fa-check"></i><b>3.3.2</b> Get data</a></li>
+<li class="chapter" data-level="3.3.3" data-path="getData.html"><a href="getData.html#make-encounter-history-files"><i class="fa fa-check"></i><b>3.3.3</b> Make encounter history files</a></li>
+<li class="chapter" data-level="3.3.4" data-path="getData.html"><a href="getData.html#wrangle-data-1"><i class="fa fa-check"></i><b>3.3.4</b> Wrangle data</a></li>
+<li class="chapter" data-level="3.3.5" data-path="getData.html"><a href="getData.html#explore-data-1"><i class="fa fa-check"></i><b>3.3.5</b> Explore data</a></li>
+<li class="chapter" data-level="3.3.6" data-path="getData.html"><a href="getData.html#cmr-metadata"><i class="fa fa-check"></i><b>3.3.6</b> CMR metadata</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="getData.html"><a href="getData.html#dataWanding"><i class="fa fa-check"></i><b>3.4</b> Wanding data</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="getData.html"><a href="getData.html#get-data-2"><i class="fa fa-check"></i><b>3.4.1</b> Get data</a></li>
+<li class="chapter" data-level="3.4.2" data-path="getData.html"><a href="getData.html#wrangle-data-2"><i class="fa fa-check"></i><b>3.4.2</b> Wrangle data</a></li>
+<li class="chapter" data-level="3.4.3" data-path="getData.html"><a href="getData.html#explore-data-2"><i class="fa fa-check"></i><b>3.4.3</b> Explore data</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="getData.html"><a href="getData.html#dataAntenna"><i class="fa fa-check"></i><b>3.5</b> Antenna data</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="getData.html"><a href="getData.html#get-data-3"><i class="fa fa-check"></i><b>3.5.1</b> Get data</a></li>
+<li class="chapter" data-level="3.5.2" data-path="getData.html"><a href="getData.html#wrangle-data-3"><i class="fa fa-check"></i><b>3.5.2</b> Wrangle data</a></li>
+<li class="chapter" data-level="3.5.3" data-path="getData.html"><a href="getData.html#explore-data-3"><i class="fa fa-check"></i><b>3.5.3</b> Explore data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>4</b> Models</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="models.html"><a href="models.html#modelYOY"><i class="fa fa-check"></i><b>4.1</b> Young-of-year size model</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="models.html"><a href="models.html#raw-data-for-yoy-model"><i class="fa fa-check"></i><b>4.1.1</b> Raw data for YOY model</a></li>
+<li class="chapter" data-level="4.1.2" data-path="models.html"><a href="models.html#get-environmental-data"><i class="fa fa-check"></i><b>4.1.2</b> Get environmental data</a></li>
+<li class="chapter" data-level="4.1.3" data-path="models.html"><a href="models.html#get-first-observations"><i class="fa fa-check"></i><b>4.1.3</b> Get first observations</a></li>
+<li class="chapter" data-level="4.1.4" data-path="models.html"><a href="models.html#counts-of-captured-fish"><i class="fa fa-check"></i><b>4.1.4</b> Counts of captured fish</a></li>
+<li class="chapter" data-level="4.1.5" data-path="models.html"><a href="models.html#raw-data-plots"><i class="fa fa-check"></i><b>4.1.5</b> Raw data plots</a></li>
+<li class="chapter" data-level="4.1.6" data-path="models.html"><a href="models.html#models-based-on-yearly-means"><i class="fa fa-check"></i><b>4.1.6</b> Models based on yearly means</a></li>
+<li class="chapter" data-level="4.1.7" data-path="models.html"><a href="models.html#models-with-extreme-flow-events-droughts"><i class="fa fa-check"></i><b>4.1.7</b> Models with extreme flow events (droughts)</a></li>
+<li class="chapter" data-level="4.1.8" data-path="models.html"><a href="models.html#models-based-on-individual-observations"><i class="fa fa-check"></i><b>4.1.8</b> Models based on individual observations</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="models.html"><a href="models.html#modelFlow"><i class="fa fa-check"></i><b>4.2</b> Flow model</a></li>
+<li class="chapter" data-level="4.3" data-path="models.html"><a href="models.html#modelCMR_Flow"><i class="fa fa-check"></i><b>4.3</b> Flow effects on survival (phi) models</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="models.html"><a href="models.html#model-phi_p"><i class="fa fa-check"></i><b>4.3.1</b> Model phi_p</a></li>
+<li class="chapter" data-level="4.3.2" data-path="models.html"><a href="models.html#model-phit_pt"><i class="fa fa-check"></i><b>4.3.2</b> Model phiT_pT</a></li>
+<li class="chapter" data-level="4.3.3" data-path="models.html"><a href="models.html#model-phit_pt_cohort"><i class="fa fa-check"></i><b>4.3.3</b> Model phiT_pT_cohort</a></li>
+<li class="chapter" data-level="4.3.4" data-path="models.html"><a href="models.html#model-phit_pt_cohort_flow"><i class="fa fa-check"></i><b>4.3.4</b> Model phiT_pT_cohort_flow</a></li>
+<li class="chapter" data-level="4.3.5" data-path="models.html"><a href="models.html#model-phit_pt_cohort_flowcohort"><i class="fa fa-check"></i><b>4.3.5</b> Model phiT_pT_cohort_flowCohort</a></li>
+<li class="chapter" data-level="4.3.6" data-path="models.html"><a href="models.html#model-phit_pt_cohort_flowcohorthier"><i class="fa fa-check"></i><b>4.3.6</b> Model phiT_pT_cohort_flowCohortHier</a></li>
+<li class="chapter" data-level="4.3.7" data-path="models.html"><a href="models.html#compare-models"><i class="fa fa-check"></i><b>4.3.7</b> Compare models</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>5</b> Final Words</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">The West Brook Story</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="setup" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Setup<a href="setup.html#setup" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Directory structure</p>
+<pre><code>#fs::dir_tree()</code></pre>
+<pre><code>    |-- westBrook-book            Main
+    |   |-- data                  Data created from chapter 2
+    |   |-- dataIn                External data
+    |   |   |-- wbFlow            Flow data
+    |   |-- images                Location for images for the book
+    |   |   |-- favicon_io        Favicon images
+    |   |-- models                Model output
+    |   |   |-- cmrFlowWB         WB CMR flow model
+    |   |   |   |-- dataOut       Data from eh object in separate CSV files
+    |   |   |   |-- runsOut       mcmc model run output
+    |   |   |   |   |-- phi_p     Data from phi_P model run in separate CSV files
+    |   |   |   |   |-- phiT_pT   Data from phiT_pT model run in separate CSV files
+    |   |-- rForSourcing          Files for sourcing functions
+    
+    |   |-- docs                  Markdown documents [created by bookdown]
+    |   |-- _bookdown_files  Bookdown documents [created by bookdown]</code></pre>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="getData.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["westBrook-book.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

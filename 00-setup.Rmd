@@ -1,0 +1,31 @@
+## Setup {#setup}
+
+```{r global Models setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+Directory structure
+```
+Create these subdirectories
+    |-- westBrook-book            Main
+    |   |-- data                  Data created from chapter 2
+    |   |-- dataIn                External data
+    |   |   |-- wbFlow            Flow data
+    |   |-- images                Location for images for the book
+    |   |   |-- favicon_io        Favicon images
+    |   |-- models                Model output
+    |   |   |-- cmrFlowWB         WB CMR flow model
+    |   |   |   |-- dataOut       Data from eh object in separate CSV files
+    |   |   |   |-- runsOut       mcmc model run output
+    |   |   |   |   |-- phi_p     Data from phi_P model run in separate CSV files
+    |   |   |   |   |-- phiT_pT   Data from phiT_pT model run in separate CSV files
+    |   |-- rForSourcing          Files for sourcing functions
+    
+Bookdown will create these subdirectories
+    |   |-- docs                  Markdown documents [created by bookdown]
+    |   |-- _bookdown_files       Bookdown documents [created by bookdown]
+```
+```{r}
+    #fs::dir_tree()
+```
+

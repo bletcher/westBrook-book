@@ -1,5 +1,6 @@
 introduction
 the-west-brook
+setup
 getData
 getEnvData
 dataElectro
@@ -53,7 +54,6 @@ modelFlow
 modelCMR_Flow
 model-phi_p
 model-phit_pt
-model-phit_pt_isyoy
 model-phit_pt_cohort
 plot-phi-against-flow-data-phit_pt_cohort
 model-phit_pt_cohort_flow
