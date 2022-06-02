@@ -66,5 +66,13 @@ model-phit_pt_cohort_flowcohorthier
 get-flow-effect-estimates-2
 plot-predictions
 betaflowtop-predictions
+model-phit_pt_cohort_flowcohorthiercjs
+get-flow-effect-estimates-3
+plot-predictions-1
+betaflowtop-predictions-1
+model-phit_pt_cohort_flowcohorthierdhmm
+get-flow-effect-estimates-4
+plot-predictions-2
+betaflowtop-predictions-2
 compare-models
 final-words
