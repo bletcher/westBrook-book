@@ -417,11 +417,11 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
                                                                # only include first x fish per cohort
   eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)#, maxIndexByCohort = 100)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
-  save(eh, file = paste0('./models/cmrFlowWB/dataOut/', fileName, '.RData'))
+  save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData'))
   
   # output for Xioawei
   for (i in seq_along(eh)){
-    write.csv(eh[[i]], file = paste0('./models/cmrFlowWB/dataOut/', 
+    write.csv(eh[[i]], file = paste0('./models/cmrFlow4rivers/dataOut/', 
                                      names(eh)[i], 
                                      ".csv"), 
               row.names = F)
@@ -439,20 +439,20 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
                                                                # only include first x fish per cohort
   eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)#, maxIndexByCohort = 100)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
-  save(eh, file = paste0('./models/cmrFlowWB/dataOut/', fileName, '.RData'))
+  save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData'))
  
   ######################################  
   # all cohorts 2002:2014, ALL rivers
   # only include first x fish per cohort
   cols <- list("cohort")
   ops <-  list("%in%")
-  vals <- list(2002:2014)
+  vals <- list(2006:2008)#list(2002:2014)
   
   maxIndexByCohort <- 250
   
   eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples, maxIndexByCohort = maxIndexByCohort)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"), "_n", maxIndexByCohort)
-  save(eh, file = paste0('./models/cmrFlowWB/dataOut/', fileName, '.RData')) 
+  save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData')) 
 
 
 ```

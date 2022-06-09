@@ -1,4 +1,4 @@
-## Flow effects on survival (phi) models - All 4 rivers {#modelCMR_FlowRiver}
+## Flow effects on survival (phi) models - O'Bear only {#modelCMR_Flow_River_OBear}
 
 The goal of this modelling exercise is to evaluate the effect of new tributary-specific stream flow estimates on survival of brook trout and brown trout. We will compare survival across the WB and tributaries with flow input data as 1) single flow estimate for all locations (historical approach) and 2) hindcasted flows for each tributary based on new tributary-specific flows which are available since 2000.
 

@@ -16,6 +16,7 @@ rmd_files:
 - 01-models.Rmd
 - 01-modelsYOY.Rmd
 - 01-modelsFlow.Rmd
-- 01-modelsCMR_Flow.Rmd
+- 01-modelsCMR_Flow_OB.Rmd
+- 01-modelsCMR_Flow_4Rivers.Rmd
 - 06-summary.Rmd
 - 17-references.Rmd

@@ -23,7 +23,7 @@
 <meta name="author" content="Ben Letcher" />
 
 
-<meta name="date" content="2022-06-02" />
+<meta name="date" content="2022-06-09" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -184,7 +184,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.1.8" data-path="models.html"><a href="models.html#models-based-on-individual-observations"><i class="fa fa-check"></i><b>3.1.8</b> Models based on individual observations</a></li>
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="models.html"><a href="models.html#modelFlow"><i class="fa fa-check"></i><b>3.2</b> Flow model</a></li>
-<li class="chapter" data-level="3.3" data-path="models.html"><a href="models.html#modelCMR_Flow"><i class="fa fa-check"></i><b>3.3</b> Flow effects on survival (phi) models</a>
+<li class="chapter" data-level="3.3" data-path="models.html"><a href="models.html#modelCMR_Flow_River_OBear"><i class="fa fa-check"></i><b>3.3</b> Flow effects on survival (phi) models - O’Bear only</a>
 <ul>
 <li class="chapter" data-level="3.3.1" data-path="models.html"><a href="models.html#model-phi_p"><i class="fa fa-check"></i><b>3.3.1</b> Model phi_p</a></li>
 <li class="chapter" data-level="3.3.2" data-path="models.html"><a href="models.html#model-phit_pt"><i class="fa fa-check"></i><b>3.3.2</b> Model phiT_pT</a></li>
@@ -195,6 +195,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.3.7" data-path="models.html"><a href="models.html#model-phit_pt_cohort_flowcohorthiercjs"><i class="fa fa-check"></i><b>3.3.7</b> Model phiT_pT_cohort_flowCohortHierCJS</a></li>
 <li class="chapter" data-level="3.3.8" data-path="models.html"><a href="models.html#model-phit_pt_cohort_flowcohorthierdhmm"><i class="fa fa-check"></i><b>3.3.8</b> Model phiT_pT_cohort_flowCohortHierDHMM</a></li>
 <li class="chapter" data-level="3.3.9" data-path="models.html"><a href="models.html#compare-models"><i class="fa fa-check"></i><b>3.3.9</b> Compare models</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="models.html"><a href="models.html#modelCMR_Flow_4rivers"><i class="fa fa-check"></i><b>3.4</b> Flow effects on survival (phi) models</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="models.html"><a href="models.html#model-phit_pt_psit"><i class="fa fa-check"></i><b>3.4.1</b> Model phiT_pT_psiT</a></li>
+<li class="chapter" data-level="3.4.2" data-path="models.html"><a href="models.html#model-phit_pt_psi_cohort"><i class="fa fa-check"></i><b>3.4.2</b> Model phiT_pT_psi_cohort</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>4</b> Final Words</a></li>
@@ -260,12 +265,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-18"><a href="getData.html#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(envDataWB)</span></code></pre></div>
 <pre><code>## tibble [32,189 × 7] (S3: tbl_df/tbl/data.frame)
 ##  $ river         : chr [1:32189] &quot;wb jimmy&quot; &quot;wb jimmy&quot; &quot;wb jimmy&quot; &quot;wb jimmy&quot; ...
-##  $ date          : POSIXct[1:32189], format: &quot;1997-05-14&quot; &quot;1997-05-15&quot; &quot;1997-05-16&quot; &quot;1997-05-17&quot; ...
+##  $ date          : POSIXct[1:32189], format: &quot;1997-05-14&quot; &quot;1997-05-15&quot; ...
 ##  $ temperature   : num [1:32189] 11.57 10.4 10.55 8.84 9.09 ...
 ##  $ daily_max_temp: num [1:32189] 11.6 12.3 11.9 10.2 11.6 ...
 ##  $ daily_min_temp: num [1:32189] 11.57 8.96 9.73 7.74 7.45 ...
 ##  $ flow          : num [1:32189] NA NA NA NA NA NA NA NA NA NA ...
-##  $ dateDate      : Date[1:32189], format: &quot;1997-05-14&quot; &quot;1997-05-15&quot; &quot;1997-05-16&quot; &quot;1997-05-17&quot; ...</code></pre>
+##  $ dateDate      : Date[1:32189], format: &quot;1997-05-14&quot; &quot;1997-05-15&quot; ...</code></pre>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="getData.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(envDataWB, <span class="fu">aes</span>(date, flow)) <span class="sc">+</span></span>
 <span id="cb7-2"><a href="getData.html#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb7-3"><a href="getData.html#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>river)</span></code></pre></div>
@@ -321,7 +326,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-37"><a href="getData.html#cb9-37" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_electro0)</span></code></pre></div>
 <pre><code>## tibble [91,103 × 22] (S3: tbl_df/tbl/data.frame)
 ##  $ tag              : chr [1:91103] &quot;00088cbed0&quot; &quot;00088cbed3&quot; &quot;00088cbed4&quot; &quot;00088cbed4&quot; ...
-##  $ detectionDate    : POSIXct[1:91103], format: &quot;2013-03-25 00:00:00&quot; &quot;2012-06-07 09:03:00&quot; &quot;2013-03-29 10:08:00&quot; &quot;2013-06-25 14:51:00&quot; ...
+##  $ detectionDate    : POSIXct[1:91103], format: &quot;2013-03-25 00:00:00&quot; &quot;2012-06-07 09:03:00&quot; ...
 ##  $ sampleName       : chr [1:91103] &quot;84&quot; &quot;81&quot; &quot;84&quot; &quot;85&quot; ...
 ##  $ sampleNumber     : num [1:91103] 73 70 73 74 70 71 73 79 80 71 ...
 ##  $ river            : chr [1:91103] &quot;wb obear&quot; &quot;west brook&quot; &quot;west brook&quot; &quot;west brook&quot; ...
@@ -334,12 +339,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  $ comments         : chr [1:91103] &quot;additional genetic sample&quot; NA NA NA ...
 ##  $ cohort           : num [1:91103] 2012 2012 2012 2012 2011 ...
 ##  $ species          : chr [1:91103] &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; ...
-##  $ dateEmigrated    : Date[1:91103], format: NA NA NA NA ...
+##  $ dateEmigrated    : Date[1:91103], format: NA NA ...
 ##  $ sex              : chr [1:91103] NA NA NA NA ...
 ##  $ year             : num [1:91103] 2013 2012 2013 2013 2012 ...
 ##  $ season           : num [1:91103] 1 2 1 2 2 3 1 3 4 3 ...
 ##  $ proportionSampled: num [1:91103] 1 1 1 1 1 1 1 1 1 1 ...
-##  $ lagDetectionDate : POSIXct[1:91103], format: NA NA &quot;2013-06-25 14:51:00&quot; NA ...
+##  $ lagDetectionDate : POSIXct[1:91103], format: NA NA ...
 ##  $ meanTemperature  : num [1:91103] NaN NaN 10.7 NaN 16.5 ...
 ##  $ meanFlow         : num [1:91103] NaN NaN 0.5247 NaN 0.0338 ...</code></pre>
 </div>
@@ -615,7 +620,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb19-207"><a href="getData.html#cb19-207" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-208"><a href="getData.html#cb19-208" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb19-209"><a href="getData.html#cb19-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-210"><a href="getData.html#cb19-210" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">%notin%</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">Negate</span>(<span class="st">`</span><span class="at">%in%</span><span class="st">`</span>)</span></code></pre></div>
+<span id="cb19-210"><a href="getData.html#cb19-210" aria-hidden="true" tabindex="-1"></a>addRiverN <span class="ot">&lt;-</span> <span class="cf">function</span>(d){</span>
+<span id="cb19-211"><a href="getData.html#cb19-211" aria-hidden="true" tabindex="-1"></a>  level_key <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;west brook&quot;</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">&quot;wb jimmy&quot;</span> <span class="ot">=</span> <span class="dv">2</span>, <span class="st">&quot;wb mitchell&quot;</span> <span class="ot">=</span> <span class="dv">3</span>, <span class="st">&quot;wb obear&quot;</span> <span class="ot">=</span> <span class="dv">4</span>)</span>
+<span id="cb19-212"><a href="getData.html#cb19-212" aria-hidden="true" tabindex="-1"></a>  d <span class="sc">%&gt;%</span> </span>
+<span id="cb19-213"><a href="getData.html#cb19-213" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">riverN =</span> <span class="fu">recode</span>(river, <span class="sc">!!!</span>level_key))</span>
+<span id="cb19-214"><a href="getData.html#cb19-214" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-215"><a href="getData.html#cb19-215" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-216"><a href="getData.html#cb19-216" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">%notin%</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">Negate</span>(<span class="st">`</span><span class="at">%in%</span><span class="st">`</span>)</span></code></pre></div>
 </div>
 <div id="get-data-1" class="section level3 hasAnchor" number="2.3.2">
 <h3><span class="header-section-number">2.3.2</span> Get data<a href="getData.html#get-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -664,19 +675,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb20-42"><a href="getData.html#cb20-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fillRiver</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb20-43"><a href="getData.html#cb20-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addRiverTagged</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb20-44"><a href="getData.html#cb20-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scaleEnvData</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb20-45"><a href="getData.html#cb20-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addIsYOY</span>()</span>
-<span id="cb20-46"><a href="getData.html#cb20-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-47"><a href="getData.html#cb20-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_CMR0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_CMR0.RData&#39;</span>)</span>
-<span id="cb20-48"><a href="getData.html#cb20-48" aria-hidden="true" tabindex="-1"></a>  <span class="co">#write.csv(cdWB_CMR0, file = &#39;./data/cdWB_CMR0.csv&#39;)</span></span>
-<span id="cb20-49"><a href="getData.html#cb20-49" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb20-50"><a href="getData.html#cb20-50" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb20-51"><a href="getData.html#cb20-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_CMR0.RData&#39;</span>)</span>
-<span id="cb20-52"><a href="getData.html#cb20-52" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb20-53"><a href="getData.html#cb20-53" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_CMR0)</span></code></pre></div>
-<pre><code>## tibble [321,788 × 38] (S3: tbl_df/tbl/data.frame)
+<span id="cb20-45"><a href="getData.html#cb20-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addIsYOY</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb20-46"><a href="getData.html#cb20-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addRiverN</span>()</span>
+<span id="cb20-47"><a href="getData.html#cb20-47" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-48"><a href="getData.html#cb20-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_CMR0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_CMR0.RData&#39;</span>)</span>
+<span id="cb20-49"><a href="getData.html#cb20-49" aria-hidden="true" tabindex="-1"></a>  <span class="co">#write.csv(cdWB_CMR0, file = &#39;./data/cdWB_CMR0.csv&#39;)</span></span>
+<span id="cb20-50"><a href="getData.html#cb20-50" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-51"><a href="getData.html#cb20-51" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb20-52"><a href="getData.html#cb20-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_CMR0.RData&#39;</span>)</span>
+<span id="cb20-53"><a href="getData.html#cb20-53" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-54"><a href="getData.html#cb20-54" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_CMR0)</span></code></pre></div>
+<pre><code>## tibble [321,788 × 39] (S3: tbl_df/tbl/data.frame)
 ##  $ cohort               : num [1:321788] 2012 2012 2012 2012 2012 ...
 ##  $ tag                  : chr [1:321788] &quot;00088cbed0&quot; &quot;00088cbed0&quot; &quot;00088cbed0&quot; &quot;00088cbed0&quot; ...
-##  $ detectionDate        : POSIXct[1:321788], format: &quot;2013-03-25 00:00:00&quot; &quot;2013-06-05 00:00:00&quot; &quot;2013-09-18 00:00:00&quot; &quot;2013-11-19 00:00:00&quot; ...
+##  $ detectionDate        : POSIXct[1:321788], format: &quot;2013-03-25 00:00:00&quot; &quot;2013-06-05 00:00:00&quot; ...
 ##  $ sampleName           : chr [1:321788] &quot;84&quot; &quot;85&quot; &quot;86&quot; &quot;87&quot; ...
 ##  $ sampleNumber         : num [1:321788] 73 74 75 76 77 78 79 80 81 82 ...
 ##  $ river                : chr [1:321788] &quot;wb obear&quot; &quot;wb obear&quot; &quot;wb obear&quot; &quot;wb obear&quot; ...
@@ -687,7 +699,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  $ pass                 : num [1:321788] 1 NA NA NA NA NA NA NA NA NA ...
 ##  $ observedWeight       : num [1:321788] 1.9 NA NA NA NA NA NA NA NA NA ...
 ##  $ species              : chr [1:321788] &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; ...
-##  $ dateEmigrated        : Date[1:321788], format: NA NA NA NA ...
+##  $ dateEmigrated        : Date[1:321788], format: NA NA ...
 ##  $ sex                  : chr [1:321788] NA NA NA NA ...
 ##  $ enc                  : num [1:321788] 1 0 0 0 0 0 0 0 0 0 ...
 ##  $ ageInSamples         : num [1:321788] 3 4 5 6 7 8 9 10 11 12 ...
@@ -696,7 +708,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  $ year                 : num [1:321788] 2013 2013 2013 2013 2014 ...
 ##  $ season               : num [1:321788] 1 2 3 4 1 2 3 4 1 2 ...
 ##  $ proportionSampled    : num [1:321788] 1 NA NA NA NA NA NA NA NA NA ...
-##  $ lagDetectionDate     : POSIXct[1:321788], format: &quot;2013-06-05 00:00:00&quot; &quot;2013-09-18 00:00:00&quot; &quot;2013-11-19 00:00:00&quot; &quot;2014-04-04 00:00:00&quot; ...
+##  $ lagDetectionDate     : POSIXct[1:321788], format: &quot;2013-06-05 00:00:00&quot; &quot;2013-09-18 00:00:00&quot; ...
 ##  $ meanTemperature      : num [1:321788] 8.62 16.51 9.44 0.94 10.52 ...
 ##  $ meanFlow             : num [1:321788] 0.38874 0.30331 0.00882 0.31319 0.58363 ...
 ##  $ knownZ               : num [1:321788] 1 NA NA NA NA NA NA NA NA NA ...
@@ -711,7 +723,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  $ sdMeanTemperature    : num [1:321788] 1.202 0.711 1.455 0.616 1.202 ...
 ##  $ meanFlowScaled       : num [1:321788] -0.129 1.313 -1.215 -1.33 1.124 ...
 ##  $ meanTemperatureScaled: num [1:321788] -1.472 0.402 0.7 -1.149 0.105 ...
-##  $ isYOY                : num [1:321788] 1 2 2 2 2 2 2 2 2 2 ...</code></pre>
+##  $ isYOY                : num [1:321788] 1 2 2 2 2 2 2 2 2 2 ...
+##  $ riverN               : num [1:321788] 4 4 4 4 4 4 4 4 4 4 ...</code></pre>
 </div>
 <div id="make-encounter-history-files" class="section level3 hasAnchor" number="2.3.3">
 <h3><span class="header-section-number">2.3.3</span> Make encounter history files<a href="getData.html#make-encounter-history-files" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -780,36 +793,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb22-63"><a href="getData.html#cb22-63" aria-hidden="true" tabindex="-1"></a>  riverWide <span class="ot">&lt;-</span> <span class="fu">getEHDataWide_AIS</span>(d, cols, ops, vals, <span class="st">&quot;river&quot;</span>, maxOccasionValue, <span class="at">valuesFill =</span> <span class="st">&quot;none&quot;</span>)</span>
 <span id="cb22-64"><a href="getData.html#cb22-64" aria-hidden="true" tabindex="-1"></a>  riverMatrix <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(riverWide <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>tag), <span class="at">nrow =</span> <span class="fu">nrow</span>(riverWide), <span class="at">ncol =</span> <span class="fu">ncol</span>(riverWide) <span class="sc">-</span> <span class="dv">1</span>)</span>
 <span id="cb22-65"><a href="getData.html#cb22-65" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb22-66"><a href="getData.html#cb22-66" aria-hidden="true" tabindex="-1"></a>  isYOYWide <span class="ot">&lt;-</span> <span class="fu">getEHDataWide_AIS</span>(d, cols, ops, vals, <span class="st">&quot;isYOY&quot;</span>, maxOccasionValue, <span class="at">valuesFill =</span> <span class="dv">2</span>)</span>
-<span id="cb22-67"><a href="getData.html#cb22-67" aria-hidden="true" tabindex="-1"></a>  isYOYMatrix <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(isYOYWide <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>tag), <span class="at">nrow =</span> <span class="fu">nrow</span>(isYOYWide), <span class="at">ncol =</span> <span class="fu">ncol</span>(riverWide) <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb22-68"><a href="getData.html#cb22-68" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb22-69"><a href="getData.html#cb22-69" aria-hidden="true" tabindex="-1"></a>  tags <span class="ot">&lt;-</span> encWide <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(tag)</span>
-<span id="cb22-70"><a href="getData.html#cb22-70" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb22-71"><a href="getData.html#cb22-71" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span></span>
-<span id="cb22-72"><a href="getData.html#cb22-72" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ehFilter</span>(cols, ops, vals) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-73"><a href="getData.html#cb22-73" aria-hidden="true" tabindex="-1"></a>    <span class="co">#filter(ageInSamples &gt; 0, ageInSamples &lt;= maxOccasionValue) %&gt;%</span></span>
-<span id="cb22-74"><a href="getData.html#cb22-74" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(ageInSamples <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span>maxOccasionValue) <span class="sc">%&gt;%</span></span>
-<span id="cb22-75"><a href="getData.html#cb22-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(tag, ageInSamples)</span>
-<span id="cb22-76"><a href="getData.html#cb22-76" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb22-77"><a href="getData.html#cb22-77" aria-hidden="true" tabindex="-1"></a>  cohorts <span class="ot">&lt;-</span> tags <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(data <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(tag, cohort) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(cohort)</span>
-<span id="cb22-78"><a href="getData.html#cb22-78" aria-hidden="true" tabindex="-1"></a>  seasons <span class="ot">&lt;-</span> tags <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(data <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(tag, season) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(season)</span>
-<span id="cb22-79"><a href="getData.html#cb22-79" aria-hidden="true" tabindex="-1"></a>  first <span class="ot">&lt;-</span> <span class="fu">apply</span>(eh, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">min</span>(<span class="fu">which</span>(x <span class="sc">!=</span> <span class="dv">0</span>)))</span>
-<span id="cb22-80"><a href="getData.html#cb22-80" aria-hidden="true" tabindex="-1"></a>  last <span class="ot">&lt;-</span> <span class="fu">apply</span>(riverMatrix, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">max</span>(<span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(x))))</span>
-<span id="cb22-81"><a href="getData.html#cb22-81" aria-hidden="true" tabindex="-1"></a>  last <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(last <span class="sc">==</span> maxOccasionValue, last, last <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb22-82"><a href="getData.html#cb22-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-83"><a href="getData.html#cb22-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">eh =</span> eh, <span class="at">flow =</span> flowMatrix, <span class="at">temperature =</span> temperatureMatrix, <span class="at">river =</span> riverMatrix,</span>
-<span id="cb22-84"><a href="getData.html#cb22-84" aria-hidden="true" tabindex="-1"></a>              <span class="at">isYOY =</span> isYOYMatrix, <span class="at">tags =</span> tags, <span class="at">cohorts =</span> cohorts, <span class="at">seasons =</span> seasons, </span>
-<span id="cb22-85"><a href="getData.html#cb22-85" aria-hidden="true" tabindex="-1"></a>              <span class="at">first =</span> first, <span class="at">last =</span> last, <span class="at">data =</span> data))</span>
-<span id="cb22-86"><a href="getData.html#cb22-86" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-87"><a href="getData.html#cb22-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-88"><a href="getData.html#cb22-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-89"><a href="getData.html#cb22-89" aria-hidden="true" tabindex="-1"></a><span class="co">#if (getNew_encounterHistories) {</span></span>
+<span id="cb22-66"><a href="getData.html#cb22-66" aria-hidden="true" tabindex="-1"></a>  riverNWide <span class="ot">&lt;-</span> <span class="fu">getEHDataWide_AIS</span>(d, cols, ops, vals, <span class="st">&quot;riverN&quot;</span>, maxOccasionValue, <span class="at">valuesFill =</span> <span class="dv">0</span>)</span>
+<span id="cb22-67"><a href="getData.html#cb22-67" aria-hidden="true" tabindex="-1"></a>  riverNMatrix <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(riverNWide <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>tag), <span class="at">nrow =</span> <span class="fu">nrow</span>(riverNWide), <span class="at">ncol =</span> <span class="fu">ncol</span>(riverNWide) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb22-68"><a href="getData.html#cb22-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-69"><a href="getData.html#cb22-69" aria-hidden="true" tabindex="-1"></a>  isYOYWide <span class="ot">&lt;-</span> <span class="fu">getEHDataWide_AIS</span>(d, cols, ops, vals, <span class="st">&quot;isYOY&quot;</span>, maxOccasionValue, <span class="at">valuesFill =</span> <span class="dv">2</span>)</span>
+<span id="cb22-70"><a href="getData.html#cb22-70" aria-hidden="true" tabindex="-1"></a>  isYOYMatrix <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(isYOYWide <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>tag), <span class="at">nrow =</span> <span class="fu">nrow</span>(isYOYWide), <span class="at">ncol =</span> <span class="fu">ncol</span>(riverWide) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb22-71"><a href="getData.html#cb22-71" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-72"><a href="getData.html#cb22-72" aria-hidden="true" tabindex="-1"></a>  tags <span class="ot">&lt;-</span> encWide <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(tag)</span>
+<span id="cb22-73"><a href="getData.html#cb22-73" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-74"><a href="getData.html#cb22-74" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> d <span class="sc">%&gt;%</span></span>
+<span id="cb22-75"><a href="getData.html#cb22-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ehFilter</span>(cols, ops, vals) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-76"><a href="getData.html#cb22-76" aria-hidden="true" tabindex="-1"></a>    <span class="co">#filter(ageInSamples &gt; 0, ageInSamples &lt;= maxOccasionValue) %&gt;%</span></span>
+<span id="cb22-77"><a href="getData.html#cb22-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(ageInSamples <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span>maxOccasionValue) <span class="sc">%&gt;%</span></span>
+<span id="cb22-78"><a href="getData.html#cb22-78" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(tag, ageInSamples)</span>
+<span id="cb22-79"><a href="getData.html#cb22-79" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-80"><a href="getData.html#cb22-80" aria-hidden="true" tabindex="-1"></a>  cohorts <span class="ot">&lt;-</span> tags <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(data <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(tag, cohort) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(cohort)</span>
+<span id="cb22-81"><a href="getData.html#cb22-81" aria-hidden="true" tabindex="-1"></a>  seasons <span class="ot">&lt;-</span> tags <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(data <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(tag, season) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(season)</span>
+<span id="cb22-82"><a href="getData.html#cb22-82" aria-hidden="true" tabindex="-1"></a>  first <span class="ot">&lt;-</span> <span class="fu">apply</span>(eh, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">min</span>(<span class="fu">which</span>(x <span class="sc">!=</span> <span class="dv">0</span>)))</span>
+<span id="cb22-83"><a href="getData.html#cb22-83" aria-hidden="true" tabindex="-1"></a>  last <span class="ot">&lt;-</span> <span class="fu">apply</span>(riverMatrix, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">max</span>(<span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(x))))</span>
+<span id="cb22-84"><a href="getData.html#cb22-84" aria-hidden="true" tabindex="-1"></a>  last <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(last <span class="sc">==</span> maxOccasionValue, last, last <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb22-85"><a href="getData.html#cb22-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-86"><a href="getData.html#cb22-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">eh =</span> eh, <span class="at">flow =</span> flowMatrix, <span class="at">temperature =</span> temperatureMatrix, <span class="at">river =</span> riverMatrix,</span>
+<span id="cb22-87"><a href="getData.html#cb22-87" aria-hidden="true" tabindex="-1"></a>              <span class="at">riverN =</span> riverNMatrix, <span class="at">isYOY =</span> isYOYMatrix, <span class="at">tags =</span> tags, <span class="at">cohorts =</span> cohorts, <span class="at">seasons =</span> seasons, </span>
+<span id="cb22-88"><a href="getData.html#cb22-88" aria-hidden="true" tabindex="-1"></a>              <span class="at">first =</span> first, <span class="at">last =</span> last, <span class="at">data =</span> data))</span>
+<span id="cb22-89"><a href="getData.html#cb22-89" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb22-90"><a href="getData.html#cb22-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-91"><a href="getData.html#cb22-91" aria-hidden="true" tabindex="-1"></a>  <span class="co"># read down through the cols, ops, vals variables for filter conditions</span></span>
-<span id="cb22-92"><a href="getData.html#cb22-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-93"><a href="getData.html#cb22-93" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb22-94"><a href="getData.html#cb22-94" aria-hidden="true" tabindex="-1"></a>  <span class="co"># all cohorts 2002:2014</span></span>
-<span id="cb22-95"><a href="getData.html#cb22-95" aria-hidden="true" tabindex="-1"></a>  cdWB_CMR0 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(river <span class="sc">==</span> <span class="st">&quot;wb obear&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cohort) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>())</span></code></pre></div>
+<span id="cb22-91"><a href="getData.html#cb22-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-92"><a href="getData.html#cb22-92" aria-hidden="true" tabindex="-1"></a><span class="co">#if (getNew_encounterHistories) {</span></span>
+<span id="cb22-93"><a href="getData.html#cb22-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-94"><a href="getData.html#cb22-94" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-95"><a href="getData.html#cb22-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-96"><a href="getData.html#cb22-96" aria-hidden="true" tabindex="-1"></a>  <span class="do">#########################################</span></span>
+<span id="cb22-97"><a href="getData.html#cb22-97" aria-hidden="true" tabindex="-1"></a>  <span class="co"># all cohorts from O&#39;Bear 2002:2014</span></span>
+<span id="cb22-98"><a href="getData.html#cb22-98" aria-hidden="true" tabindex="-1"></a>  cdWB_CMR0 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(river <span class="sc">==</span> <span class="st">&quot;wb obear&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cohort) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>())</span></code></pre></div>
 <pre><code>## # A tibble: 17 × 2
 ##    cohort     n
 ##     &lt;dbl&gt; &lt;int&gt;
@@ -830,32 +846,72 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 15   2013   729
 ## 16   2014   725
 ## 17   2015     5</code></pre>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="getData.html#cb24-1" aria-hidden="true" tabindex="-1"></a>  cols <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;cohort&quot;</span>,  <span class="st">&quot;riverTagged&quot;</span>)</span>
-<span id="cb24-2"><a href="getData.html#cb24-2" aria-hidden="true" tabindex="-1"></a>  ops <span class="ot">&lt;-</span>  <span class="fu">list</span>(<span class="st">&quot;%in%&quot;</span>,    <span class="st">&quot;==&quot;</span>)</span>
-<span id="cb24-3"><a href="getData.html#cb24-3" aria-hidden="true" tabindex="-1"></a>  vals <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">2002</span><span class="sc">:</span><span class="dv">2014</span>, <span class="st">&quot;wb obear&quot;</span>)</span>
-<span id="cb24-4"><a href="getData.html#cb24-4" aria-hidden="true" tabindex="-1"></a>                                                               <span class="co"># only include first x fish per cohort</span></span>
-<span id="cb24-5"><a href="getData.html#cb24-5" aria-hidden="true" tabindex="-1"></a>  eh <span class="ot">&lt;-</span> <span class="fu">getEH_AIS</span>(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)<span class="co">#, maxIndexByCohort = 100)</span></span>
-<span id="cb24-6"><a href="getData.html#cb24-6" aria-hidden="true" tabindex="-1"></a>  fileName <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&quot;eh_&quot;</span>, <span class="fu">stri_paste_list</span>(vals, <span class="at">collapse =</span> <span class="st">&quot;_&quot;</span>))</span>
-<span id="cb24-7"><a href="getData.html#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(eh, <span class="at">file =</span> <span class="fu">paste0</span>(<span class="st">&#39;./models/cmrFlowWB/dataOut/&#39;</span>, fileName, <span class="st">&#39;.RData&#39;</span>))</span>
-<span id="cb24-8"><a href="getData.html#cb24-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb24-9"><a href="getData.html#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output for Xioawei</span></span>
-<span id="cb24-10"><a href="getData.html#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(eh)){</span>
-<span id="cb24-11"><a href="getData.html#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write.csv</span>(eh[[i]], <span class="at">file =</span> <span class="fu">paste0</span>(<span class="st">&#39;./models/cmrFlowWB/dataOut/&#39;</span>, </span>
-<span id="cb24-12"><a href="getData.html#cb24-12" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">names</span>(eh)[i], </span>
-<span id="cb24-13"><a href="getData.html#cb24-13" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">&quot;.csv&quot;</span>), </span>
-<span id="cb24-14"><a href="getData.html#cb24-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">row.names =</span> F)</span>
-<span id="cb24-15"><a href="getData.html#cb24-15" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb24-16"><a href="getData.html#cb24-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb24-17"><a href="getData.html#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="co">#}</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="getData.html#cb24-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># read down through the cols, ops, vals variables for filter conditions</span></span>
+<span id="cb24-2"><a href="getData.html#cb24-2" aria-hidden="true" tabindex="-1"></a>  cols <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;cohort&quot;</span>,  <span class="st">&quot;riverTagged&quot;</span>)</span>
+<span id="cb24-3"><a href="getData.html#cb24-3" aria-hidden="true" tabindex="-1"></a>  ops <span class="ot">&lt;-</span>  <span class="fu">list</span>(<span class="st">&quot;%in%&quot;</span>,    <span class="st">&quot;==&quot;</span>)</span>
+<span id="cb24-4"><a href="getData.html#cb24-4" aria-hidden="true" tabindex="-1"></a>  vals <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">2002</span><span class="sc">:</span><span class="dv">2014</span>, <span class="st">&quot;wb obear&quot;</span>)</span>
+<span id="cb24-5"><a href="getData.html#cb24-5" aria-hidden="true" tabindex="-1"></a>                                                               <span class="co"># only include first x fish per cohort</span></span>
+<span id="cb24-6"><a href="getData.html#cb24-6" aria-hidden="true" tabindex="-1"></a>  eh <span class="ot">&lt;-</span> <span class="fu">getEH_AIS</span>(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)<span class="co">#, maxIndexByCohort = 100)</span></span>
+<span id="cb24-7"><a href="getData.html#cb24-7" aria-hidden="true" tabindex="-1"></a>  fileName <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&quot;eh_&quot;</span>, <span class="fu">stri_paste_list</span>(vals, <span class="at">collapse =</span> <span class="st">&quot;_&quot;</span>))</span>
+<span id="cb24-8"><a href="getData.html#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(eh, <span class="at">file =</span> <span class="fu">paste0</span>(<span class="st">&#39;./models/cmrFlow4rivers/dataOut/&#39;</span>, fileName, <span class="st">&#39;.RData&#39;</span>))</span>
+<span id="cb24-9"><a href="getData.html#cb24-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb24-10"><a href="getData.html#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output for Xioawei</span></span>
+<span id="cb24-11"><a href="getData.html#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(eh)){</span>
+<span id="cb24-12"><a href="getData.html#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write.csv</span>(eh[[i]], <span class="at">file =</span> <span class="fu">paste0</span>(<span class="st">&#39;./models/cmrFlow4rivers/dataOut/&#39;</span>, </span>
+<span id="cb24-13"><a href="getData.html#cb24-13" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">names</span>(eh)[i], </span>
+<span id="cb24-14"><a href="getData.html#cb24-14" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">&quot;.csv&quot;</span>), </span>
+<span id="cb24-15"><a href="getData.html#cb24-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">row.names =</span> F)</span>
+<span id="cb24-16"><a href="getData.html#cb24-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb24-17"><a href="getData.html#cb24-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb24-18"><a href="getData.html#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-19"><a href="getData.html#cb24-19" aria-hidden="true" tabindex="-1"></a>  <span class="do">######################################  </span></span>
+<span id="cb24-20"><a href="getData.html#cb24-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># all cohorts 2002:2014, ALL rivers</span></span>
+<span id="cb24-21"><a href="getData.html#cb24-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb24-22"><a href="getData.html#cb24-22" aria-hidden="true" tabindex="-1"></a>  cdWB_CMR0 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(riverN, cohort) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>())</span></code></pre></div>
+<pre><code>## # A tibble: 69 × 3
+## # Groups:   riverN [4]
+##    riverN cohort     n
+##     &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
+##  1      1   1997  7170
+##  2      1   1998 18616
+##  3      1   1999 14751
+##  4      1   2000 23511
+##  5      1   2001 25017
+##  6      1   2002 14383
+##  7      1   2003 27296
+##  8      1   2004 27355
+##  9      1   2005  7035
+## 10      1   2006  8513
+## # … with 59 more rows</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="getData.html#cb26-1" aria-hidden="true" tabindex="-1"></a>  cols <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;cohort&quot;</span>)</span>
+<span id="cb26-2"><a href="getData.html#cb26-2" aria-hidden="true" tabindex="-1"></a>  ops <span class="ot">&lt;-</span>  <span class="fu">list</span>(<span class="st">&quot;%in%&quot;</span>)</span>
+<span id="cb26-3"><a href="getData.html#cb26-3" aria-hidden="true" tabindex="-1"></a>  vals <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">2006</span><span class="sc">:</span><span class="dv">2008</span>)<span class="co">#list(2002:2014)</span></span>
+<span id="cb26-4"><a href="getData.html#cb26-4" aria-hidden="true" tabindex="-1"></a>                                                               <span class="co"># only include first x fish per cohort</span></span>
+<span id="cb26-5"><a href="getData.html#cb26-5" aria-hidden="true" tabindex="-1"></a>  eh <span class="ot">&lt;-</span> <span class="fu">getEH_AIS</span>(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)<span class="co">#, maxIndexByCohort = 100)</span></span>
+<span id="cb26-6"><a href="getData.html#cb26-6" aria-hidden="true" tabindex="-1"></a>  fileName <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&quot;eh_&quot;</span>, <span class="fu">stri_paste_list</span>(vals, <span class="at">collapse =</span> <span class="st">&quot;_&quot;</span>))</span>
+<span id="cb26-7"><a href="getData.html#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(eh, <span class="at">file =</span> <span class="fu">paste0</span>(<span class="st">&#39;./models/cmrFlow4rivers/dataOut/&#39;</span>, fileName, <span class="st">&#39;.RData&#39;</span>))</span>
+<span id="cb26-8"><a href="getData.html#cb26-8" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb26-9"><a href="getData.html#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="do">######################################  </span></span>
+<span id="cb26-10"><a href="getData.html#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># all cohorts 2002:2014, ALL rivers</span></span>
+<span id="cb26-11"><a href="getData.html#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># only include first x fish per cohort</span></span>
+<span id="cb26-12"><a href="getData.html#cb26-12" aria-hidden="true" tabindex="-1"></a>  cols <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;cohort&quot;</span>)</span>
+<span id="cb26-13"><a href="getData.html#cb26-13" aria-hidden="true" tabindex="-1"></a>  ops <span class="ot">&lt;-</span>  <span class="fu">list</span>(<span class="st">&quot;%in%&quot;</span>)</span>
+<span id="cb26-14"><a href="getData.html#cb26-14" aria-hidden="true" tabindex="-1"></a>  vals <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">2006</span><span class="sc">:</span><span class="dv">2008</span>)<span class="co">#list(2002:2014)</span></span>
+<span id="cb26-15"><a href="getData.html#cb26-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-16"><a href="getData.html#cb26-16" aria-hidden="true" tabindex="-1"></a>  maxIndexByCohort <span class="ot">&lt;-</span> <span class="dv">250</span></span>
+<span id="cb26-17"><a href="getData.html#cb26-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-18"><a href="getData.html#cb26-18" aria-hidden="true" tabindex="-1"></a>  eh <span class="ot">&lt;-</span> <span class="fu">getEH_AIS</span>(cdWB_CMR0, cols, ops, vals, maxAgeInSamples, <span class="at">maxIndexByCohort =</span> maxIndexByCohort)</span>
+<span id="cb26-19"><a href="getData.html#cb26-19" aria-hidden="true" tabindex="-1"></a>  fileName <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&quot;eh_&quot;</span>, <span class="fu">stri_paste_list</span>(vals, <span class="at">collapse =</span> <span class="st">&quot;_&quot;</span>), <span class="st">&quot;_n&quot;</span>, maxIndexByCohort)</span>
+<span id="cb26-20"><a href="getData.html#cb26-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(eh, <span class="at">file =</span> <span class="fu">paste0</span>(<span class="st">&#39;./models/cmrFlow4rivers/dataOut/&#39;</span>, fileName, <span class="st">&#39;.RData&#39;</span>)) </span></code></pre></div>
 </div>
 <div id="wrangle-data-1" class="section level3 hasAnchor" number="2.3.4">
 <h3><span class="header-section-number">2.3.4</span> Wrangle data<a href="getData.html#wrangle-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 </div>
 <div id="explore-data-1" class="section level3 hasAnchor" number="2.3.5">
 <h3><span class="header-section-number">2.3.5</span> Explore data<a href="getData.html#explore-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="getData.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cdWB_CMR0 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(enc <span class="sc">==</span><span class="dv">1</span>), <span class="fu">aes</span>(year)) <span class="sc">+</span></span>
-<span id="cb25-2"><a href="getData.html#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb25-3"><a href="getData.html#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(river <span class="sc">+</span> season <span class="sc">~</span> species)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="getData.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cdWB_CMR0 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(enc <span class="sc">==</span><span class="dv">1</span>), <span class="fu">aes</span>(year)) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="getData.html#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb27-3"><a href="getData.html#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(river <span class="sc">+</span> season <span class="sc">~</span> species)</span></code></pre></div>
 <p><img src="westBrook-book_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 <div id="cmr-metadata" class="section level3 hasAnchor" number="2.3.6">
@@ -908,40 +964,40 @@ Logical, was the fish observed? (1 = yes, 0 = no)</p>
 <div id="get-data-2" class="section level3 hasAnchor" number="2.4.1">
 <h3><span class="header-section-number">2.4.1</span> Get data<a href="getData.html#get-data-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>West Brook wanding data</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="getData.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_wanding0) {</span>
-<span id="cb26-2"><a href="getData.html#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># from wandingDataWB project in d:/ben/github/wandingData/</span></span>
-<span id="cb26-3"><a href="getData.html#cb26-3" aria-hidden="true" tabindex="-1"></a>  cdWB_wanding0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
-<span id="cb26-4"><a href="getData.html#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sampleType =</span> <span class="st">&quot;portableAntenna&quot;</span>,</span>
-<span id="cb26-5"><a href="getData.html#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;tag&quot;</span>, </span>
-<span id="cb26-6"><a href="getData.html#cb26-6" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;detectionDate&quot;</span>, </span>
-<span id="cb26-7"><a href="getData.html#cb26-7" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;river&quot;</span>, </span>
-<span id="cb26-8"><a href="getData.html#cb26-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;area&quot;</span>, </span>
-<span id="cb26-9"><a href="getData.html#cb26-9" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;section&quot;</span>, </span>
-<span id="cb26-10"><a href="getData.html#cb26-10" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;survey&quot;</span>, </span>
-<span id="cb26-11"><a href="getData.html#cb26-11" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;sampleName&quot;</span>, </span>
-<span id="cb26-12"><a href="getData.html#cb26-12" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;readerId&quot;</span>, </span>
-<span id="cb26-13"><a href="getData.html#cb26-13" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;aliveOrDead&quot;</span>, </span>
-<span id="cb26-14"><a href="getData.html#cb26-14" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;instance&quot;</span>, </span>
-<span id="cb26-15"><a href="getData.html#cb26-15" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;pass&quot;</span>, </span>
-<span id="cb26-16"><a href="getData.html#cb26-16" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;quarter&quot;</span>, </span>
-<span id="cb26-17"><a href="getData.html#cb26-17" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;leftOrRight&quot;</span>, </span>
-<span id="cb26-18"><a href="getData.html#cb26-18" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;habitat&quot;</span>, </span>
-<span id="cb26-19"><a href="getData.html#cb26-19" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;cover&quot;</span>, </span>
-<span id="cb26-20"><a href="getData.html#cb26-20" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;justification&quot;</span>, </span>
-<span id="cb26-21"><a href="getData.html#cb26-21" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;comment&quot;</span>)</span>
-<span id="cb26-22"><a href="getData.html#cb26-22" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-23"><a href="getData.html#cb26-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addTagProperties</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-24"><a href="getData.html#cb26-24" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>( species <span class="sc">%in%</span> <span class="fu">c</span>( <span class="st">&quot;bkt&quot;</span>,<span class="st">&quot;bnt&quot;</span>,<span class="st">&quot;ats&quot;</span> ) )</span>
-<span id="cb26-25"><a href="getData.html#cb26-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb26-26"><a href="getData.html#cb26-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">save</span>(cdWB_wanding0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_wanding0.RData&#39;</span>)</span>
-<span id="cb26-27"><a href="getData.html#cb26-27" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb26-28"><a href="getData.html#cb26-28" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb26-29"><a href="getData.html#cb26-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_wanding0.RData&#39;</span>)</span>
-<span id="cb26-30"><a href="getData.html#cb26-30" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb26-31"><a href="getData.html#cb26-31" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_wanding0)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="getData.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_wanding0) {</span>
+<span id="cb28-2"><a href="getData.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># from wandingDataWB project in d:/ben/github/wandingData/</span></span>
+<span id="cb28-3"><a href="getData.html#cb28-3" aria-hidden="true" tabindex="-1"></a>  cdWB_wanding0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
+<span id="cb28-4"><a href="getData.html#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sampleType =</span> <span class="st">&quot;portableAntenna&quot;</span>,</span>
+<span id="cb28-5"><a href="getData.html#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">columnsToAdd =</span> <span class="fu">c</span>(<span class="st">&quot;tag&quot;</span>, </span>
+<span id="cb28-6"><a href="getData.html#cb28-6" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;detectionDate&quot;</span>, </span>
+<span id="cb28-7"><a href="getData.html#cb28-7" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;river&quot;</span>, </span>
+<span id="cb28-8"><a href="getData.html#cb28-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;area&quot;</span>, </span>
+<span id="cb28-9"><a href="getData.html#cb28-9" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;section&quot;</span>, </span>
+<span id="cb28-10"><a href="getData.html#cb28-10" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;survey&quot;</span>, </span>
+<span id="cb28-11"><a href="getData.html#cb28-11" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;sampleName&quot;</span>, </span>
+<span id="cb28-12"><a href="getData.html#cb28-12" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;readerId&quot;</span>, </span>
+<span id="cb28-13"><a href="getData.html#cb28-13" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;aliveOrDead&quot;</span>, </span>
+<span id="cb28-14"><a href="getData.html#cb28-14" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;instance&quot;</span>, </span>
+<span id="cb28-15"><a href="getData.html#cb28-15" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;pass&quot;</span>, </span>
+<span id="cb28-16"><a href="getData.html#cb28-16" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;quarter&quot;</span>, </span>
+<span id="cb28-17"><a href="getData.html#cb28-17" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;leftOrRight&quot;</span>, </span>
+<span id="cb28-18"><a href="getData.html#cb28-18" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;habitat&quot;</span>, </span>
+<span id="cb28-19"><a href="getData.html#cb28-19" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;cover&quot;</span>, </span>
+<span id="cb28-20"><a href="getData.html#cb28-20" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;justification&quot;</span>, </span>
+<span id="cb28-21"><a href="getData.html#cb28-21" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;comment&quot;</span>)</span>
+<span id="cb28-22"><a href="getData.html#cb28-22" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-23"><a href="getData.html#cb28-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addTagProperties</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb28-24"><a href="getData.html#cb28-24" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>( species <span class="sc">%in%</span> <span class="fu">c</span>( <span class="st">&quot;bkt&quot;</span>,<span class="st">&quot;bnt&quot;</span>,<span class="st">&quot;ats&quot;</span> ) )</span>
+<span id="cb28-25"><a href="getData.html#cb28-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-26"><a href="getData.html#cb28-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">save</span>(cdWB_wanding0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_wanding0.RData&#39;</span>)</span>
+<span id="cb28-27"><a href="getData.html#cb28-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-28"><a href="getData.html#cb28-28" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb28-29"><a href="getData.html#cb28-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_wanding0.RData&#39;</span>)</span>
+<span id="cb28-30"><a href="getData.html#cb28-30" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-31"><a href="getData.html#cb28-31" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_wanding0)</span></code></pre></div>
 <pre><code>## tibble [14,880 × 19] (S3: tbl_df/tbl/data.frame)
 ##  $ tag          : chr [1:14880] &quot;00088cf41b&quot; &quot;00088cf41b&quot; &quot;00088cf41b&quot; &quot;00088cf435&quot; ...
-##  $ detectionDate: POSIXct[1:14880], format: &quot;2010-09-27 11:08:45&quot; &quot;2010-10-18 14:16:22&quot; &quot;2010-10-25 11:40:24&quot; &quot;2010-12-06 13:32:15&quot; ...
+##  $ detectionDate: POSIXct[1:14880], format: &quot;2010-09-27 11:08:45&quot; &quot;2010-10-18 14:16:22&quot; ...
 ##  $ sampleName   : chr [1:14880] &quot;92710.00&quot; &quot;101810.00&quot; &quot;102510.00&quot; &quot;12610.00&quot; ...
 ##  $ river        : chr [1:14880] &quot;wb jimmy&quot; &quot;wb jimmy&quot; &quot;wb jimmy&quot; &quot;wb jimmy&quot; ...
 ##  $ section      : chr [1:14880] &quot;13&quot; &quot;14&quot; &quot;14&quot; &quot;2&quot; ...
@@ -974,44 +1030,44 @@ Logical, was the fish observed? (1 = yes, 0 = no)</p>
 <h3><span class="header-section-number">2.5.1</span> Get data<a href="getData.html#get-data-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>West Brook antenna data
 Note: some pitAntenna code at <a href="https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R" class="uri">https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R</a></p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="getData.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_antenna0) {</span>
-<span id="cb28-2"><a href="getData.html#cb28-2" aria-hidden="true" tabindex="-1"></a>  cdWB_antenna0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
-<span id="cb28-3"><a href="getData.html#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">sampleType=</span><span class="fu">c</span>(<span class="st">&quot;stationaryAntenna&quot;</span>), </span>
-<span id="cb28-4"><a href="getData.html#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">whichDrainage =</span> <span class="st">&quot;west&quot;</span>,</span>
-<span id="cb28-5"><a href="getData.html#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">columnsToAdd=</span><span class="fu">c</span>(</span>
-<span id="cb28-6"><a href="getData.html#cb28-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;river&quot;</span>,</span>
-<span id="cb28-7"><a href="getData.html#cb28-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;riverMeter&quot;</span>,</span>
-<span id="cb28-8"><a href="getData.html#cb28-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;survey&quot;</span>,</span>
-<span id="cb28-9"><a href="getData.html#cb28-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;readerID&quot;</span>,</span>
-<span id="cb28-10"><a href="getData.html#cb28-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;comment&quot;</span></span>
-<span id="cb28-11"><a href="getData.html#cb28-11" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb28-12"><a href="getData.html#cb28-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span>  </span>
-<span id="cb28-13"><a href="getData.html#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(tag)) <span class="sc">%&gt;%</span> <span class="co"># for now</span></span>
-<span id="cb28-14"><a href="getData.html#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTagProperties</span>(<span class="at">columnsToAdd =</span> <span class="fu">c</span>(</span>
-<span id="cb28-15"><a href="getData.html#cb28-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cohort&quot;</span>,</span>
-<span id="cb28-16"><a href="getData.html#cb28-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;species&quot;</span>,</span>
-<span id="cb28-17"><a href="getData.html#cb28-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;dateEmigrated&quot;</span>,</span>
-<span id="cb28-18"><a href="getData.html#cb28-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;sex&quot;</span>,</span>
-<span id="cb28-19"><a href="getData.html#cb28-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;species&quot;</span>)</span>
-<span id="cb28-20"><a href="getData.html#cb28-20" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb28-21"><a href="getData.html#cb28-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb28-22"><a href="getData.html#cb28-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_antenna0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_antenna0.RData&#39;</span>)</span>
-<span id="cb28-23"><a href="getData.html#cb28-23" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-24"><a href="getData.html#cb28-24" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb28-25"><a href="getData.html#cb28-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_antenna0.RData&#39;</span>)</span>
-<span id="cb28-26"><a href="getData.html#cb28-26" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb28-27"><a href="getData.html#cb28-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-28"><a href="getData.html#cb28-28" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_antenna0)</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="getData.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(getNew_cdWB_antenna0) {</span>
+<span id="cb30-2"><a href="getData.html#cb30-2" aria-hidden="true" tabindex="-1"></a>  cdWB_antenna0 <span class="ot">&lt;-</span> <span class="fu">createCoreData</span>(</span>
+<span id="cb30-3"><a href="getData.html#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">sampleType=</span><span class="fu">c</span>(<span class="st">&quot;stationaryAntenna&quot;</span>), </span>
+<span id="cb30-4"><a href="getData.html#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">whichDrainage =</span> <span class="st">&quot;west&quot;</span>,</span>
+<span id="cb30-5"><a href="getData.html#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">columnsToAdd=</span><span class="fu">c</span>(</span>
+<span id="cb30-6"><a href="getData.html#cb30-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;river&quot;</span>,</span>
+<span id="cb30-7"><a href="getData.html#cb30-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;riverMeter&quot;</span>,</span>
+<span id="cb30-8"><a href="getData.html#cb30-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;survey&quot;</span>,</span>
+<span id="cb30-9"><a href="getData.html#cb30-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;readerID&quot;</span>,</span>
+<span id="cb30-10"><a href="getData.html#cb30-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;comment&quot;</span></span>
+<span id="cb30-11"><a href="getData.html#cb30-11" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb30-12"><a href="getData.html#cb30-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span>  </span>
+<span id="cb30-13"><a href="getData.html#cb30-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(tag)) <span class="sc">%&gt;%</span> <span class="co"># for now</span></span>
+<span id="cb30-14"><a href="getData.html#cb30-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTagProperties</span>(<span class="at">columnsToAdd =</span> <span class="fu">c</span>(</span>
+<span id="cb30-15"><a href="getData.html#cb30-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cohort&quot;</span>,</span>
+<span id="cb30-16"><a href="getData.html#cb30-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;species&quot;</span>,</span>
+<span id="cb30-17"><a href="getData.html#cb30-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;dateEmigrated&quot;</span>,</span>
+<span id="cb30-18"><a href="getData.html#cb30-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;sex&quot;</span>,</span>
+<span id="cb30-19"><a href="getData.html#cb30-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;species&quot;</span>)</span>
+<span id="cb30-20"><a href="getData.html#cb30-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-21"><a href="getData.html#cb30-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-22"><a href="getData.html#cb30-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(cdWB_antenna0, <span class="at">file =</span> <span class="st">&#39;./data/cdWB_antenna0.RData&#39;</span>)</span>
+<span id="cb30-23"><a href="getData.html#cb30-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-24"><a href="getData.html#cb30-24" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb30-25"><a href="getData.html#cb30-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="at">file =</span> <span class="st">&#39;./data/cdWB_antenna0.RData&#39;</span>)</span>
+<span id="cb30-26"><a href="getData.html#cb30-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-27"><a href="getData.html#cb30-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-28"><a href="getData.html#cb30-28" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cdWB_antenna0)</span></code></pre></div>
 <pre><code>## tibble [410,915 × 10] (S3: tbl_df/tbl/data.frame)
 ##  $ tag          : chr [1:410915] &quot;00088cbed9&quot; &quot;00088cbed9&quot; &quot;00088cbed9&quot; &quot;00088cbed9&quot; ...
-##  $ detectionDate: POSIXct[1:410915], format: &quot;2014-10-17 20:22:33&quot; &quot;2014-10-24 15:34:31&quot; &quot;2014-10-24 16:03:51&quot; &quot;2014-10-24 17:29:37&quot; ...
+##  $ detectionDate: POSIXct[1:410915], format: &quot;2014-10-17 20:22:33&quot; &quot;2014-10-24 15:34:31&quot; ...
 ##  $ river        : chr [1:410915] &quot;wb mitchell&quot; &quot;wb mitchell&quot; &quot;wb mitchell&quot; &quot;wb mitchell&quot; ...
 ##  $ riverMeter   : num [1:410915] 4797 4797 4830 4830 5524 ...
 ##  $ survey       : chr [1:410915] &quot;stationaryAntenna&quot; &quot;stationaryAntenna&quot; &quot;stationaryAntenna&quot; &quot;stationaryAntenna&quot; ...
 ##  $ comment      : chr [1:410915] NA NA NA NA ...
 ##  $ cohort       : num [1:410915] 2013 2013 2013 2013 2013 ...
 ##  $ species      : chr [1:410915] &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; &quot;bkt&quot; ...
-##  $ dateEmigrated: Date[1:410915], format: &quot;2014-10-25&quot; &quot;2014-10-25&quot; &quot;2014-10-25&quot; &quot;2014-10-25&quot; ...
+##  $ dateEmigrated: Date[1:410915], format: &quot;2014-10-25&quot; &quot;2014-10-25&quot; ...
 ##  $ sex          : chr [1:410915] NA NA NA NA ...</code></pre>
 </div>
 <div id="wrangle-data-3" class="section level3 hasAnchor" number="2.5.2">
