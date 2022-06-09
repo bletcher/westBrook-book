@@ -7,6 +7,8 @@
 library(nimbleEcology)
 
 
+
+#setwd('~/github/BenLetcher_flowEffect/2022_05_26_code')
 load('./models/cmrFlowWB/dataOut/eh_2002200320042005200620072008200920102011201220132014_wb obear.RData')
 
 y <- eh$eh
@@ -79,6 +81,7 @@ if(FALSE) {
 ## for either CJS or DHMM distributions
 if(TRUE) {
     indToKeep <- which(first < 12)
+    newN <- length(indToKeep)
 }
 
 myConstants <- list(
@@ -224,7 +227,32 @@ system.time(
     )
 )
 
+Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+Cmodel <- compileNimble(Rmodel)
+Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
 
+mcmc.phiT_pT_cohort_flowCohortHier <- runMCMC(
+    Cmcmc, 
+    niter = nIter, 
+    nburnin = nBurnin, 
+    thin = thinRate, 
+    nchains = nChains
+)
+
+end <- Sys.time()
+elapsed_phi_p <- end - start
+toSave <- list(
+    mcmc = mcmc.phi_p, 
+    elapsed = elapsed_phi_p,
+    name = "phi_p",
+    myConstants = myConstants, 
+    nIter = nIter, 
+    nBurnin = nBurnin,
+    thinRate = thinRate, 
+    nSeasons = nSeasons, 
+    nCohorts = nCohorts,
+    nChains = nChains
+)
 
 
 
