@@ -86,6 +86,4 @@ compare-models
 modelCMR_Flow_4rivers
 model-phit_pt_psit
 set-up-and-run-model-8
-model-phit_pt_psi_cohort
-set-up-and-run-model-9
 final-words
