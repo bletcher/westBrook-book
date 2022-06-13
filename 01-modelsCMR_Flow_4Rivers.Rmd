@@ -26,7 +26,7 @@ library(tidyverse)
 
 ```{r}
 rerunSurivalModels <- FALSE
-plotMCMCOutput <- FALSE
+plotMCMCOutput <- TRUE
 ```
 
 
@@ -110,21 +110,20 @@ if (rerunSurivalModels) {
   delta[5] <- 0                    # Pr(dead t = 1) = 0
     
 
-  for (i in 1:N){
-   for (t in 1:(T-1)){ # loop over time
-      for (r in 1:(nRivers - 1)){
-        ##
-        # psi
-        lpsiA[r,t,i] ~ dnorm(0, sd = 1000)
-        lpsiB[r,t,i] ~ dnorm(0, sd = 1000)
-        lpsiC[r,t,i] ~ dnorm(0, sd = 1000)
-        lpsiD[r,t,i] ~ dnorm(0, sd = 1000)
+  for (i in 1:N){ # loop over individuals
+    for (t in 1:(T-1)){ # loop over time
       
+      for (r in 1:(nRivers - 1)){
+         lpsiA[r,t,i] ~ dnorm(0, sd = 1000)
+         lpsiB[r,t,i] ~ dnorm(0, sd = 1000)
+         lpsiC[r,t,i] ~ dnorm(0, sd = 1000)
+         lpsiD[r,t,i] ~ dnorm(0, sd = 1000)
+         
       # constrain the transitions such that their sum is < 1
          psiA[r,t,i] <- exp(lpsiA[r,t,i]) / (1 + exp(lpsiA[1,t,i]) + exp(lpsiA[2,t,i]) + exp(lpsiA[3,t,i]))
          psiB[r,t,i] <- exp(lpsiB[r,t,i]) / (1 + exp(lpsiB[1,t,i]) + exp(lpsiB[2,t,i]) + exp(lpsiB[3,t,i]))
          psiC[r,t,i] <- exp(lpsiC[r,t,i]) / (1 + exp(lpsiC[1,t,i]) + exp(lpsiC[2,t,i]) + exp(lpsiC[3,t,i]))
-         psid[r,t,i] <- exp(lpsiD[r,t,i]) / (1 + exp(lpsiD[1,t,i]) + exp(lpsiD[2,t,i]) + exp(lpsiD[3,t,i]))
+         psiD[r,t,i] <- exp(lpsiD[r,t,i]) / (1 + exp(lpsiD[1,t,i]) + exp(lpsiD[2,t,i]) + exp(lpsiD[3,t,i]))
       }
      
       # last transition probability
@@ -132,13 +131,15 @@ if (rerunSurivalModels) {
       psiB[4,t,i] <- 1 - psiB[1,t,i] - psiB[2,t,i] - psiB[3,t,i]
       psiC[4,t,i] <- 1 - psiC[1,t,i] - psiC[2,t,i] - psiC[3,t,i]
       psiD[4,t,i] <- 1 - psiD[1,t,i] - psiD[2,t,i] - psiD[3,t,i]
-     
+
+           
       ##
       # phi
       phiA[t,i] <- betaPhi[1,cohort[i],t] 
       phiB[t,i] <- betaPhi[2,cohort[i],t]
       phiC[t,i] <- betaPhi[3,cohort[i],t]
       phiD[t,i] <- betaPhi[4,cohort[i],t]
+      
       # probabilities of state z(t+1) given z(t)
       gamma[1,1,t,i] <- phiA[t,i] * psiA[1,t,i]
       gamma[1,2,t,i] <- phiA[t,i] * psiA[2,t,i]
@@ -252,8 +253,8 @@ if (rerunSurivalModels) {
       }
       
     } # i loop
-    ##    
   
+
     for (r in 1:nRivers){
       betaPhiRiver[r] ~ dnorm(0,1)
       betaPRiver[r] ~ dnorm(0,1)
@@ -268,6 +269,7 @@ if (rerunSurivalModels) {
       }
     }
   
+  
     # back-transform for examining output
     for (r in 1:nRivers){
       betaPhiRiverOut[r] <- 1/(1 + exp(-betaPhiRiver[r]))
@@ -281,7 +283,22 @@ if (rerunSurivalModels) {
         }
       }
     }
-        # likelihood
+  
+### need to figure out how to output psi values...
+    # for (r in 1:nRivers){
+    #   for (c in 1:nCohorts){
+    #     for (t in 1:(T-1)){ 
+    #       for (i in 1:N){
+    #         psiOut[1,r,t,c] <- psiA[r,t,i]
+    #         psiOut[2,r,t,c] <- psiB[r,t,i]
+    #         psiOut[3,r,t,c] <- psiC[r,t,i]
+    #         psiOut[4,r,t,c] <- psiD[r,t,i]
+    #       }
+    #     }
+    #   }
+    # }
+    
+    # likelihood
     for (i in 1:N){
       y[i,first[i]:last[i]] ~ dDHMMo(init = delta[1:5],
                                      probTrans = gamma[1:5, 1:5, first[i]:last[i], i],
@@ -314,14 +331,14 @@ if (rerunSurivalModels) {
     
     betaPhiRiver = array(runif(nRivers, 0, 1), c(nRivers)), 
     betaPhiRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
-    betaPhi = array(runif(nRivers * nCohorts * (myConstants0$T - 1), 0, 1), c(nRivers, nCohorts, (myConstants0$T - 1))),
+    betaPhi = array(runif(nRivers * nCohorts * (myConstants$T - 1), 0, 1), c(nRivers, nCohorts, (myConstants$T - 1))),
     betaPRiver = array(runif(nRivers, 0, 1), c(nRivers)), 
     betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
-    betaP = array(runif(nRivers * nCohorts * (myConstants0$T - 1), 0, 1), c(nRivers, nCohorts, (myConstants0$T - 1))),
-    lpsiA = array(rnorm((nRivers - 1) * (myConstants0$T - 1) * myConstants0$N, 0, 1), c((nRivers - 1), (myConstants0$T - 1), myConstants0$N)),
-    lpsiB = array(rnorm((nRivers - 1) * (myConstants0$T - 1) * myConstants0$N, 0, 1), c((nRivers - 1), (myConstants0$T - 1), myConstants0$N)),
-    lpsiC = array(rnorm((nRivers - 1) * (myConstants0$T - 1) * myConstants0$N, 0, 1), c((nRivers - 1), (myConstants0$T - 1), myConstants0$N)),
-    lpsid = array(rnorm((nRivers - 1) * (myConstants0$T - 1) * myConstants0$N, 0, 1), c((nRivers - 1), (myConstants0$T - 1), myConstants0$N)),
+    betaP = array(runif(nRivers * nCohorts * (myConstants$T - 1), 0, 1), c(nRivers, nCohorts, (myConstants$T - 1))),
+    lpsiA = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
+    lpsiB = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
+    lpsiC = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
+    lpsiD = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
     z = zInitsNA
   )
   
@@ -336,12 +353,9 @@ if (rerunSurivalModels) {
       indToKeep <- sample(1:oldN, size = newN, replace = FALSE)
   }
   
-  ## this removes the very last observation,
-  ## since first[2376] = T = 12, which is not allowed
-  ## to have the first observation occur on the final sampling period
-  ## for either CJS or DHMM distributions
+  ## this removes fish that were only observed on the very last observation
   if(TRUE) {
-      indToKeep <- which(first < 12)
+      indToKeep <- which(first < ncol(y))
       newN <- length(indToKeep)
   }
   
@@ -385,10 +399,11 @@ if (rerunSurivalModels) {
   parametersToSave <- c("betaPhi", "betaPhiRiver", "betaPhiRiverCohort", 
                         "betaP",   "betaPRiver",   "betaPRiverCohort",
                         "betaPhiOut", "betaPhiRiverOut", "betaPhiRiverCohortOut", 
-                        "betaPOut",   "betaPRiverOut",   "betaPRiverCohortOut")
+                        "betaPOut",   "betaPRiverOut",   "betaPRiverCohortOut"
+                        )
   
-  nIter <- 10000 #30000
-  nBurnin <- 5000 #15000
+  nIter <- 5000 #30000
+  nBurnin <- 2500 #15000
   nChains <- 2
   thinRate <- 5
   
@@ -428,28 +443,28 @@ if (rerunSurivalModels) {
       nChains = nChains
   )
   
-#    save(toSave, file = paste0('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_', substr(end,1,13), '.RData'))
-#    save(toSave, file = './models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
+    save(toSave, file = paste0('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_', substr(end,1,13), '.RData'))
+    save(toSave, file = './models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
 } else {
-#  load('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
+  load('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
 }
 
 if(plotMCMCOutput) {
 
   #MCMCsummary(object = mcmc.phiT_pT_cohort_flowHier, round = 2)
   #MCMCplot(object = mcmc.phiT_pT_cohort_flowHier, params = "betaPhiOut")
-  MCMCplot(object = toSave$mcmc, params = "phiA")
-  MCMCplot(object = toSave$mcmc, params = "betaFlow")# 
-  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohortOut"))
-  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohort"))
-  MCMCplot(object = toSave$mcmc, params = c("betaPCohortOut"))
-  MCMCplot(object = toSave$mcmc, params = c("betaFlowCohort"))
+  MCMCplot(object = toSave$mcmc, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPhiRiverOut")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiRiverCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = "betaPOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPRiverOut")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPRiverCohortOut"))
   
   priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
   MCMCtrace(object = toSave$mcmc,
             #ISB = FALSE,
             #exact = TRUE, 
-            params = c("betaFlowTop"),
+            params = c("betaPhiRiverOut"),
             pdf = FALSE, 
             priors = priors)
   
@@ -457,17 +472,10 @@ if(plotMCMCOutput) {
   MCMCtrace(object = toSave$mcmc,
             #ISB = FALSE,
             #exact = TRUE, 
-            params = c("betaPhiCohortOut"),
+            params = c("betaPhiRiverCohortOut"),
             pdf = FALSE, 
             priors = priors)
-  
-  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1)
-  MCMCtrace(object = toSave$mcmc,
-            #ISB = FALSE,
-            #exact = TRUE, 
-            params = c("betaFlow"),
-            pdf = FALSE, 
-            priors = priors)
+
 }
 
 

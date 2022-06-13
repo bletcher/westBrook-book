@@ -1,9 +1,13 @@
+**/data/*
+**/models/*
+
 # History files
 .Rhistory
 .Rapp.history
 
 # Session Data files
 .RData
+.Rdata
 .csv
 
 # User-specific files
