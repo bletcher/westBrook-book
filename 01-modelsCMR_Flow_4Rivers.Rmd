@@ -91,13 +91,15 @@ if (rerunSurivalModels) {
   # States (z):
   # 1 alive at A
   # 2 alive at B
-  # 2 alive at C
-  # 3 dead
+  # 3 alive at C
+  # 4 alive at D
+  # 5 dead
   # Observations (y):  
   # 1 not seen
   # 2 seen at A 
   # 3 seen at B
-  # 3 seen at C
+  # 4 seen at C
+  # 5 seen at D
   # -------------------------------------------------
   
   ## model code using DHMMo distribution
