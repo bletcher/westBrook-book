@@ -71,7 +71,7 @@ if (rerunSurivalModels) {
   
   #  For 3 states, we are using 4
   # -------------------------------------------------
-  # Parameters:
+  # Parameters for 3 sites (A, B, C):
   # phiA: survival probability site A
   # phiB: survival probability site B
   # phiC: survival probability site B
@@ -100,256 +100,219 @@ if (rerunSurivalModels) {
   # 3 seen at B
   # 4 seen at C
   # 5 seen at D
+  # river names: c("west brook" = 1, "wb jimmy" = 2, "wb mitchell" = 3, "wb obear" = 4)
   # -------------------------------------------------
   
   ## model code using DHMMo distribution
   hmm.phiT_pT_psiT_DHMM <- nimbleCode({
-
-  delta[1] <- 0.4                    # Pr(alive t = 1 and in river 1) = 0.4
-  delta[2] <- 0.2
-  delta[3] <- 0.2
-  delta[4] <- 0.2
-  delta[5] <- 0                    # Pr(dead t = 1) = 0
-    
-
-  for (i in 1:N){ # loop over individuals
-    for (t in 1:(T-1)){ # loop over time
-      
-      for (r in 1:(nRivers - 1)){
-         lpsiA[r,t,i] ~ dnorm(0, sd = 1000)
-         lpsiB[r,t,i] ~ dnorm(0, sd = 1000)
-         lpsiC[r,t,i] ~ dnorm(0, sd = 1000)
-         lpsiD[r,t,i] ~ dnorm(0, sd = 1000)
+      delta[1] <- 0.4                    # Pr(alive t = 1 and in river 1) = 0.4
+      delta[2] <- 0.2
+      delta[3] <- 0.2
+      delta[4] <- 0.2
+      delta[5] <- 0                    # Pr(dead t = 1) = 0
+  
+      for (r in 1:nRivers){
+          betaPhiRiver[r] ~ dnorm(0,1)
+          betaPRiver[r] ~ dnorm(0,1)
+          betaPhiRiverOut[r] <- 1/(1 + exp(-betaPhiRiver[r]))
+          betaPRiverOut[r] <- 1/(1 + exp(-betaPRiver[r]))
+          for (c in 1:nCohorts){
+              betaPhiRiverCohort[r,c] ~ dnorm(betaPhiRiver[r],1)
+              betaPRiverCohort[r,c] ~ dnorm(betaPRiver[r],1)
+              betaPhiRiverCohortOut[r,c] <- 1/(1 + exp(-betaPhiRiverCohort[r,c]))
+              betaPRiverCohortOut[r,c] <- 1/(1 + exp(-betaPRiverCohort[r,c]))
+              for (t in 1:(T-1)){
+                  betaPhi[r,c,t] ~ dnorm(betaPhiRiverCohort[r,c],1)
+                  betaP[r,c,t] ~ dnorm(betaPRiverCohort[r,c],1)
+                  betaPhiOut[r,c,t] <- 1/(1 + exp(-betaPhi[r,c,t]))
+                  betaPOut[r,c,t] <- 1/(1 + exp(-betaP[r,c,t]))
+              }
+          }
+      }
+  
+      for (t in 1:(T-1)){ # loop over time
+          for (r in 1:(nRivers - 1)){
+              lpsiA[r,t] ~ dnorm(0, sd = 1000)  # sd too big?
+              lpsiB[r,t] ~ dnorm(0, sd = 1000)
+              lpsiC[r,t] ~ dnorm(0, sd = 1000)
+              lpsiD[r,t] ~ dnorm(0, sd = 1000)
+             
+              # constrain the transitions such that their sum is < 1
+              psiA[r,t] <- exp(lpsiA[r,t]) / (1 + exp(lpsiA[1,t]) + exp(lpsiA[2,t]) + exp(lpsiA[3,t]))
+              psiB[r,t] <- exp(lpsiB[r,t]) / (1 + exp(lpsiB[1,t]) + exp(lpsiB[2,t]) + exp(lpsiB[3,t]))
+              psiC[r,t] <- exp(lpsiC[r,t]) / (1 + exp(lpsiC[1,t]) + exp(lpsiC[2,t]) + exp(lpsiC[3,t]))
+              psiD[r,t] <- exp(lpsiD[r,t]) / (1 + exp(lpsiD[1,t]) + exp(lpsiD[2,t]) + exp(lpsiD[3,t]))
+          }
          
-      # constrain the transitions such that their sum is < 1
-         psiA[r,t,i] <- exp(lpsiA[r,t,i]) / (1 + exp(lpsiA[1,t,i]) + exp(lpsiA[2,t,i]) + exp(lpsiA[3,t,i]))
-         psiB[r,t,i] <- exp(lpsiB[r,t,i]) / (1 + exp(lpsiB[1,t,i]) + exp(lpsiB[2,t,i]) + exp(lpsiB[3,t,i]))
-         psiC[r,t,i] <- exp(lpsiC[r,t,i]) / (1 + exp(lpsiC[1,t,i]) + exp(lpsiC[2,t,i]) + exp(lpsiC[3,t,i]))
-         psiD[r,t,i] <- exp(lpsiD[r,t,i]) / (1 + exp(lpsiD[1,t,i]) + exp(lpsiD[2,t,i]) + exp(lpsiD[3,t,i]))
+          # last transition probability
+          psiA[4,t] <- 1 - psiA[1,t] - psiA[2,t] - psiA[3,t]
+          psiB[4,t] <- 1 - psiB[1,t] - psiB[2,t] - psiB[3,t]
+          psiC[4,t] <- 1 - psiC[1,t] - psiC[2,t] - psiC[3,t]
+          psiD[4,t] <- 1 - psiD[1,t] - psiD[2,t] - psiD[3,t]
+       
+          for (c in 1:nCohorts){
+              gamma[1,1,t,c] <- betaPhi[1,c,t] * psiA[1,t]
+              gamma[1,2,t,c] <- betaPhi[1,c,t] * psiA[2,t]
+              gamma[1,3,t,c] <- betaPhi[1,c,t] * psiA[3,t]
+              gamma[1,4,t,c] <- betaPhi[1,c,t] * psiA[4,t]
+              gamma[1,5,t,c] <- 1 - betaPhi[1,c,t]
+              gamma[2,1,t,c] <- betaPhi[2,c,t] * psiB[1,t]
+              gamma[2,2,t,c] <- betaPhi[2,c,t] * psiB[2,t]
+              gamma[2,3,t,c] <- betaPhi[2,c,t] * psiB[3,t]
+              gamma[2,4,t,c] <- betaPhi[2,c,t] * psiB[4,t]
+              gamma[2,5,t,c] <- 1 - betaPhi[2,c,t]
+              gamma[3,1,t,c] <- betaPhi[3,c,t] * psiC[1,t]
+              gamma[3,2,t,c] <- betaPhi[3,c,t] * psiC[2,t]
+              gamma[3,3,t,c] <- betaPhi[3,c,t] * psiC[3,t]
+              gamma[3,4,t,c] <- betaPhi[3,c,t] * psiC[4,t]
+              gamma[3,5,t,c] <- 1 - betaPhi[3,c,t]
+              gamma[4,1,t,c] <- betaPhi[4,c,t] * psiD[1,t]
+              gamma[4,2,t,c] <- betaPhi[4,c,t] * psiD[2,t]
+              gamma[4,3,t,c] <- betaPhi[4,c,t] * psiD[3,t]
+              gamma[4,4,t,c] <- betaPhi[4,c,t] * psiD[4,t]
+              gamma[4,5,t,c] <- 1 - betaPhi[4,c,t]
+              gamma[5,1,t,c] <- 0
+              gamma[5,2,t,c] <- 0
+              gamma[5,3,t,c] <- 0
+              gamma[5,4,t,c] <- 0
+              gamma[5,5,t,c] <- 1
+          }
       }
-     
-      # last transition probability
-      psiA[4,t,i] <- 1 - psiA[1,t,i] - psiA[2,t,i] - psiA[3,t,i]
-      psiB[4,t,i] <- 1 - psiB[1,t,i] - psiB[2,t,i] - psiB[3,t,i]
-      psiC[4,t,i] <- 1 - psiC[1,t,i] - psiC[2,t,i] - psiC[3,t,i]
-      psiD[4,t,i] <- 1 - psiD[1,t,i] - psiD[2,t,i] - psiD[3,t,i]
-
-           
-      ##
-      # phi
-      phiA[t,i] <- betaPhi[1,cohort[i],t] 
-      phiB[t,i] <- betaPhi[2,cohort[i],t]
-      phiC[t,i] <- betaPhi[3,cohort[i],t]
-      phiD[t,i] <- betaPhi[4,cohort[i],t]
-      
-      # probabilities of state z(t+1) given z(t)
-      gamma[1,1,t,i] <- phiA[t,i] * psiA[1,t,i]
-      gamma[1,2,t,i] <- phiA[t,i] * psiA[2,t,i]
-      gamma[1,3,t,i] <- phiA[t,i] * psiA[3,t,i]
-      gamma[1,4,t,i] <- phiA[t,i] * psiA[4,t,i]
-      gamma[1,5,t,i] <- 1 - phiA[t,i]
-      gamma[2,1,t,i] <- phiB[t,i] * psiB[1,t,i]
-      gamma[2,2,t,i] <- phiB[t,i] * psiB[2,t,i]
-      gamma[2,3,t,i] <- phiB[t,i] * psiB[3,t,i]
-      gamma[2,4,t,i] <- phiB[t,i] * psiB[4,t,i]
-      gamma[2,5,t,i] <- 1 - phiB[t,i]
-      gamma[3,1,t,i] <- phiC[t,i] * psiC[1,t,i]
-      gamma[3,2,t,i] <- phiC[t,i] * psiC[2,t,i]
-      gamma[3,3,t,i] <- phiC[t,i] * psiC[3,t,i]
-      gamma[3,4,t,i] <- phiC[t,i] * psiC[4,t,i]
-      gamma[3,5,t,i] <- 1 - phiC[t,i]
-      gamma[4,1,t,i] <- phiD[t,i] * psiD[1,t,i]
-      gamma[4,2,t,i] <- phiD[t,i] * psiD[2,t,i]
-      gamma[4,3,t,i] <- phiD[t,i] * psiD[3,t,i]
-      gamma[4,4,t,i] <- phiD[t,i] * psiD[4,t,i]
-      gamma[4,5,t,i] <- 1 - phiD[t,i]
-      gamma[5,1,t,i] <- 0
-      gamma[5,2,t,i] <- 0
-      gamma[5,3,t,i] <- 0
-      gamma[5,4,t,i] <- 0
-      gamma[5,5,t,i] <- 1
-      
-
-     } # t loop
-    
+         
+      for (c in 1:nCohorts){
+          for (a in 1:(nRivers+1)){
+              for (b in 1:nRivers){
+                  gamma[a,b,T,c] <- 0
+              }  
+              gamma[a,5,T,c] <- 1
+          }
+      }
+       
+       
+      for (i in 1:N){ # loop over individuals
+          # omega for first obs      
+          omega[1,1,first[i],i] <- 0     # Pr(alive A t -> non-detected t)
+          omega[1,2,first[i],i] <- 1         # Pr(alive A t -> detected A t)
+          omega[1,3,first[i],i] <- 0          # Pr(alive A t -> detected B t)
+          omega[1,4,first[i],i] <- 0          # Pr(alive A t -> detected C t)
+          omega[1,5,first[i],i] <- 0          # Pr(alive A t -> detected D t)
+          omega[2,1,first[i],i] <- 0     # Pr(alive B t -> non-detected t)
+          omega[2,2,first[i],i] <- 0          # Pr(alive B t -> detected A t)
+          omega[2,3,first[i],i] <- 1         # Pr(alive B t -> detected B t)
+          omega[2,4,first[i],i] <- 0          # Pr(alive B t -> detected C t)
+          omega[2,5,first[i],i] <- 0          # Pr(alive B t -> detected C t)
+          omega[3,1,first[i],i] <- 0     # Pr(alive C t -> non-detected t)
+          omega[3,2,first[i],i] <- 0          # Pr(alive C t -> detected A t)
+          omega[3,3,first[i],i] <- 0          # Pr(alive C t -> detected B t)
+          omega[3,4,first[i],i] <- 1         # Pr(alive C t -> detected C t)
+          omega[3,5,first[i],i] <- 0          # Pr(alive C t -> detected C t)
+          omega[4,1,first[i],i] <- 0     # Pr(dead t -> non-detected t)
+          omega[4,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
+          omega[4,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
+          omega[4,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
+          omega[4,5,first[i],i] <- 1          # Pr(dead t -> detected C t)
+          omega[5,1,first[i],i] <- 1         # Pr(dead t -> non-detected t)
+          omega[5,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
+          omega[5,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
+          omega[5,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
+          omega[5,5,first[i],i] <- 0          # Pr(dead t -> detected D t)
+       
+         
           ## DT changes:
-      ## need to pad the gamma matrix with an extra t=T row, to ensure it's
-      ## always a matrix.  This values are never actually used (except maybe for internal checking of row sums = 1),
-      ## but defining them is necessary.
-      # for (a in 1:nRivers){
-      #   for (b in 1:(nRivers - 1)){
-      #     gamma[a,b,T,i] <- 0
-      #     gamma[a,b,T,i] <- 0
-      #     gamma[a,b,T,i] <- 0
-      #     gamma[a,b,T,i] <- 0
-      #  
-      #   }  
-      #     gamma[a,5,T,i] <- 1
-      # }
-    
-     ##
-     # p
-    
-     # omega for first obs      
-     omega[1,1,first[i],i] <- 0     # Pr(alive A t -> non-detected t)
-     omega[1,2,first[i],i] <- 1         # Pr(alive A t -> detected A t)
-     omega[1,3,first[i],i] <- 0          # Pr(alive A t -> detected B t)
-     omega[1,4,first[i],i] <- 0          # Pr(alive A t -> detected C t)
-     omega[1,5,first[i],i] <- 0          # Pr(alive A t -> detected D t)
-     omega[2,1,first[i],i] <- 0     # Pr(alive B t -> non-detected t)
-     omega[2,2,first[i],i] <- 0          # Pr(alive B t -> detected A t)
-     omega[2,3,first[i],i] <- 1         # Pr(alive B t -> detected B t)
-     omega[2,4,first[i],i] <- 0          # Pr(alive B t -> detected C t)
-     omega[2,5,first[i],i] <- 0          # Pr(alive B t -> detected C t)
-     omega[3,1,first[i],i] <- 0     # Pr(alive C t -> non-detected t)
-     omega[3,2,first[i],i] <- 0          # Pr(alive C t -> detected A t)
-     omega[3,3,first[i],i] <- 0          # Pr(alive C t -> detected B t)
-     omega[3,4,first[i],i] <- 1         # Pr(alive C t -> detected C t)
-     omega[3,5,first[i],i] <- 0          # Pr(alive C t -> detected C t)
-     omega[4,1,first[i],i] <- 0     # Pr(dead t -> non-detected t)
-     omega[4,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
-     omega[4,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
-     omega[4,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
-     omega[4,5,first[i],i] <- 1          # Pr(dead t -> detected C t)
-     omega[5,1,first[i],i] <- 1         # Pr(dead t -> non-detected t)
-     omega[5,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
-     omega[5,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
-     omega[5,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
-     omega[5,5,first[i],i] <- 0          # Pr(dead t -> detected D t)
-          
-      ## DT changes:
-      ## time t > first[i]:
-      for(t in (first[i]+1):last[i]) {
-        logit(pA[t,i]) <- betaP[1,cohort[i],t-1]
-        logit(pB[t,i]) <- betaP[2,cohort[i],t-1]
-        logit(pC[t,i]) <- betaP[3,cohort[i],t-1]
-        logit(pD[t,i]) <- betaP[4,cohort[i],t-1]
-        
-        # probabilities of y(t) given z(t)
-                                          # letters are not all correct below  
-        omega[1,1,t,i] <- 1 - pA[t,i]     # Pr(alive A t -> non-detected t)
-        omega[1,2,t,i] <- pA[t,i]         # Pr(alive A t -> detected A t)
-        omega[1,3,t,i] <- 0          # Pr(alive A t -> detected B t)
-        omega[1,4,t,i] <- 0          # Pr(alive A t -> detected C t)
-        omega[1,5,t,i] <- 0          # Pr(alive A t -> detected D t)
-        omega[2,1,t,i] <- 1 - pB[t,i]     # Pr(alive B t -> non-detected t)
-        omega[2,2,t,i] <- 0          # Pr(alive B t -> detected A t)
-        omega[2,3,t,i] <- pB[t,i]         # Pr(alive B t -> detected B t)
-        omega[2,4,t,i] <- 0          # Pr(alive B t -> detected C t)
-        omega[2,5,t,i] <- 0          # Pr(alive B t -> detected C t)
-        omega[3,1,t,i] <- 1 - pC[t,i]     # Pr(alive C t -> non-detected t)
-        omega[3,2,t,i] <- 0          # Pr(alive C t -> detected A t)
-        omega[3,3,t,i] <- 0          # Pr(alive C t -> detected B t)
-        omega[3,4,t,i] <- pC[t,i]         # Pr(alive C t -> detected C t)
-        omega[3,5,t,i] <- 0          # Pr(alive C t -> detected C t)
-        omega[4,1,t,i] <- 1 - pD[t,i]     # Pr(alive D t -> non-detected t))
-        omega[4,2,t,i] <- 0          # Pr(dead t -> detected A t)
-        omega[4,3,t,i] <- 0          # Pr(dead t -> detected B t)
-        omega[4,4,t,i] <- 0          # Pr(dead t -> detected C t)
-        omega[4,5,t,i] <- pD[t,i]          # Pr(alive t -> detected D t)
-        omega[5,1,t,i] <- 1         # Pr(dead t -> non-detected t)
-        omega[5,2,t,i] <- 0          # Pr(dead t -> detected A t)
-        omega[5,3,t,i] <- 0          # Pr(dead t -> detected B t)
-        omega[5,4,t,i] <- 0          # Pr(dead t -> detected C t)
-        omega[5,5,t,i] <- 0          # Pr(dead t -> detected D t)
+          ## time t > first[i]:
+          for(t in (first[i]+1):last[i]) {
+              logit(pA[t,i]) <- betaP[1,cohort[i],t-1]
+              logit(pB[t,i]) <- betaP[2,cohort[i],t-1]
+              logit(pC[t,i]) <- betaP[3,cohort[i],t-1]
+              logit(pD[t,i]) <- betaP[4,cohort[i],t-1]
+             
+              # probabilities of y(t) given z(t)
+                                                # letters are not all correct below  
+              omega[1,1,t,i] <- 1 - pA[t,i]     # Pr(alive A t -> non-detected t)
+              omega[1,2,t,i] <- pA[t,i]         # Pr(alive A t -> detected A t)
+              omega[1,3,t,i] <- 0               # Pr(alive A t -> detected B t)
+              omega[1,4,t,i] <- 0               # Pr(alive A t -> detected C t)
+              omega[1,5,t,i] <- 0               # Pr(alive A t -> detected D t)
+              omega[2,1,t,i] <- 1 - pB[t,i]     # Pr(alive B t -> non-detected t)
+              omega[2,2,t,i] <- 0               # Pr(alive B t -> detected A t)
+              omega[2,3,t,i] <- pB[t,i]         # Pr(alive B t -> detected B t)
+              omega[2,4,t,i] <- 0               # Pr(alive B t -> detected C t)
+              omega[2,5,t,i] <- 0               # Pr(alive B t -> detected C t)
+              omega[3,1,t,i] <- 1 - pC[t,i]     # Pr(alive C t -> non-detected t)
+              omega[3,2,t,i] <- 0               # Pr(alive C t -> detected A t)
+              omega[3,3,t,i] <- 0               # Pr(alive C t -> detected B t)
+              omega[3,4,t,i] <- pC[t,i]         # Pr(alive C t -> detected C t)
+              omega[3,5,t,i] <- 0               # Pr(alive C t -> detected C t)
+              omega[4,1,t,i] <- 1 - pD[t,i]     # Pr(alive D t -> non-detected t))
+              omega[4,2,t,i] <- 0               # Pr(dead t -> detected A t)
+              omega[4,3,t,i] <- 0               # Pr(dead t -> detected B t)
+              omega[4,4,t,i] <- 0               # Pr(dead t -> detected C t)
+              omega[4,5,t,i] <- pD[t,i]         # Pr(alive t -> detected D t)
+              omega[5,1,t,i] <- 1               # Pr(dead t -> non-detected t)
+              omega[5,2,t,i] <- 0               # Pr(dead t -> detected A t)
+              omega[5,3,t,i] <- 0               # Pr(dead t -> detected B t)
+              omega[5,4,t,i] <- 0               # Pr(dead t -> detected C t)
+              omega[5,5,t,i] <- 0               # Pr(dead t -> detected D t)
+          }
+         
+      } # i loop
+  
+      for (i in 1:N){
+          y[i,first[i]:last[i]] ~ dDHMMo(init = delta[1:5],
+                                         probTrans = gamma[1:5, 1:5, first[i]:last[i], cohort[i]],
+                                         probObs =   omega[1:5, 1:5, first[i]:last[i], i],
+                                         len = length[i],
+                                         checkRowSums = 1)
       }
-      
-    } # i loop
-  
-
-    for (r in 1:nRivers){
-      betaPhiRiver[r] ~ dnorm(0,1)
-      betaPRiver[r] ~ dnorm(0,1)
-      for (c in 1:nCohorts){
-        # mean values
-        betaPhiRiverCohort[r,c] ~ dnorm(betaPhiRiver[r],1)
-        betaPRiverCohort[r,c] ~ dnorm(betaPRiver[r],1)
-        for (t in 1:(T-1)){ 
-            betaPhi[r,c,t] ~ dnorm(betaPhiRiverCohort[r,c],1)
-            betaP[r,c,t] ~ dnorm(betaPRiverCohort[r,c],1)
-        }
-      }
-    }
-  
-  
-    # back-transform for examining output
-    for (r in 1:nRivers){
-      betaPhiRiverOut[r] <- 1/(1 + exp(-betaPhiRiver[r]))
-      betaPRiverOut[r] <- 1/(1 + exp(-betaPRiver[r]))
-      for (c in 1:nCohorts){
-        betaPhiRiverCohortOut[r,c] <- 1/(1 + exp(-betaPhiRiverCohort[r,c]))
-        betaPRiverCohortOut[r,c] <- 1/(1 + exp(-betaPRiverCohort[r,c]))
-        for (t in 1:(T-1)){ 
-            betaPhiOut[r,c,t] <- 1/(1 + exp(-betaPhi[r,c,t]))
-            betaPOut[r,c,t] <- 1/(1 + exp(-betaP[r,c,t])) 
-        }
-      }
-    }
-  
-### need to figure out how to output psi values...
-    # for (r in 1:nRivers){
-    #   for (c in 1:nCohorts){
-    #     for (t in 1:(T-1)){ 
-    #       for (i in 1:N){
-    #         psiOut[1,r,t,c] <- psiA[r,t,i]
-    #         psiOut[2,r,t,c] <- psiB[r,t,i]
-    #         psiOut[3,r,t,c] <- psiC[r,t,i]
-    #         psiOut[4,r,t,c] <- psiD[r,t,i]
-    #       }
-    #     }
-    #   }
-    # }
-    
-    # likelihood
-    for (i in 1:N){
-      y[i,first[i]:last[i]] ~ dDHMMo(init = delta[1:5],
-                                     probTrans = gamma[1:5, 1:5, first[i]:last[i], i],
-                                     probObs =   omega[1:5, 1:5, first[i]:last[i], i],
-                                     len = length[i],
-                                     checkRowSums = 1)
-    }
   
   })
   
+  
+  
   ##
-  myConstants0 <- list(N = nrow(y), 
-                      T = ncol(y), 
-                      first = first,
-                      last = last,
-                      cohort = cohort, 
-                      nCohorts = nCohorts,
-                      nRivers = nRivers,
-                      season = seasonArray, 
- #                     flow = eh$flow,
-                      length = last - first + 1
-                      )
+  myConstants0 <- list(N = nrow(y),
+                       T = ncol(y),
+                       first = first,
+                       last = last,
+                       cohort = cohort,
+                       nCohorts = nCohorts,
+                       nRivers = nRivers,
+                       season = seasonArray,
+                       #                     flow = eh$flow,
+                       length = last - first + 1
+                       )
   
   ## DT changes:
-  myData0 <- list(yCJS = eh$eh, #y,    ## data for CJS distribution
-                 y = y + 1)   ## data for DHMM distribution
+  myData0 <- list(###yCJS = eh$eh, #y,    ## data for CJS distribution
+      y = y + 1
+  )   ## data for DHMM distribution
   
   
-  initialValues <- function() list(
-    
-    betaPhiRiver = array(runif(nRivers, 0, 1), c(nRivers)), 
-    betaPhiRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
-    betaPhi = array(runif(nRivers * nCohorts * (myConstants$T - 1), 0, 1), c(nRivers, nCohorts, (myConstants$T - 1))),
-    betaPRiver = array(runif(nRivers, 0, 1), c(nRivers)), 
-    betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
-    betaP = array(runif(nRivers * nCohorts * (myConstants$T - 1), 0, 1), c(nRivers, nCohorts, (myConstants$T - 1))),
-    lpsiA = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
-    lpsiB = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
-    lpsiC = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
-    lpsiD = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
-    z = zInitsNA
-  )
+  initialValues <- function()
+      list(
+          betaPhiRiver = array(runif(nRivers, 0, 1), c(nRivers)),
+          betaPhiRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
+          betaPhi = array(runif(nRivers * nCohorts * (myConstants$T - 1), 0, 1), c(nRivers, nCohorts, (myConstants$T - 1))),
+          betaPRiver = array(runif(nRivers, 0, 1), c(nRivers)),
+          betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
+          betaP = array(runif(nRivers * nCohorts * (myConstants$T - 1), 0, 1), c(nRivers, nCohorts, (myConstants$T - 1))),
+          ##lpsiA = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
+          ##lpsiB = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
+          ##lpsiC = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N)),
+          ##lpsiD = array(rnorm((nRivers - 1) * (myConstants$T - 1) * myConstants$N, 0, 1), c((nRivers - 1), (myConstants$T - 1), myConstants$N))
+          lpsiA = array(rnorm((nRivers - 1) * (myConstants$T - 1), 0, 1), c((nRivers - 1), (myConstants$T - 1))),
+          lpsiB = array(rnorm((nRivers - 1) * (myConstants$T - 1), 0, 1), c((nRivers - 1), (myConstants$T - 1))),
+          lpsiC = array(rnorm((nRivers - 1) * (myConstants$T - 1), 0, 1), c((nRivers - 1), (myConstants$T - 1))),
+          lpsiD = array(rnorm((nRivers - 1) * (myConstants$T - 1), 0, 1), c((nRivers - 1), (myConstants$T - 1)))
+          ####z = zInitsNA
+      )
   
   
   ## if you change this FALSE to TRUE
   ## this makes the dataset smaller - only 200 observations,
   ## for quicker testing
   if(FALSE) {
-      newN <- 200
+      newN <- 20
       oldN <- dim(y)[1]
       set.seed(0)
       indToKeep <- sample(1:oldN, size = newN, replace = FALSE)
@@ -369,20 +332,20 @@ if (rerunSurivalModels) {
       nRivers = myConstants0$nRivers,
       cohort = myConstants0$cohort[indToKeep],
       nCohorts = myConstants0$nCohorts,
-#      season = myConstants$season,
-#      flow = myConstants$flow[indToKeep,],
+      #      season = myConstants$season,
+      #      flow = myConstants$flow[indToKeep,],
       length = myConstants0$length[indToKeep]
   )
   
   myData <- list(
-      yCJS = myData0$yCJS[indToKeep,],
+      ##yCJS = myData0$yCJS[indToKeep,],
       y = myData0$y[indToKeep,]
   )
   
-  zInitsNA <- zInitsNA[indToKeep,]
+  ###zInitsNA <- zInitsNA[indToKeep,]
   
   set.seed(0)
-
+  start = Sys.time()
   ## you'll get warnings that the data 'yCJS' is not used, and the 'z' initial
   ## values are not in the model.  Those don't cause any problems,
   ## and let us use the same myData and initialValue() for both models.
@@ -408,8 +371,6 @@ if (rerunSurivalModels) {
   nBurnin <- 2500 #15000
   nChains <- 2
   thinRate <- 5
-  
-  start = Sys.time()
   
   system.time(
       conf <- configureMCMC(
@@ -484,8 +445,807 @@ if(plotMCMCOutput) {
 ```
 
 
+### Model phiT_pT_psiT  
+Phi and p and psi vary by time    
+Includes transition probabilities among rivers
+Add cohort (c) indexing to psi's
+
+#### Set up and run model
+```{r phiT_pT_psiT_River2}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/5_demo.html
+if (rerunSurivalModels) {
+  
+  y <- eh$eh * eh$riverN
+  (nCohorts <- nrow(unique(eh$cohorts)))
+  (nSeasons <- nrow(unique(eh$seasons)))
+  (nRivers <- length(unique(eh$data$riverN)))# rivers 1:4
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
+             
+
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
+  
+  #  For 3 states, we are using 4
+  # -------------------------------------------------
+  # Parameters for 3 sites (A, B, C):
+  # phiA: survival probability site A
+  # phiB: survival probability site B
+  # phiC: survival probability site B
+  # psiAA: movement probability from site A to site A (reference)
+  # psiAB = psiA[1]: movement probability from site A to site B
+  # psiAC = psiA[2]: movement probability from site A to site C 
+  # psiBA = psiB[1]: movement probability from site B to site A
+  # psiBB: movement probability from site B to site B (reference)
+  # psiBC = psiB[2]: movement probability from site B to site C
+  # psiCA = psiC[1]: movement probability from site C to site A
+  # psiCB = psiC[2]: movement probability from site C to site B
+  # psiCC: movement probability from site C to site C (reference)
+  # pA: recapture probability site A
+  # pB: recapture probability site B
+  # pC: recapture probability site C
+  # -------------------------------------------------
+  # States (z):
+  # 1 alive at A
+  # 2 alive at B
+  # 3 alive at C
+  # 4 alive at D
+  # 5 dead
+  # Observations (y):  
+  # 1 not seen
+  # 2 seen at A 
+  # 3 seen at B
+  # 4 seen at C
+  # 5 seen at D
+  # river names: c("west brook" = 1, "wb jimmy" = 2, "wb mitchell" = 3, "wb obear" = 4)
+  # -------------------------------------------------
+  
+  ## model code using DHMMo distribution
+  hmm.phiT_pT_psiT_DHMM <- nimbleCode({
+      delta[1] <- 0.4                    # Pr(alive t = 1 and in river 1) = 0.4
+      delta[2] <- 0.2
+      delta[3] <- 0.2
+      delta[4] <- 0.2
+      delta[5] <- 0                    # Pr(dead t = 1) = 0
+  
+      for (r in 1:nRivers){
+          betaPhiRiver[r] ~ dnorm(0,1)
+          betaPRiver[r] ~ dnorm(0,1)
+          betaPhiRiverOut[r] <- 1/(1 + exp(-betaPhiRiver[r]))
+          betaPRiverOut[r] <- 1/(1 + exp(-betaPRiver[r]))
+          for (c in 1:nCohorts){
+              betaPhiRiverCohort[r,c] ~ dnorm(betaPhiRiver[r],1)
+              betaPRiverCohort[r,c] ~ dnorm(betaPRiver[r],1)
+              betaPhiRiverCohortOut[r,c] <- 1/(1 + exp(-betaPhiRiverCohort[r,c]))
+              betaPRiverCohortOut[r,c] <- 1/(1 + exp(-betaPRiverCohort[r,c]))
+              for (t in 1:(T-1)){
+                  betaPhi[r,c,t] ~ dnorm(betaPhiRiverCohort[r,c],1)
+                  betaP[r,c,t] ~ dnorm(betaPRiverCohort[r,c],1)
+                  betaPhiOut[r,c,t] <- 1/(1 + exp(-betaPhi[r,c,t]))
+                  betaPOut[r,c,t] <- 1/(1 + exp(-betaP[r,c,t]))
+              }
+          }
+      }
+  
+      for (t in 1:(T-1)){ # loop over time
+        for (c in 1:nCohorts){
+          for (r in 1:(nRivers - 1)){
+              lpsiA[r,t,c] ~ dnorm(0, sd = 1000)
+              lpsiB[r,t,c] ~ dnorm(0, sd = 1000)
+              lpsiC[r,t,c] ~ dnorm(0, sd = 1000)
+              lpsiD[r,t,c] ~ dnorm(0, sd = 1000)
+             
+              # constrain the transitions such that their sum is < 1
+              psiA[r,t,c] <- exp(lpsiA[r,t,c]) / (1 + exp(lpsiA[1,t,c]) + exp(lpsiA[2,t,c]) + exp(lpsiA[3,t,c]))
+              psiB[r,t,c] <- exp(lpsiB[r,t,c]) / (1 + exp(lpsiB[1,t,c]) + exp(lpsiB[2,t,c]) + exp(lpsiB[3,t,c]))
+              psiC[r,t,c] <- exp(lpsiC[r,t,c]) / (1 + exp(lpsiC[1,t,c]) + exp(lpsiC[2,t,c]) + exp(lpsiC[3,t,c]))
+              psiD[r,t,c] <- exp(lpsiD[r,t,c]) / (1 + exp(lpsiD[1,t,c]) + exp(lpsiD[2,t,c]) + exp(lpsiD[3,t,c]))
+          }
+         
+          # last transition probability
+          psiA[4,t,c] <- 1 - psiA[1,t,c] - psiA[2,t,c] - psiA[3,t,c]
+          psiB[4,t,c] <- 1 - psiB[1,t,c] - psiB[2,t,c] - psiB[3,t,c]
+          psiC[4,t,c] <- 1 - psiC[1,t,c] - psiC[2,t,c] - psiC[3,t,c]
+          psiD[4,t,c] <- 1 - psiD[1,t,c] - psiD[2,t,c] - psiD[3,t,c]
+       
+          
+              gamma[1,1,t,c] <- betaPhi[1,c,t] * psiA[1,t,c]
+              gamma[1,2,t,c] <- betaPhi[1,c,t] * psiA[2,t,c]
+              gamma[1,3,t,c] <- betaPhi[1,c,t] * psiA[3,t,c]
+              gamma[1,4,t,c] <- betaPhi[1,c,t] * psiA[4,t,c]
+              gamma[1,5,t,c] <- 1 - betaPhi[1,c,t]
+              gamma[2,1,t,c] <- betaPhi[2,c,t] * psiB[1,t,c]
+              gamma[2,2,t,c] <- betaPhi[2,c,t] * psiB[2,t,c]
+              gamma[2,3,t,c] <- betaPhi[2,c,t] * psiB[3,t,c]
+              gamma[2,4,t,c] <- betaPhi[2,c,t] * psiB[4,t,c]
+              gamma[2,5,t,c] <- 1 - betaPhi[2,c,t]
+              gamma[3,1,t,c] <- betaPhi[3,c,t] * psiC[1,t,c]
+              gamma[3,2,t,c] <- betaPhi[3,c,t] * psiC[2,t,c]
+              gamma[3,3,t,c] <- betaPhi[3,c,t] * psiC[3,t,c]
+              gamma[3,4,t,c] <- betaPhi[3,c,t] * psiC[4,t,c]
+              gamma[3,5,t,c] <- 1 - betaPhi[3,c,t]
+              gamma[4,1,t,c] <- betaPhi[4,c,t] * psiD[1,t,c]
+              gamma[4,2,t,c] <- betaPhi[4,c,t] * psiD[2,t,c]
+              gamma[4,3,t,c] <- betaPhi[4,c,t] * psiD[3,t,c]
+              gamma[4,4,t,c] <- betaPhi[4,c,t] * psiD[4,t,c]
+              gamma[4,5,t,c] <- 1 - betaPhi[4,c,t]
+              gamma[5,1,t,c] <- 0
+              gamma[5,2,t,c] <- 0
+              gamma[5,3,t,c] <- 0
+              gamma[5,4,t,c] <- 0
+              gamma[5,5,t,c] <- 1
+          }
+      }
+         
+      for (c in 1:nCohorts){
+          for (a in 1:(nRivers+1)){
+              for (b in 1:nRivers){
+                  gamma[a,b,T,c] <- 0
+              }  
+              gamma[a,5,T,c] <- 1
+          }
+      }
+       
+       
+      for (i in 1:N){ # loop over individuals
+          # omega for first obs      
+          omega[1,1,first[i],i] <- 0     # Pr(alive A t -> non-detected t)
+          omega[1,2,first[i],i] <- 1         # Pr(alive A t -> detected A t)
+          omega[1,3,first[i],i] <- 0          # Pr(alive A t -> detected B t)
+          omega[1,4,first[i],i] <- 0          # Pr(alive A t -> detected C t)
+          omega[1,5,first[i],i] <- 0          # Pr(alive A t -> detected D t)
+          omega[2,1,first[i],i] <- 0     # Pr(alive B t -> non-detected t)
+          omega[2,2,first[i],i] <- 0          # Pr(alive B t -> detected A t)
+          omega[2,3,first[i],i] <- 1         # Pr(alive B t -> detected B t)
+          omega[2,4,first[i],i] <- 0          # Pr(alive B t -> detected C t)
+          omega[2,5,first[i],i] <- 0          # Pr(alive B t -> detected C t)
+          omega[3,1,first[i],i] <- 0     # Pr(alive C t -> non-detected t)
+          omega[3,2,first[i],i] <- 0          # Pr(alive C t -> detected A t)
+          omega[3,3,first[i],i] <- 0          # Pr(alive C t -> detected B t)
+          omega[3,4,first[i],i] <- 1         # Pr(alive C t -> detected C t)
+          omega[3,5,first[i],i] <- 0          # Pr(alive C t -> detected C t)
+          omega[4,1,first[i],i] <- 0     # Pr(dead t -> non-detected t)
+          omega[4,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
+          omega[4,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
+          omega[4,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
+          omega[4,5,first[i],i] <- 1          # Pr(dead t -> detected C t)
+          omega[5,1,first[i],i] <- 1         # Pr(dead t -> non-detected t)
+          omega[5,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
+          omega[5,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
+          omega[5,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
+          omega[5,5,first[i],i] <- 0          # Pr(dead t -> detected D t)
+       
+         
+          ## DT changes:
+          ## time t > first[i]:
+          for(t in (first[i]+1):last[i]) {
+              logit(pA[t,i]) <- betaP[1,cohort[i],t-1]
+              logit(pB[t,i]) <- betaP[2,cohort[i],t-1]
+              logit(pC[t,i]) <- betaP[3,cohort[i],t-1]
+              logit(pD[t,i]) <- betaP[4,cohort[i],t-1]
+             
+              # probabilities of y(t) given z(t)
+                                                # letters are not all correct below  
+              omega[1,1,t,i] <- 1 - pA[t,i]     # Pr(alive A t -> non-detected t)
+              omega[1,2,t,i] <- pA[t,i]         # Pr(alive A t -> detected A t)
+              omega[1,3,t,i] <- 0               # Pr(alive A t -> detected B t)
+              omega[1,4,t,i] <- 0               # Pr(alive A t -> detected C t)
+              omega[1,5,t,i] <- 0               # Pr(alive A t -> detected D t)
+              omega[2,1,t,i] <- 1 - pB[t,i]     # Pr(alive B t -> non-detected t)
+              omega[2,2,t,i] <- 0               # Pr(alive B t -> detected A t)
+              omega[2,3,t,i] <- pB[t,i]         # Pr(alive B t -> detected B t)
+              omega[2,4,t,i] <- 0               # Pr(alive B t -> detected C t)
+              omega[2,5,t,i] <- 0               # Pr(alive B t -> detected C t)
+              omega[3,1,t,i] <- 1 - pC[t,i]     # Pr(alive C t -> non-detected t)
+              omega[3,2,t,i] <- 0               # Pr(alive C t -> detected A t)
+              omega[3,3,t,i] <- 0               # Pr(alive C t -> detected B t)
+              omega[3,4,t,i] <- pC[t,i]         # Pr(alive C t -> detected C t)
+              omega[3,5,t,i] <- 0               # Pr(alive C t -> detected C t)
+              omega[4,1,t,i] <- 1 - pD[t,i]     # Pr(alive D t -> non-detected t))
+              omega[4,2,t,i] <- 0               # Pr(dead t -> detected A t)
+              omega[4,3,t,i] <- 0               # Pr(dead t -> detected B t)
+              omega[4,4,t,i] <- 0               # Pr(dead t -> detected C t)
+              omega[4,5,t,i] <- pD[t,i]         # Pr(alive t -> detected D t)
+              omega[5,1,t,i] <- 1               # Pr(dead t -> non-detected t)
+              omega[5,2,t,i] <- 0               # Pr(dead t -> detected A t)
+              omega[5,3,t,i] <- 0               # Pr(dead t -> detected B t)
+              omega[5,4,t,i] <- 0               # Pr(dead t -> detected C t)
+              omega[5,5,t,i] <- 0               # Pr(dead t -> detected D t)
+          }
+         
+      } # i loop
+  
+      for (i in 1:N){
+          y[i,first[i]:last[i]] ~ dDHMMo(init = delta[1:5],
+                                         probTrans = gamma[1:5, 1:5, first[i]:last[i], cohort[i]],
+                                         probObs =   omega[1:5, 1:5, first[i]:last[i], i],
+                                         len = length[i],
+                                         checkRowSums = 1)
+      }
+  
+  })
+  
+  
+  
+  ##
+  myConstants0 <- list(N = nrow(y),
+                       T = ncol(y),
+                       first = first,
+                       last = last,
+                       cohort = cohort,
+                       nCohorts = nCohorts,
+                       nRivers = nRivers,
+                       season = seasonArray,
+                       #                     flow = eh$flow,
+                       length = last - first + 1
+                       )
+  
+  ## DT changes:
+  myData0 <- list(###yCJS = eh$eh, #y,    ## data for CJS distribution
+      y = y + 1
+  )   ## data for DHMM distribution
+  
+    ## if you change this FALSE to TRUE
+  ## this makes the dataset smaller - only 200 observations,
+  ## for quicker testing
+  if(FALSE) {
+      newN <- 20
+      oldN <- dim(y)[1]
+      set.seed(0)
+      indToKeep <- sample(1:oldN, size = newN, replace = FALSE)
+  }
+  
+  ## this removes fish that were only observed on the very last observation
+  if(TRUE) {
+      indToKeep <- which(first < ncol(y))
+      newN <- length(indToKeep)
+  }
+  
+  myConstants <- list(
+      N = newN,
+      T = myConstants0$T,
+      first = myConstants0$first[indToKeep],
+      last = myConstants0$last[indToKeep],
+      nRivers = myConstants0$nRivers,
+      cohort = myConstants0$cohort[indToKeep],
+      nCohorts = myConstants0$nCohorts,
+      #      season = myConstants$season,
+      #      flow = myConstants$flow[indToKeep,],
+      length = myConstants0$length[indToKeep]
+  )
+  
+  myData <- list(
+      ##yCJS = myData0$yCJS[indToKeep,],
+      y = myData0$y[indToKeep,]
+  )
+  
+    initialValues <- function(){
+      list(
+          betaPhiRiver = array(runif(nRivers, 0, 1), c(nRivers)),
+          betaPhiRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
+          betaPhi = array(runif(nRivers * nCohorts * (myConstants$T - 1), 0, 1), c(nRivers, nCohorts, (myConstants$T - 1))),
+          betaPRiver = array(runif(nRivers, 0, 1), c(nRivers)),
+          betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
+          betaP = array(runif(nRivers * nCohorts * (myConstants$T - 1), 0, 1), c(nRivers, nCohorts, (myConstants$T - 1))),
+          lpsiA = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
+          lpsiB = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
+          lpsiC = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
+          lpsiD = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts))
+          ####z = zInitsNA
+      )
+  }
+  
+  ###zInitsNA <- zInitsNA[indToKeep,]
+  
+  set.seed(0)
+  start = Sys.time()
+  ## you'll get warnings that the data 'yCJS' is not used, and the 'z' initial
+  ## values are not in the model.  Those don't cause any problems,
+  ## and let us use the same myData and initialValue() for both models.
+  system.time(
+      Rmodel <- nimbleModel(
+          code = hmm.phiT_pT_psiT_DHMM,
+          constants = myConstants,
+          data = myData,              
+          inits = initialValues(),
+          calculate = FALSE
+      )
+  )
+  
+  #Rmodel$calculate()
+  
+  parametersToSave <- c("betaPhi", "betaPhiRiver", "betaPhiRiverCohort", 
+                        "betaP",   "betaPRiver",   "betaPRiverCohort",
+                        "betaPhiOut", "betaPhiRiverOut", "betaPhiRiverCohortOut", 
+                        "betaPOut",   "betaPRiverOut",   "betaPRiverCohortOut",
+                        "psiA", "psiB", "psiC", "psiD"
+                        )
+  
+  nIter <- 5000 #30000
+  nBurnin <- 2500 #15000
+  nChains <- 1
+  thinRate <- 5
+  
+  system.time(
+      conf <- configureMCMC(
+          Rmodel,
+          monitors = parametersToSave
+      )
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT_psiT_DHMM <- runMCMC(
+      Cmcmc, 
+      niter = nIter, 
+      nburnin = nBurnin, 
+      thin = thinRate, 
+      nchains = nChains
+  )
+  
+  end <- Sys.time()
+  elapsed_phiT_pT_psiT_DHMM <- end - start
+  toSave <- list(
+      mcmc = mcmc.phiT_pT_psiT_DHMM, 
+      elapsed = elapsed_phiT_pT_psiT_DHMM,
+      name = "phiT_pT_psiT_DHMM",
+      myConstants = myConstants, 
+      nIter = nIter, 
+      nBurnin = nBurnin,
+      thinRate = thinRate, 
+      nSeasons = nSeasons, 
+      nCohorts = nCohorts,
+      nChains = nChains
+  )
+  
+    save(toSave, file = paste0('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_', substr(end,1,13), '.RData'))
+    save(toSave, file = './models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
+} else {
+  load('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
+}
+
+if(plotMCMCOutput) {
+
+  #MCMCsummary(object = mcmc.phiT_pT_cohort_flowHier, round = 2)
+  #MCMCplot(object = mcmc.phiT_pT_cohort_flowHier, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPhiRiverOut")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiRiverCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = "betaPOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPRiverOut")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPRiverCohortOut"))
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiRiverOut"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiRiverCohortOut"),
+            pdf = FALSE, 
+            priors = priors)
+
+}
 
 
+```
+
+### Model phiT_pT_psiT  
+Phi and p and psi vary by time    
+Includes transition probabilities among rivers
+Add cohort (c) indexing to psi's
+Fix c,t indexing, change to t,c
+
+#### Set up and run model
+```{r phiT_pT_psiT_River2}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/5_demo.html
+if (rerunSurivalModels) {
+  
+  y <- eh$eh * eh$riverN
+  (nCohorts <- nrow(unique(eh$cohorts)))
+  (nSeasons <- nrow(unique(eh$seasons)))
+  (nRivers <- length(unique(eh$data$riverN)))# rivers 1:4
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
+             
+
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
+  
+  #  For 3 states, we are using 4
+  # -------------------------------------------------
+  # Parameters for 3 sites (A, B, C):
+  # phiA: survival probability site A
+  # phiB: survival probability site B
+  # phiC: survival probability site B
+  # psiAA: movement probability from site A to site A (reference)
+  # psiAB = psiA[1]: movement probability from site A to site B
+  # psiAC = psiA[2]: movement probability from site A to site C 
+  # psiBA = psiB[1]: movement probability from site B to site A
+  # psiBB: movement probability from site B to site B (reference)
+  # psiBC = psiB[2]: movement probability from site B to site C
+  # psiCA = psiC[1]: movement probability from site C to site A
+  # psiCB = psiC[2]: movement probability from site C to site B
+  # psiCC: movement probability from site C to site C (reference)
+  # pA: recapture probability site A
+  # pB: recapture probability site B
+  # pC: recapture probability site C
+  # -------------------------------------------------
+  # States (z):
+  # 1 alive at A
+  # 2 alive at B
+  # 3 alive at C
+  # 4 alive at D
+  # 5 dead
+  # Observations (y):  
+  # 1 not seen
+  # 2 seen at A 
+  # 3 seen at B
+  # 4 seen at C
+  # 5 seen at D
+  # river names: c("west brook" = 1, "wb jimmy" = 2, "wb mitchell" = 3, "wb obear" = 4)
+  # -------------------------------------------------
+  
+  ## model code using DHMMo distribution
+  hmm.phiT_pT_psiT_DHMM <- nimbleCode({
+      delta[1] <- 0.4                  # Pr(alive t = 1 and in river 1) = 0.4
+      delta[2] <- 0.2
+      delta[3] <- 0.2
+      delta[4] <- 0.2
+      delta[5] <- 0                    # Pr(dead t = 1) = 0
+  
+      for (r in 1:nRivers){
+          betaPhiRiver[r] ~ dnorm(0,1)
+          betaPRiver[r] ~ dnorm(0,1)
+          betaPhiRiverOut[r] <- 1/(1 + exp(-betaPhiRiver[r]))
+          betaPRiverOut[r] <- 1/(1 + exp(-betaPRiver[r]))
+          for (c in 1:nCohorts){
+              betaPhiRiverCohort[r,c] ~ dnorm(betaPhiRiver[r],1)
+              betaPRiverCohort[r,c] ~ dnorm(betaPRiver[r],1)
+              betaPhiRiverCohortOut[r,c] <- 1/(1 + exp(-betaPhiRiverCohort[r,c]))
+              betaPRiverCohortOut[r,c] <- 1/(1 + exp(-betaPRiverCohort[r,c]))
+              for (t in 1:(T-1)){
+                  betaPhi[r,t,c] ~ dnorm(betaPhiRiverCohort[r,c],1)
+                  betaP[r,t,c] ~ dnorm(betaPRiverCohort[r,c],1)
+                  betaPhiOut[r,t,c] <- 1/(1 + exp(-betaPhi[r,t,c]))
+                  betaPOut[r,t,c] <- 1/(1 + exp(-betaP[r,t,c]))
+              }
+          }
+      }
+  
+      for (t in 1:(T-1)){ # loop over time
+        for (c in 1:nCohorts){
+          for (r in 1:(nRivers - 1)){
+              lpsiA[r,t,c] ~ dnorm(0, sd = 1000) # sd too big???
+              lpsiB[r,t,c] ~ dnorm(0, sd = 1000)
+              lpsiC[r,t,c] ~ dnorm(0, sd = 1000)
+              lpsiD[r,t,c] ~ dnorm(0, sd = 1000)
+             
+              # constrain the transitions such that their sum is < 1
+              psiA[r,t,c] <- exp(lpsiA[r,t,c]) / (1 + exp(lpsiA[1,t,c]) + exp(lpsiA[2,t,c]) + exp(lpsiA[3,t,c]))
+              psiB[r,t,c] <- exp(lpsiB[r,t,c]) / (1 + exp(lpsiB[1,t,c]) + exp(lpsiB[2,t,c]) + exp(lpsiB[3,t,c]))
+              psiC[r,t,c] <- exp(lpsiC[r,t,c]) / (1 + exp(lpsiC[1,t,c]) + exp(lpsiC[2,t,c]) + exp(lpsiC[3,t,c]))
+              psiD[r,t,c] <- exp(lpsiD[r,t,c]) / (1 + exp(lpsiD[1,t,c]) + exp(lpsiD[2,t,c]) + exp(lpsiD[3,t,c]))
+          }
+         
+          # last transition probability
+          psiA[4,t,c] <- 1 - psiA[1,t,c] - psiA[2,t,c] - psiA[3,t,c]
+          psiB[4,t,c] <- 1 - psiB[1,t,c] - psiB[2,t,c] - psiB[3,t,c]
+          psiC[4,t,c] <- 1 - psiC[1,t,c] - psiC[2,t,c] - psiC[3,t,c]
+          psiD[4,t,c] <- 1 - psiD[1,t,c] - psiD[2,t,c] - psiD[3,t,c]
+       
+          
+          gamma[1,1,t,c] <- ilogit(betaPhi[1,t,c]) * psiA[1,t,c]
+          gamma[1,2,t,c] <- ilogit(betaPhi[1,t,c]) * psiA[2,t,c]
+          gamma[1,3,t,c] <- ilogit(betaPhi[1,t,c]) * psiA[3,t,c]
+          gamma[1,4,t,c] <- ilogit(betaPhi[1,t,c]) * psiA[4,t,c]
+          gamma[1,5,t,c] <- 1 - ilogit(betaPhi[1,t,c])
+          gamma[2,1,t,c] <- ilogit(betaPhi[2,t,c]) * psiB[1,t,c]
+          gamma[2,2,t,c] <- ilogit(betaPhi[2,t,c]) * psiB[2,t,c]
+          gamma[2,3,t,c] <- ilogit(betaPhi[2,t,c]) * psiB[3,t,c]
+          gamma[2,4,t,c] <- ilogit(betaPhi[2,t,c]) * psiB[4,t,c]
+          gamma[2,5,t,c] <- 1 - ilogit(betaPhi[2,t,c])
+          gamma[3,1,t,c] <- ilogit(betaPhi[3,t,c]) * psiC[1,t,c]
+          gamma[3,2,t,c] <- ilogit(betaPhi[3,t,c]) * psiC[2,t,c]
+          gamma[3,3,t,c] <- ilogit(betaPhi[3,t,c]) * psiC[3,t,c]
+          gamma[3,4,t,c] <- ilogit(betaPhi[3,t,c]) * psiC[4,t,c]
+          gamma[3,5,t,c] <- 1 - ilogit(betaPhi[3,t,c])
+          gamma[4,1,t,c] <- ilogit(betaPhi[4,t,c]) * psiD[1,t,c]
+          gamma[4,2,t,c] <- ilogit(betaPhi[4,t,c]) * psiD[2,t,c]
+          gamma[4,3,t,c] <- ilogit(betaPhi[4,t,c]) * psiD[3,t,c]
+          gamma[4,4,t,c] <- ilogit(betaPhi[4,t,c]) * psiD[4,t,c]
+          gamma[4,5,t,c] <- 1 - ilogit(betaPhi[4,t,c])
+          gamma[5,1,t,c] <- 0
+          gamma[5,2,t,c] <- 0
+          gamma[5,3,t,c] <- 0
+          gamma[5,4,t,c] <- 0
+          gamma[5,5,t,c] <- 1
+        }
+      }
+       
+      # gamma for the last occasion  
+      for (c in 1:nCohorts){
+          for (a in 1:(nRivers+1)){
+              for (b in 1:nRivers){
+                  gamma[a,b,T,c] <- 0
+              }  
+              gamma[a,5,T,c] <- 1
+          }
+      }
+       
+       
+      for (i in 1:N){ # loop over individuals
+          # omega for first obs      
+          omega[1,1,first[i],i] <- 0          # Pr(alive A t -> non-detected t)
+          omega[1,2,first[i],i] <- 1          # Pr(alive A t -> detected A t)
+          omega[1,3,first[i],i] <- 0          # Pr(alive A t -> detected B t)
+          omega[1,4,first[i],i] <- 0          # Pr(alive A t -> detected C t)
+          omega[1,5,first[i],i] <- 0          # Pr(alive A t -> detected D t)
+          omega[2,1,first[i],i] <- 0          # Pr(alive B t -> non-detected t)
+          omega[2,2,first[i],i] <- 0          # Pr(alive B t -> detected A t)
+          omega[2,3,first[i],i] <- 1          # Pr(alive B t -> detected B t)
+          omega[2,4,first[i],i] <- 0          # Pr(alive B t -> detected C t)
+          omega[2,5,first[i],i] <- 0          # Pr(alive B t -> detected C t)
+          omega[3,1,first[i],i] <- 0          # Pr(alive C t -> non-detected t)
+          omega[3,2,first[i],i] <- 0          # Pr(alive C t -> detected A t)
+          omega[3,3,first[i],i] <- 0          # Pr(alive C t -> detected B t)
+          omega[3,4,first[i],i] <- 1          # Pr(alive C t -> detected C t)
+          omega[3,5,first[i],i] <- 0          # Pr(alive C t -> detected C t)
+          omega[4,1,first[i],i] <- 0          # Pr(dead t -> non-detected t)
+          omega[4,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
+          omega[4,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
+          omega[4,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
+          omega[4,5,first[i],i] <- 1          # Pr(dead t -> detected C t)
+          omega[5,1,first[i],i] <- 1          # Pr(dead t -> non-detected t)
+          omega[5,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
+          omega[5,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
+          omega[5,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
+          omega[5,5,first[i],i] <- 0          # Pr(dead t -> detected D t)
+       
+         
+          ## DT changes:
+          ## time t > first[i]:
+          for(t in (first[i]+1):last[i]) {
+              logit(pA[t,i]) <- betaP[1,t-1,cohort[i]]
+              logit(pB[t,i]) <- betaP[2,t-1,cohort[i]]
+              logit(pC[t,i]) <- betaP[3,t-1,cohort[i]]
+              logit(pD[t,i]) <- betaP[4,t-1,cohort[i]]
+             
+              # probabilities of y(t) given z(t)
+              # omega[z, y, t, i]
+              
+              # z=1 = alive in River 1, z=2 = alive in River 2...z=5 = dead
+              # y=1 = unobserved, y=2 = observed in River 1, y=3 = observed in River 2, etc
+              
+              omega[1,1,t,i] <- 1 - pA[t,i]     # Pr(alive A t -> non-detected t)
+              omega[1,2,t,i] <- pA[t,i]         # Pr(alive A t -> detected A t)
+              omega[1,3,t,i] <- 0               # Pr(alive A t -> detected B t)
+              omega[1,4,t,i] <- 0               # Pr(alive A t -> detected C t)
+              omega[1,5,t,i] <- 0               # Pr(alive A t -> detected D t)
+              omega[2,1,t,i] <- 1 - pB[t,i]     # Pr(alive B t -> non-detected t)
+              omega[2,2,t,i] <- 0               # Pr(alive B t -> detected A t)
+              omega[2,3,t,i] <- pB[t,i]         # Pr(alive B t -> detected B t)
+              omega[2,4,t,i] <- 0               # Pr(alive B t -> detected C t)
+              omega[2,5,t,i] <- 0               # Pr(alive B t -> detected C t)
+              omega[3,1,t,i] <- 1 - pC[t,i]     # Pr(alive C t -> non-detected t)
+              omega[3,2,t,i] <- 0               # Pr(alive C t -> detected A t)
+              omega[3,3,t,i] <- 0               # Pr(alive C t -> detected B t)
+              omega[3,4,t,i] <- pC[t,i]         # Pr(alive C t -> detected C t)
+              omega[3,5,t,i] <- 0               # Pr(alive C t -> detected C t)
+              omega[4,1,t,i] <- 1 - pD[t,i]     # Pr(alive D t -> non-detected t))
+              omega[4,2,t,i] <- 0               # Pr(dead D t -> detected A t)
+              omega[4,3,t,i] <- 0               # Pr(dead D t -> detected B t)
+              omega[4,4,t,i] <- 0               # Pr(dead D t -> detected C t)
+              omega[4,5,t,i] <- pD[t,i]         # Pr(alive D t -> detected D t)
+              omega[5,1,t,i] <- 1               # Pr(dead t -> non-detected t)
+              omega[5,2,t,i] <- 0               # Pr(dead t -> detected A t)
+              omega[5,3,t,i] <- 0               # Pr(dead t -> detected B t)
+              omega[5,4,t,i] <- 0               # Pr(dead t -> detected C t)
+              omega[5,5,t,i] <- 0               # Pr(dead t -> detected D t)
+          }
+         
+      } # i loop
+  
+      for (i in 1:N){
+          y[i,first[i]:last[i]] ~ dDHMMo(init = delta[1:5],
+                                         probTrans = gamma[1:5, 1:5, first[i]:last[i], cohort[i]],
+                                         probObs =   omega[1:5, 1:5, first[i]:last[i], i],
+                                         len = length[i],
+                                         checkRowSums = 1)
+      }
+  
+  })
+  
+  ##
+  myConstants0 <- list(N = nrow(y),
+                       T = ncol(y),
+                       first = first,
+                       last = last,
+                       cohort = cohort,
+                       nCohorts = nCohorts,
+                       nRivers = nRivers,
+                       season = seasonArray,
+                       #                     flow = eh$flow,
+                       length = last - first + 1
+                       )
+  
+  ## DT changes:
+  myData0 <- list(###yCJS = eh$eh, #y,    ## data for CJS distribution
+      y = y + 1
+  )   ## data for DHMM distribution
+  
+    ## if you change this FALSE to TRUE
+  ## this makes the dataset smaller - only 200 observations,
+  ## for quicker testing
+  if(FALSE) {
+      newN <- 20
+      oldN <- dim(y)[1]
+      set.seed(0)
+      indToKeep <- sample(1:oldN, size = newN, replace = FALSE)
+  }
+  
+  ## this removes fish that were only observed on the very last observation
+  if(TRUE) {
+      indToKeep <- which(first < ncol(y))
+      newN <- length(indToKeep)
+  }
+  
+  myConstants <- list(
+      N = newN,
+      T = myConstants0$T,
+      first = myConstants0$first[indToKeep],
+      last = myConstants0$last[indToKeep],
+      nRivers = myConstants0$nRivers,
+      cohort = myConstants0$cohort[indToKeep],
+      nCohorts = myConstants0$nCohorts,
+      #      season = myConstants$season,
+      #      flow = myConstants$flow[indToKeep,],
+      length = myConstants0$length[indToKeep]
+  )
+  
+  myData <- list(
+      ##yCJS = myData0$yCJS[indToKeep,],
+      y = myData0$y[indToKeep,]
+  )
+  
+    initialValues <- function(){
+      list(
+          betaPhiRiver = array(runif(nRivers, 0, 1), c(nRivers)),
+          betaPhiRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
+          betaPhi = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
+          betaPRiver = array(runif(nRivers, 0, 1), c(nRivers)),
+          betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
+          betaP = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
+          lpsiA = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
+          lpsiB = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
+          lpsiC = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
+          lpsiD = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts))
+          ####z = zInitsNA
+      )
+  }
+  
+  ###zInitsNA <- zInitsNA[indToKeep,]
+  
+  set.seed(0)
+  start = Sys.time()
+  ## you'll get warnings that the data 'yCJS' is not used, and the 'z' initial
+  ## values are not in the model.  Those don't cause any problems,
+  ## and let us use the same myData and initialValue() for both models.
+  system.time(
+      Rmodel <- nimbleModel(
+          code = hmm.phiT_pT_psiT_DHMM,
+          constants = myConstants,
+          data = myData,              
+          inits = initialValues(),
+          calculate = FALSE
+      )
+  )
+  
+  #Rmodel$calculate()
+  
+  parametersToSave <- c("betaPhi", "betaPhiRiver", "betaPhiRiverCohort", 
+                        "betaP",   "betaPRiver",   "betaPRiverCohort",
+                        "betaPhiOut", "betaPhiRiverOut", "betaPhiRiverCohortOut", 
+                        "betaPOut",   "betaPRiverOut",   "betaPRiverCohortOut",
+                        "psiA", "psiB", "psiC", "psiD"
+                        )
+  
+  nIter <- 10000 #30000
+  nBurnin <- 5000 #15000
+  nChains <- 1
+  thinRate <- 5
+  
+  system.time(
+      conf <- configureMCMC(
+          Rmodel,
+          monitors = parametersToSave
+      )
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT_psiT_DHMM <- runMCMC(
+      Cmcmc, 
+      niter = nIter, 
+      nburnin = nBurnin, 
+      thin = thinRate, 
+      nchains = nChains
+  )
+  
+  end <- Sys.time()
+  elapsed_phiT_pT_psiT_DHMM <- end - start
+  toSave <- list(
+      mcmc = mcmc.phiT_pT_psiT_DHMM, 
+      elapsed = elapsed_phiT_pT_psiT_DHMM,
+      name = "phiT_pT_psiT_DHMM",
+      myConstants = myConstants, 
+      nIter = nIter, 
+      nBurnin = nBurnin,
+      thinRate = thinRate, 
+      nSeasons = nSeasons, 
+      nCohorts = nCohorts,
+      nChains = nChains
+  )
+  
+    save(toSave, file = paste0('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_', substr(end,1,13), '.RData'))
+    save(toSave, file = './models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
+} else {
+  load('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
+}
+
+if(plotMCMCOutput) {
+
+  #MCMCsummary(object = mcmc.phiT_pT_cohort_flowHier, round = 2)
+  #MCMCplot(object = mcmc.phiT_pT_cohort_flowHier, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPhiRiverOut")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiRiverCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = "betaPOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPRiverOut")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPRiverCohortOut"))
+  
+  MCMCplot(object = toSave$mcmc, params = c("psiA"))
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiRiverOut"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiRiverCohortOut"),
+            pdf = FALSE, 
+            priors = priors)
+
+}
+
+
+```
 
 
 

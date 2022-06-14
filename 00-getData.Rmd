@@ -4,8 +4,9 @@
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
-The server hosting the data is named osensei and is at UMass (osensei.cns.umass.edu). It can be accessed using functions in the 'getWBData' package. Use
-`devtools::install_github('Conte-Ecology/westBrookData/getWBData')` to install. Most of the functions will run reconnect() to connect to the server with your username and password. Run `reconnect()` from the console to connect if necessary. Use `conDplyr` to see the list of available tables on the server. Details about the 'getWBData' package are 
+The database is now (as of 6/14/2022) on AWS. It can be accessed using functions in the 'getWBData' R package. Use
+`devtools::install_github('Conte-Ecology/westBrookData/getWBData')` to install. Most of the functions will run reconnect() to connect to the server with your username and password (which you won't need if you have set up a .Rprofile file).  
+Run `reconnect()` from the console to connect if necessary. Use `DBI::dbListTables(con)` to see the list of available tables on the server. Details about the 'getWBData' package are 
 [here](https://github.com/Conte-Ecology/westBrookData/blob/master/getWBData/vignettes/getWBDataTutorial.pdf).     
 
 
