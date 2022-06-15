@@ -47,9 +47,10 @@ table(eh$data$cohort, eh$data$river)
 ### Model phiT_pT_psiT  
 Phi and p and psi vary by time    
 Includes transition probabilities among rivers
-Add cohort (c) indexing to psi's
-Fix c,t indexing, change to t,c
+Added cohort (c) indexing to psi's
+Fixed c,t indexing, change to t,c
 Added ilogis() to betaPhi
+Added hier vars on psi
 
 #### Set up and run model
 ```{r phiT_pT_psiT_River2}
@@ -117,13 +118,35 @@ if (rerunSurivalModels) {
       for (r in 1:nRivers){
           betaPhiRiver[r] ~ dnorm(0,1)
           betaPRiver[r] ~ dnorm(0,1)
+          
+          betaPsiRiverA[r] ~ dnorm(0,1)
+          betaPsiRiverB[r] ~ dnorm(0,1)
+          betaPsiRiverC[r] ~ dnorm(0,1)
+          betaPsiRiverD[r] ~ dnorm(0,1)
+          
           betaPhiRiverOut[r] <- 1/(1 + exp(-betaPhiRiver[r]))
           betaPRiverOut[r] <- 1/(1 + exp(-betaPRiver[r]))
+          
+          betaPsiRiverOutA[r] <- 1/(1 + exp(-betaPsiRiverA[r]))
+          betaPsiRiverOutB[r] <- 1/(1 + exp(-betaPsiRiverB[r]))
+          betaPsiRiverOutC[r] <- 1/(1 + exp(-betaPsiRiverC[r]))
+          betaPsiRiverOutD[r] <- 1/(1 + exp(-betaPsiRiverD[r]))
           for (c in 1:nCohorts){
               betaPhiRiverCohort[r,c] ~ dnorm(betaPhiRiver[r],1)
               betaPRiverCohort[r,c] ~ dnorm(betaPRiver[r],1)
+              
+              betaPsiRiverCohortA[r,c] ~ dnorm(betaPsiRiverA[r],1)
+              betaPsiRiverCohortB[r,c] ~ dnorm(betaPsiRiverB[r],1)
+              betaPsiRiverCohortC[r,c] ~ dnorm(betaPsiRiverC[r],1)
+              betaPsiRiverCohortD[r,c] ~ dnorm(betaPsiRiverD[r],1)
+              
               betaPhiRiverCohortOut[r,c] <- 1/(1 + exp(-betaPhiRiverCohort[r,c]))
               betaPRiverCohortOut[r,c] <- 1/(1 + exp(-betaPRiverCohort[r,c]))
+              
+              betaPsiRiverCohortOutA[r,c] <- 1/(1 + exp(-betaPsiRiverCohortA[r,c]))
+              betaPsiRiverCohortOutB[r,c] <- 1/(1 + exp(-betaPsiRiverCohortB[r,c]))
+              betaPsiRiverCohortOutC[r,c] <- 1/(1 + exp(-betaPsiRiverCohortC[r,c]))
+              betaPsiRiverCohortOutD[r,c] <- 1/(1 + exp(-betaPsiRiverCohortD[r,c]))
               for (t in 1:(T-1)){
                   betaPhi[r,t,c] ~ dnorm(betaPhiRiverCohort[r,c],1)
                   betaP[r,t,c] ~ dnorm(betaPRiverCohort[r,c],1)
@@ -136,10 +159,10 @@ if (rerunSurivalModels) {
       for (t in 1:(T-1)){ # loop over time
         for (c in 1:nCohorts){
           for (r in 1:(nRivers - 1)){
-              lpsiA[r,t,c] ~ dnorm(0, sd = 1000) # sd too big???
-              lpsiB[r,t,c] ~ dnorm(0, sd = 1000)
-              lpsiC[r,t,c] ~ dnorm(0, sd = 1000)
-              lpsiD[r,t,c] ~ dnorm(0, sd = 1000)
+              lpsiA[r,t,c] ~ dnorm(betaPsiRiverCohortA[r,c], sd = 1000) # sd too big??? could group by season
+              lpsiB[r,t,c] ~ dnorm(betaPsiRiverCohortB[r,c], sd = 1000)
+              lpsiC[r,t,c] ~ dnorm(betaPsiRiverCohortC[r,c], sd = 1000)
+              lpsiD[r,t,c] ~ dnorm(betaPsiRiverCohortD[r,c], sd = 1000)
              
               # constrain the transitions such that their sum is < 1
               psiA[r,t,c] <- exp(lpsiA[r,t,c]) / (1 + exp(lpsiA[1,t,c]) + exp(lpsiA[2,t,c]) + exp(lpsiA[3,t,c]))
@@ -367,12 +390,15 @@ if (rerunSurivalModels) {
                         "betaP",   "betaPRiver",   "betaPRiverCohort",
                         "betaPhiOut", "betaPhiRiverOut", "betaPhiRiverCohortOut", 
                         "betaPOut",   "betaPRiverOut",   "betaPRiverCohortOut",
-                        "psiA", "psiB", "psiC", "psiD"
+                        
+                        "psiA", "psiB", "psiC", "psiD",
+                        "betaPsiRiverOutA", "betaPsiRiverOutB", "betaPsiRiverOutC", "betaPsiRiverOutD",   
+                        "betaPsiRiverCohortOutA","betaPsiRiverCohortOutB","betaPsiRiverCohortOutC","betaPsiRiverCohortOutD"
                         )
   
   nIter <- 10000 #30000
   nBurnin <- 5000 #15000
-  nChains <- 1
+  nChains <- 2
   thinRate <- 5
   
   system.time(
@@ -448,9 +474,6 @@ if(plotMCMCOutput) {
 
 
 ```
-
-
-
 
 
 
