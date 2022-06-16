@@ -373,7 +373,7 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   temperatureMatrix <- as.matrix(temperatureWide %>% dplyr::select(-tag), nrow = nrow(temperatureWide), ncol = ncol(temperatureWide) - 1)
   temperatureMatrix <- ifelse(is.finite(temperatureMatrix), temperatureMatrix, temperatureFill)
   
-  riverWide <- getEHDataWide_AIS(d, cols, ops, vals, "river", maxOccasionValue, valuesFill = "none")
+  riverWide <- getEHDataWide_AIS(d, cols, ops, vals, "river", maxOccasionValue, valuesFill = NA)
   riverMatrix <- as.matrix(riverWide %>% dplyr::select(-tag), nrow = nrow(riverWide), ncol = ncol(riverWide) - 1)
   
   riverNWide <- getEHDataWide_AIS(d, cols, ops, vals, "riverN", maxOccasionValue, valuesFill = 0)
@@ -436,6 +436,7 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   cols <- list("cohort")
   ops <-  list("%in%")
   vals <- list(2006:2008)#list(2002:2014)
+  #vals <- list(2002:2014)
                                                                # only include first x fish per cohort
   eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)#, maxIndexByCohort = 100)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
