@@ -508,6 +508,10 @@ if (rerunSurivalModels) {
   zinits[zinits == 2] <- 1 # dead -> alive
   zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
   
+  # Proportion of fish in each river on the first observation
+  y1 <- y[,1]
+  deltaProps <- table(y1[y1>0]) / length(y1[y1>0])
+  
   #  For 3 states, we are using 4
   # -------------------------------------------------
   # Parameters for 3 sites (A, B, C):
@@ -544,60 +548,44 @@ if (rerunSurivalModels) {
   
   ## model code using DHMMo distribution
   hmm.phiT_pT_psiT_DHMM_dirch <- nimbleCode({
-      delta[1] <- 0.4                  # Pr(alive t = 1 and in river 1) = 0.4
-      delta[2] <- 0.2
-      delta[3] <- 0.2
-      delta[4] <- 0.2
+      # Initial distribution among rivers
+      delta[1] <- deltaProps[1]                  # Pr(alive t = 1 and in river 1) = 0.4
+      delta[2] <- deltaProps[2]
+      delta[3] <- deltaProps[3]
+      delta[4] <- deltaProps[4]
       delta[5] <- 0                    # Pr(dead t = 1) = 0
   
       for (r in 1:nRivers){
           betaPhiRiver[r] ~ dnorm(0,1)
           betaPRiver[r] ~ dnorm(0,1)
           
-          # betaPsiRiverA[r] ~ dnorm(0,1)
-          # betaPsiRiverB[r] ~ dnorm(0,1)
-          # betaPsiRiverC[r] ~ dnorm(0,1)
-          # betaPsiRiverD[r] ~ dnorm(0,1)
-          # 
-          betaPhiRiverOut[r] <- 1/(1 + exp(-betaPhiRiver[r]))
-          betaPRiverOut[r] <- 1/(1 + exp(-betaPRiver[r]))
-          # 
-          # betaPsiRiverOutA[r] <- 1/(1 + exp(-betaPsiRiverA[r]))
-          # betaPsiRiverOutB[r] <- 1/(1 + exp(-betaPsiRiverB[r]))
-          # betaPsiRiverOutC[r] <- 1/(1 + exp(-betaPsiRiverC[r]))
-          # betaPsiRiverOutD[r] <- 1/(1 + exp(-betaPsiRiverD[r]))
+          betaPhiRiverOut[r] <- ilogit(betaPhiRiver[r])
+          betaPRiverOut[r] <- ilogit(betaPRiver[r])
+          
           for (c in 1:nCohorts){
               betaPhiRiverCohort[r,c] ~ dnorm(betaPhiRiver[r],1)
               betaPRiverCohort[r,c] ~ dnorm(betaPRiver[r],1)
-              
-              # betaPsiRiverCohortA[r,c] ~ dnorm(betaPsiRiverA[r],1)
-              # betaPsiRiverCohortB[r,c] ~ dnorm(betaPsiRiverB[r],1)
-              # betaPsiRiverCohortC[r,c] ~ dnorm(betaPsiRiverC[r],1)
-              # betaPsiRiverCohortD[r,c] ~ dnorm(betaPsiRiverD[r],1)
-              # 
-              betaPhiRiverCohortOut[r,c] <- 1/(1 + exp(-betaPhiRiverCohort[r,c]))
-              betaPRiverCohortOut[r,c] <- 1/(1 + exp(-betaPRiverCohort[r,c]))
-              # 
-              # betaPsiRiverCohortOutA[r,c] <- 1/(1 + exp(-betaPsiRiverCohortA[r,c]))
-              # betaPsiRiverCohortOutB[r,c] <- 1/(1 + exp(-betaPsiRiverCohortB[r,c]))
-              # betaPsiRiverCohortOutC[r,c] <- 1/(1 + exp(-betaPsiRiverCohortC[r,c]))
-              # betaPsiRiverCohortOutD[r,c] <- 1/(1 + exp(-betaPsiRiverCohortD[r,c]))
+ 
+              betaPhiRiverCohortOut[r,c] <- ilogit(betaPhiRiverCohort[r,c])
+              betaPRiverCohortOut[r,c] <- ilogit(betaPRiverCohort[r,c])
               for (t in 1:(T-1)){
                   betaPhi[r,t,c] ~ dnorm(betaPhiRiverCohort[r,c],1)
                   betaP[r,t,c] ~ dnorm(betaPRiverCohort[r,c],1)
-                  betaPhiOut[r,t,c] <- 1/(1 + exp(-betaPhi[r,t,c]))
-                  betaPOut[r,t,c] <- 1/(1 + exp(-betaP[r,t,c]))
+                  
+                  betaPhiOut[r,t,c] <- ilogit(betaPhi[r,t,c])
+                  betaPOut[r,t,c] <- ilogit(betaP[r,t,c])
+                  
+                  # move from river 'r' to one of river 1:nRivers
+                  # Nice description of effect of 'alpha' on probabilities:
+                  # https://stats.stackexchange.com/questions/244917/what-exactly-is-the-alpha-in-the-dirichlet-distribution
+                  psi[r,1:nRivers,t,c] ~ ddirch(alpha[1:nRivers])
               }
           }
       }
   
       for (t in 1:(T-1)){ # loop over time
         for (c in 1:nCohorts){
-          for (r in 1:(nRivers)){
-            psi[r,1:nRivers,t,c] ~ ddirch(alpha[1:nRivers])
-            
-          }
-         
+
           gamma[1,1,t,c] <- ilogit(betaPhi[1,t,c]) * psi[1,1,t,c]
           gamma[1,2,t,c] <- ilogit(betaPhi[1,t,c]) * psi[1,2,t,c]
           gamma[1,3,t,c] <- ilogit(betaPhi[1,t,c]) * psi[1,3,t,c]
@@ -765,7 +753,7 @@ if (rerunSurivalModels) {
       #      season = myConstants$season,
       #      flow = myConstants$flow[indToKeep,],
       length = myConstants0$length[indToKeep],
-      alpha = c(1,1,1,1)
+      alpha = myConstants0$alpha
   )
   
   myData <- list(
@@ -876,7 +864,7 @@ if(plotMCMCOutput) {
   MCMCplot(object = toSave$mcmc, params = "betaPsiRiverOutA")# 
   MCMCplot(object = toSave$mcmc, params = c("betaPsiRiverCohortOutA"))
   
-  MCMCplot(object = toSave$mcmc, params = c("psiA"))
+  MCMCplot(object = toSave$mcmc, params = c("psi"))
   
   priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
   MCMCtrace(object = toSave$mcmc,
@@ -894,6 +882,14 @@ if(plotMCMCOutput) {
             pdf = FALSE, 
             priors = priors)
 
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("psi"),
+            pdf = FALSE, 
+            priors = priors)
+  
 }
 
 
