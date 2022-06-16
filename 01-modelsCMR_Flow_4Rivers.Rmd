@@ -769,7 +769,7 @@ if (rerunSurivalModels) {
           betaPRiver = array(runif(nRivers, 0, 1), c(nRivers)),
           betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
           betaP = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
-          psi = array(1/nRivers, c(nRivers, nRivers, (myConstants$T - 1), nCohorts))
+          psi = array(runif(nRivers * nRivers * (myConstants$T - 1) * nCohorts), c(nRivers, nRivers, (myConstants$T - 1), nCohorts))
           # lpsiA = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
           # lpsiB = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
           # lpsiC = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
@@ -860,9 +860,6 @@ if(plotMCMCOutput) {
   MCMCplot(object = toSave$mcmc, params = "betaPOut")
   MCMCplot(object = toSave$mcmc, params = "betaPRiverOut")# 
   MCMCplot(object = toSave$mcmc, params = c("betaPRiverCohortOut"))
-  
-  MCMCplot(object = toSave$mcmc, params = "betaPsiRiverOutA")# 
-  MCMCplot(object = toSave$mcmc, params = c("betaPsiRiverCohortOutA"))
   
   MCMCplot(object = toSave$mcmc, params = c("psi"))
   
