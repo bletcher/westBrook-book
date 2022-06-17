@@ -512,6 +512,25 @@ if (rerunSurivalModels) {
   y1 <- y[,1]
   deltaProps <- table(y1[y1>0]) / length(y1[y1>0])
   
+  # alpha for the dirchlet prior
+  alpha <- c(1,1,1,1)
+
+  # fill in entires for dirchlet priors where a[r,,t,c] sums to 1 for any r,t,c combo
+  getDirchPriors <- function(nRivers,myConstants, nCohorts, alpha){
+    a = array(rep(0, nRivers * nRivers * (myConstants$T - 1) * nCohorts) , c(nRivers, nRivers, (myConstants$T - 1), nCohorts ))
+    for(r in 1:nRivers){
+      for(t in 1:(myConstants$T - 1)){
+        for (c in 1:nCohorts){
+          dirch <- rdirch(1, alpha)
+          for (r2 in 1:nRivers){
+            a[r,r2,t,c] <- dirch[r2]
+          }
+        }
+      }
+    }
+    return(a)
+  }
+  
   #  For 3 states, we are using 4
   # -------------------------------------------------
   # Parameters for 3 sites (A, B, C):
@@ -718,7 +737,7 @@ if (rerunSurivalModels) {
                        season = seasonArray,
                        #                     flow = eh$flow,
                        length = last - first + 1,
-                       alpha = c(1,1,1,1)
+                       alpha = alpha
                        )
   
   ## DT changes:
@@ -766,22 +785,18 @@ if (rerunSurivalModels) {
           betaPhiRiver = array(runif(nRivers, 0, 1), c(nRivers)),
           betaPhiRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
           betaPhi = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
+          
           betaPRiver = array(runif(nRivers, 0, 1), c(nRivers)),
           betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
           betaP = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
-          psi = array(runif(nRivers * nRivers * (myConstants$T - 1) * nCohorts), c(nRivers, nRivers, (myConstants$T - 1), nCohorts))
-          # lpsiA = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
-          # lpsiB = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
-          # lpsiC = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
-          # lpsiD = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts))
-          ####z = zInitsNA
+          
+          psi = getDirchPriors(nRivers,myConstants, nCohorts, alpha)
       )
   }
-  
-  ###zInitsNA <- zInitsNA[indToKeep,]
-  
+
   set.seed(0)
   start = Sys.time()
+  
   ## you'll get warnings that the data 'yCJS' is not used, and the 'z' initial
   ## values are not in the model.  Those don't cause any problems,
   ## and let us use the same myData and initialValue() for both models.
@@ -810,6 +825,7 @@ if (rerunSurivalModels) {
   nChains <- 2
   thinRate <- 5
   
+  rm(conf, Rmcmc, Cmodel, Cmcmc) # so old versions don't run if there is an error in an earlier step
   system.time(
       conf <- configureMCMC(
           Rmodel,
