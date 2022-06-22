@@ -26,19 +26,19 @@ library(tidyverse)
 
 ```{r}
 rerunSurivalModels <- FALSE
-plotMCMCOutput <- TRUE
+plotMCMCOutput <- FALSE
 ```
 
 
 ```{r}
 #all the data
 #load('./models/cmrFlow4rivers/dataOut/eh_2002200320042005200620072008200920102011201220132014.RData')
-#load('./models/cmrFlow4rivers/dataOut/eh_200620072008.RData')
+load('./models/cmrFlow4rivers/dataOut/eh_200620072008.RData')
 
 #250 fish from each cohort
 #load('./models/cmrFlow4rivers/dataOut/eh_2002200320042005200620072008200920102011201220132014_n250.RData')
 #250 fish from each of 3 cohorts
-load('./models/cmrFlow4rivers/dataOut/eh_200620072008_n250.RData')
+#load('./models/cmrFlow4rivers/dataOut/eh_200620072008_n250.RData')
 
 table(eh$data$cohort, eh$data$river)
 ```
@@ -452,10 +452,10 @@ if(plotMCMCOutput) {
   MCMCplot(object = toSave$mcmc, params = "betaPRiverOut")# 
   MCMCplot(object = toSave$mcmc, params = c("betaPRiverCohortOut"))
   
-  MCMCplot(object = toSave$mcmc, params = "betaPsiRiverOutA")# 
-  MCMCplot(object = toSave$mcmc, params = c("betaPsiRiverCohortOutA"))
+  #MCMCplot(object = toSave$mcmc, params = "betaPsiRiverOutA")# 
+  #MCMCplot(object = toSave$mcmc, params = c("betaPsiRiverCohortOutA"))
   
-  MCMCplot(object = toSave$mcmc, params = c("psiA"))
+  #MCMCplot(object = toSave$mcmc, params = c("psiA"))
   
   priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
   MCMCtrace(object = toSave$mcmc,
@@ -488,7 +488,7 @@ Added hier vars on psi
 Try dirchlet prior
 
 #### Set up and run model
-```{r phiT_pT_psiT_River2}
+```{r phiT_pT_psiT_River2_dirch}
 
 # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/5_demo.html
 if (rerunSurivalModels) {
@@ -896,12 +896,12 @@ if(plotMCMCOutput) {
             priors = priors)
 
   priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
-  MCMCtrace(object = toSave$mcmc,
-            #ISB = FALSE,
-            #exact = TRUE, 
-            params = c("psi"),
-            pdf = FALSE, 
-            priors = priors)
+  # MCMCtrace(object = toSave$mcmc,
+  #           #ISB = FALSE,
+  #           #exact = TRUE, 
+  #           params = c("psi"),
+  #           pdf = FALSE, 
+  #           priors = priors)
   
 }
 
