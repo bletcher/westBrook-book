@@ -737,7 +737,8 @@ if (rerunSurivalModels) {
                        season = seasonArray,
                        #                     flow = eh$flow,
                        length = last - first + 1,
-                       alpha = alpha
+                       alpha = alpha,
+                       deltaProps = deltaProps
                        )
   
   ## DT changes:
@@ -772,7 +773,8 @@ if (rerunSurivalModels) {
       #      season = myConstants$season,
       #      flow = myConstants$flow[indToKeep,],
       length = myConstants0$length[indToKeep],
-      alpha = myConstants0$alpha
+      alpha = myConstants0$alpha,
+      deltaProps = deltaProps
   )
   
   myData <- list(
