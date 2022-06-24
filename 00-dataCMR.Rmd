@@ -419,14 +419,6 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData'))
   
-  # output for Xioawei
-  for (i in seq_along(eh)){
-    write.csv(eh[[i]], file = paste0('./models/cmrFlow4rivers/dataOut/', 
-                                     names(eh)[i], 
-                                     ".csv"), 
-              row.names = F)
-  }
-  
 
   ######################################  
   # all cohorts 2002:2014, ALL rivers

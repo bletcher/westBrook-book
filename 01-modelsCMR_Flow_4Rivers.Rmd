@@ -26,7 +26,9 @@ library(tidyverse)
 
 ```{r}
 rerunSurivalModels <- FALSE
-plotMCMCOutput <- FALSE
+plotMCMCOutput <- TRUE
+plotTraces <- TRUE
+outputFileForXiaowei <- FALSE
 ```
 
 
@@ -41,16 +43,26 @@ load('./models/cmrFlow4rivers/dataOut/eh_200620072008.RData')
 #load('./models/cmrFlow4rivers/dataOut/eh_200620072008_n250.RData')
 
 table(eh$data$cohort, eh$data$river)
+
+if (outputFileForXiaowei){
+  # output for Xiaowei
+  for (i in seq_along(eh)){
+    write.csv(eh[[i]], file = paste0('./models/cmrFlow4rivers/dataOut/', 
+                                     names(eh)[i], 
+                                     ".csv"), 
+              row.names = F)
+  }
+}
 ```
 
 
 ### Model phiT_pT_psiT  
 Phi and p and psi vary by time    
-Includes transition probabilities among rivers
-Added cohort (c) indexing to psi's
-Fixed c,t indexing, change to t,c
-Added ilogis() to betaPhi
-Added hier vars on psi
+Includes transition probabilities among rivers  
+Added cohort (c) indexing to psi's  
+Fixed c,t indexing, change to t,c  
+Added ilogis() to betaPhi  
+Added hier vars on psi  
 
 #### Set up and run model
 ```{r phiT_pT_psiT_River2}
@@ -441,7 +453,7 @@ if (rerunSurivalModels) {
   load('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
 }
 
-if(plotMCMCOutput) {
+if(FALSE) {
 
   #MCMCsummary(object = mcmc.phiT_pT_cohort_flowHier, round = 2)
   #MCMCplot(object = mcmc.phiT_pT_cohort_flowHier, params = "betaPhiOut")
@@ -480,12 +492,12 @@ if(plotMCMCOutput) {
 
 ### Model phiT_pT_psiT_dirch  
 Phi and p and psi vary by time    
-Includes transition probabilities among rivers
-Added cohort (c) indexing to psi's
-Fixed c,t indexing, change to t,c
-Added ilogis() to betaPhi
-Added hier vars on psi
-Try dirchlet prior
+Includes transition probabilities among rivers  
+Added cohort (c) indexing to psi's  
+Fixed c,t indexing, change to t,c  
+Added ilogis() to betaPhi  
+Added hier vars on psi  
+Used dirchlet prior  
 
 #### Set up and run model
 ```{r phiT_pT_psiT_River2_dirch}
@@ -515,7 +527,7 @@ if (rerunSurivalModels) {
   # alpha for the dirchlet prior
   alpha <- c(1,1,1,1)
 
-  # fill in entires for dirchlet priors where a[r,,t,c] sums to 1 for any r,t,c combo
+  # fill in entries for dirchlet priors where a[r,,t,c] sums to 1 for any r,t,c combo
   getDirchPriors <- function(nRivers,myConstants, nCohorts, alpha){
     a = array(rep(0, nRivers * nRivers * (myConstants$T - 1) * nCohorts) , c(nRivers, nRivers, (myConstants$T - 1), nCohorts ))
     for(r in 1:nRivers){
@@ -880,7 +892,9 @@ if(plotMCMCOutput) {
   MCMCplot(object = toSave$mcmc, params = c("betaPRiverCohortOut"))
   
   MCMCplot(object = toSave$mcmc, params = c("psi"))
-  
+}
+
+if(plotTraces) {
   priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
   MCMCtrace(object = toSave$mcmc,
             #ISB = FALSE,
@@ -898,12 +912,12 @@ if(plotMCMCOutput) {
             priors = priors)
 
   priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
-  # MCMCtrace(object = toSave$mcmc,
-  #           #ISB = FALSE,
-  #           #exact = TRUE, 
-  #           params = c("psi"),
-  #           pdf = FALSE, 
-  #           priors = priors)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE,
+            params = c("psi[1,1,1,1]"),
+            pdf = FALSE,
+            priors = priors)
   
 }
 

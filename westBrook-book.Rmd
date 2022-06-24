@@ -1,0 +1,5172 @@
+--- 
+title: "The West Brook Story"
+author: "Ben Letcher"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+output:
+  bookdown::gitbook: default
+bibliography:
+- book.bib
+- packages.bib
+biblio-style: apalike
+link-citations: yes
+description: This book describes accessing, cleaning, and analyzing data from the West Brook Study in western MA, USA
+cover-image: images/westBrook.jpg
+favicon: images/favicon.ico
+github-repo: bletcher/westBrook-book
+---
+
+# Introduction
+
+This book describes accessing, cleaning, and analyzing data from the West Brook Study in Whateley MA, USA.
+
+Use `bookdown::render_book("index.Rmd", "bookdown::gitbook")` to force html book. `bookdown::preview_chapter("01-modelsCMR_Flow_4Rivers.Rmd", "bookdown::gitbook")` to update just one chapter (01-modelsCMR_Flow_4Rivers.Rmd as example here). 
+
+Use `clean_book()` to clean up temporary files.
+
+
+## The West Brook
+The Ecology Section at the USGS Conte Laboratory has studied fish in the West Brook since 1997. The goal is to understand the strength and direction of drivers on fish growth, movement, reproduction and survival in the wild. We hope to provide a comprehensive understanding of fish population dynamics and ultimately individual fitness (natural selection and evolution) in the study area.  
+
+[Interactive applications](https://pitdata.ecosheds.org/) allow exploration of the raw data.
+```{r, echo = FALSE}
+knitr::include_url("https://pitdata.ecosheds.org/", height = "700px")
+```
+
+
+<!--chapter:end:index.Rmd-->
+
+## Setup {#setup}
+
+```{r global Models setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+Directory structure
+```
+Create these subdirectories
+    |-- westBrook-book            Main
+    |   |-- data                  Data created from chapter 2
+    |   |-- dataIn                External data
+    |   |   |-- wbFlow            Flow data
+    |   |-- images                Location for images for the book
+    |   |   |-- favicon_io        Favicon images
+    |   |-- models                Model output
+    |   |   |-- cmrFlowWB         WB CMR flow model
+    |   |   |   |-- dataOut       Data from eh object in separate CSV files
+    |   |   |   |-- runsOut       mcmc model run output
+    |   |   |   |   |-- phi_p     Data from phi_P model run in separate CSV files
+    |   |   |   |   |-- phiT_pT   Data from phiT_pT model run in separate CSV files
+    |   |-- rForSourcing          Files for sourcing functions
+    
+Bookdown will create these subdirectories
+    |   |-- docs                  Markdown documents [created by bookdown]
+    |   |-- _bookdown_files       Bookdown documents [created by bookdown]
+```
+```{r}
+    #fs::dir_tree()
+```
+
+
+<!--chapter:end:00-setup.Rmd-->
+
+# Get data {#getData}
+
+```{r globalGetData, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+The database is now (as of 6/14/2022) on AWS. It can be accessed using functions in the 'getWBData' R package. Use
+`devtools::install_github('Conte-Ecology/westBrookData/getWBData')` to install. Most of the functions will run reconnect() to connect to the server with your username and password (which you won't need if you have set up a .Rprofile file).  
+Run `reconnect()` from the console to connect if necessary. Use `DBI::dbListTables(con)` to see the list of available tables on the server. Details about the 'getWBData' package are 
+[here](https://github.com/Conte-Ecology/westBrookData/blob/master/getWBData/vignettes/getWBDataTutorial.pdf).     
+
+
+```{r librariesGetData, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(validate)
+```
+
+We have two types of databases: Environmental and fish
+
+The environmental database contains daily mean temperature and flow data. Flow data are from a flow extension model and are not tributary-specific. Temperature data are from tributary-specific loggers.
+
+There are four main fish databases we want to create:    
+1. **cdWB_electro0** West Brook electrofishing data, 3 species (brook trout, brown trout and Atlantic salmon), tagged and untagged fish  
+2. **cdWB_CMR0** West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals  
+3. **cdWB_wanding0** West Brook wanding (portable antenna) data, all tagged salmonids  
+4. **cdWB_antenna0** West Brook stationary antenna data, all tagged salmonids  
+
+The "0" at the end of these file names indicates that they are the initial files that will be wrangled in the next step (next chapter). "cd" stands for "core data".  
+
+The `getNew_...` variables determine whether the data are retrieved from the server. Change to 'TRUE' to get a new data frame, e.g. when there are new data on the server.
+```{r switchesCD}
+getNew_envDataWB <- FALSE
+
+getNew_cdWB_electro0 <- FALSE
+getNew_cdWB_CMR0 <- FALSE
+getNew_cdWB_wanding0 <- FALSE
+getNew_cdWB_antenna0 <- FALSE
+
+
+```
+
+
+<!--chapter:end:00-getData.Rmd-->
+
+## Get environmental data {#getEnvData}
+
+```{r globalGetEnvData, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r envData}
+if(getNew_envDataWB) {
+  
+  reconnect()
+  envDataWB <- tbl(conDplyr, "data_daily_temperature") %>% 
+    collect(n = Inf) %>% 
+    full_join(tbl(conDplyr, "data_flow_extension") %>% 
+    collect(n = Inf), by = c("river", "date")) %>% 
+    select(-source) %>% 
+    rename(temperature = daily_mean_temp, flow = qPredicted) %>%
+    mutate(dateDate = as_date(date),
+           yday = yday(dateDate))
+
+  save(envDataWB, file = './data/envDataWB.RData')
+  
+} else {
+  load(file = './data/envDataWB.RData')
+}
+str(envDataWB)
+
+ggplot(envDataWB, aes(date, flow)) +
+  geom_point() +
+  facet_wrap(~river)
+
+ggplot(envDataWB, aes(date, temperature)) +
+  geom_point(size = 0.5) +
+  facet_wrap(~river)
+```
+
+
+
+need to add getting environmental data here
+
+<!--chapter:end:00-getEnvData.Rmd-->
+
+## Electrofishing data {#dataElectro}
+
+This section retrieves electrofishing data, including both tagged and untagged fish. Fish were untagged if they were too small (< 60 mm, 2 g wet weight) or were captured outside of the core study area (tributaries and 47 sections of the mainstem West Brook).
+```{r globalGetDataElectro, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesDataElectro, echo = FALSE}
+# library(devtools)
+# install_github(repo = "Conte-Ecology/westBrookData", subdir = "getWBData")
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+#library(validate)
+
+# devtools::install_github('bletcher/getPrepareWBData')
+# use this if command above doesn't work: options(download.file.method = "wininet")
+
+library(getPrepareWBData) # this has functions for preparing West Brook data
+```
+
+### Get data
+```{r cdWB_electro0}
+
+# default values for createCoreData()
+# function (sampleType = "electrofishing", baseColumns = T, 
+#    columnsToAdd = NULL, includeUntagged = F, whichDrainage = "west") 
+
+if(getNew_cdWB_electro0) {
+  cdWB_electro0 <- createCoreData(
+        sampleType = "electrofishing",  #"stationaryAntenna","portableAntenna"
+        columnsToAdd = c("sampleNumber",
+                         "river",
+                         "survey",
+                         "pass",
+                         "observedLength",
+                         "observedWeight",
+                         "comments"),
+        includeUntagged = TRUE,
+        whichDrainage = "west"
+      ) %>%
+      addTagProperties(
+        columnsToAdd = c("cohort",
+                         "species",
+                         "dateEmigrated",
+                         "sex",
+                         "species"
+        )
+      ) %>%
+      dplyr::filter(species %in% c( "bkt","bnt","ats"),
+                    area %in% c("trib","inside","below","above"),
+                    !is.na(sampleNumber)) %>%
+      addSampleProperties() %>%
+      addEnvironmental()
+  
+  save(cdWB_electro0, file = './data/cdWB_electro0.RData')
+  
+} else {
+  load(file = './data/cdWB_electro0.RData')
+}
+str(cdWB_electro0)
+```
+
+### Wrangle data
+
+
+```{r globalWrangle, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+This section takes cdWB_electro0 and cleans it to create cdWB_electro.  
+
+```{r}
+reclean_cdWB_electro <- FALSE
+```
+
+
+```{r wrangleElectroMain, cache = TRUE}
+
+if(reclean_cdWB_electro){
+  drainage <- 'west'
+
+  # functions in getPrepareWBData library
+  cdWB_electro <- cdWB_electro0 %>%
+    cleanData(drainage) %>%
+    mergeSites(drainage) %>%
+    addNPasses(drainage) %>%
+    mutate(drainage = drainage)
+  
+  save(cdWB_electro, file = './data/cdWB_electro.RData')
+  
+} else {
+  load(file = './data/cdWB_electro.RData')
+}
+```
+
+### Explore data
+
+```{r lw, cache = TRUE}
+
+ggplot(cdWB_electro, aes(observedLength, observedWeight, color = species)) +
+  geom_point(alpha = 0.1) +
+  scale_x_log10() +
+  scale_y_log10() +
+  theme_publication() +
+  facet_wrap(~ species)
+
+lwReg <- cdWB_electro %>%
+  nest_by(species) %>%
+  mutate(reg = list(lm(log(observedWeight) ~ log(observedLength), data = data)))
+
+lwReg %>% summarise(broom::tidy(reg))  
+lwReg %>% summarise(broom::glance(reg))
+```
+
+
+
+
+<!--chapter:end:00-dataElectro.Rmd-->
+
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+## Capture-recapture data {#dataCMR}
+
+```{r globalGetDataCMR, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesDataCMR, echo = FALSE}
+library(data.table)
+library(getWBData)
+library(lubridate)
+library(validate)
+library(rlang)
+library(stringi)
+library(writexl)
+library(tidyverse)
+```
+
+```{r CMR_global variables}
+getNew_encounterHistories <- TRUE
+
+# maximum ageInSamples for both createCmrData and getEH
+maxAgeInSamples <- 12
+```
+
+### Temporary home for updated functions
+```{r}
+
+addEnvironmental <- function(coreData, sampleFlow = F, funName = "mean") {
+  func <- get(funName)
+  whichDrainage <- "west"
+  if (all(!unique(coreData$river) %in% c("west brook", "wb jimmy", 
+                                         "wb mitchell", "wb obear"))) {
+    whichDrainage <- "stanley"
+  }
+  if (whichDrainage == "west") {
+    envData <- tbl(conDplyr, "data_daily_temperature") %>% 
+      collect(n = Inf) %>% 
+      full_join(tbl(conDplyr, "data_flow_extension") %>% 
+      collect(n = Inf), by = c("river", "date")) %>% 
+      dplyr::select(-source) %>% 
+      dplyr::filter(date <= max(coreData$detectionDate), 
+                    date >= min(coreData$detectionDate)) %>% 
+      rename(temperature = daily_mean_temp, flow = qPredicted) %>% 
+      data.frame()
+  }
+  else {
+    envData <- tbl(conDplyr, "stanley_environmental") %>% 
+      filter(section == 11) %>% 
+      dplyr::select(datetime, temperature, depth) %>% 
+      collect(n = Inf) %>% 
+      rename(flow = depth, date = datetime) %>% 
+      data.frame()
+    warning("Depth was inserted into flow column because that is what is available in Stanley")
+  }
+  
+  coreData <- coreData %>% 
+    group_by(tag) %>% 
+    arrange(ageInSamples) %>%
+    mutate(lagDetectionDate = lead(detectionDate)) %>% 
+    ungroup()
+  
+  if (whichDrainage == "west") {
+    getIntervalMean <- function(start, end, r, e, fun = func) {
+      d <- envData$date
+      if (e == "Temperature") {
+        envCol <- "temperature"
+        if (is.na(r)) 
+          meanVar <- fun(envData[d >= start & d <= end, envCol], na.rm = T)
+        if (!is.na(r)) 
+          meanVar <- fun(envData[d >= start & d <= end & envData$river == r, envCol], na.rm = T)
+      }
+      # will need to make this river-specific
+      if (e == "Flow") {
+        envCol <- "flow"
+        meanVar <- fun(envData[d >= start & d <= end, envCol], na.rm = T)
+      }
+      return(meanVar)
+    }
+    
+    coreDataUniqueDates <- coreData %>% 
+      dplyr::select(river, detectionDate, lagDetectionDate) %>% 
+      unique() %>% 
+      group_by(river, detectionDate, lagDetectionDate) %>% 
+      mutate(meanTemperature = getIntervalMean(detectionDate, lagDetectionDate, river, "Temperature"), 
+             meanFlow =        getIntervalMean(detectionDate, lagDetectionDate, river, "Flow")) %>% 
+      ungroup()
+    
+    coreData <- left_join(coreData, coreDataUniqueDates, 
+                          by = c("detectionDate", "river", "lagDetectionDate"))
+  }
+  else {
+    getIntervalMean <- function(start, end, e, fun = func) {
+      d <- envData$date
+      meanEnv <- fun(envData[d >= start & d <= end, tolower(e)], 
+                     na.rm = T)
+      return(meanEnv)
+    }
+    
+    coreDataUniqueDates <- coreData %>% 
+      dplyr::select(detectionDate, lagDetectionDate) %>% 
+      unique() %>% 
+      group_by(detectionDate, lagDetectionDate) %>% 
+      mutate(meanTemperature = getIntervalMean(detectionDate, lagDetectionDate, "Temperature"), 
+             meanFlow = getIntervalMean(detectionDate, lagDetectionDate, "Flow")) %>% 
+      ungroup()
+    
+    coreData <- left_join(coreData, coreDataUniqueDates, 
+                          by = c("detectionDate", "lagDetectionDate"))
+  }
+  
+  if (sampleFlow) {
+    coreData <- coreData %>% 
+      mutate(date = as.Date(detectionDate)) %>% 
+      filter(enc == 1) %>% dplyr::select(sampleName, date) %>% 
+      group_by(sampleName, date) %>% summarize(n = n()) %>% 
+      ungroup() %>% 
+      left_join(envData %>% 
+                  filter(!is.na(flow)) %>% 
+                                mutate(date = as.Date(date)) %>% 
+                  dplyr::select(date, flow) %>% 
+                                rename(flowForP = flow) %>% 
+                  unique(), by = c("date")) %>% 
+      group_by(sampleName) %>% summarize(flowForP = sum(flowForP * n)/(sum(n))) %>% 
+      ungroup() %>% 
+      right_join(coreData, by = "sampleName")
+  }
+  names(coreData)[which(names(coreData) == "meanTemperature")] <- paste0(funName, "Temperature")
+  names(coreData)[which(names(coreData) == "meanFlow")] <- paste0(funName,  "Flow")
+  return(coreData)
+}
+
+getKnown <- function(x) {
+  firstObs <- min(which(x == 1))
+  lastObs <- max(which(x == 1))
+  known <- rep(0, length(x))
+  known[firstObs:lastObs] <- 1
+  if (lastObs != length(known)) {
+    known[(lastObs + 1):length(known)] <- NA
+  }
+  return(known)
+}
+
+addKnownZ2 <- function(d) {
+  d %>% 
+    group_by(tag) %>%
+    arrange(sampleNumber) %>%
+    mutate(knownZ = getKnown(enc)) %>%
+    ungroup() %>%
+    arrange(tag, sampleNumber)
+}
+
+addFirstLast <- function(d){
+  firstLast <- d %>% 
+    group_by(tag) %>%
+    filter(knownZ == 1) %>%
+    summarize(firstObserved = min(sampleNumber, na.rm = TRUE),
+              lastObserved = max(sampleNumber, na.rm = TRUE)) %>%
+    ungroup()
+  
+  left_join(d, firstLast) %>%
+    mutate(isFirstObserved = sampleNumber == firstObserved,
+           isLastObserved = sampleNumber == lastObserved)
+}    
+
+fillRiver <- function (data, location = T){
+  fillLocation <- function(location) {
+    known <- which(!is.na(location))
+    unknown <- which(is.na(location))
+    nKnown <- length(unique(location[known]))
+    if (nKnown == 1) {
+      location[unknown] <- location[known[1]]
+    }
+    else {
+      for (i in unknown) {
+        location[i] <- location[known[max(which(i > known))]]
+      }
+    }
+    return(location)
+  }
+    if (location) {
+    data <- data %>% 
+      group_by(tag) %>% 
+      mutate(river = fillLocation(river)) %>% 
+      ungroup()
+  }
+
+  return(data)
+}
+
+scale_this <- function(x){
+  (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+}
+
+scaleEnvData <- function(d){
+  tmp <- d %>%
+    group_by(river, season) %>% 
+    summarize(meanMeanFlow = mean(meanFlow, na.rm = TRUE),
+              sdMeanFlow = sd(meanFlow, na.rm = TRUE),
+              meanMeanTemperature = mean(meanTemperature, na.rm = TRUE),
+              sdMeanTemperature = sd(meanTemperature, na.rm = TRUE)
+    ) %>%
+    ungroup()
+  
+  out <- left_join(d, tmp) %>%
+    mutate(
+      meanFlowScaled = (meanFlow - meanMeanFlow) / sdMeanFlow,
+      meanTemperatureScaled = (meanTemperature - meanMeanTemperature) / sdMeanTemperature
+    )  
+}
+
+getNeverCaptured <- function(d, maxOccasionValue){
+  d %>%
+    #filter(ageInSamples > 0 & ageInSamples <= maxOccasionValue) %>%
+    filter(ageInSamples %in% 1:maxOccasionValue) %>%
+    group_by(tag) %>%
+    summarize(sumEnc = sum(enc, na.rm = TRUE)) %>%
+    filter(sumEnc == 0) %>%
+    dplyr::select(tag)
+}
+
+addRiverTagged <- function(d){
+  d1 <- d %>% 
+    filter(isFirstObserved) %>%
+    mutate(riverTagged = river) %>%
+    dplyr::select(tag, riverTagged)
+  
+  return(left_join(d, d1))
+
+}
+
+addIsYOY <- function(d){
+  d %>%
+    mutate(isYOY = ifelse(ageInSamples <= 3, 1, 2))
+
+}
+
+addRiverN <- function(d){
+  level_key <- c("west brook" = 1, "wb jimmy" = 2, "wb mitchell" = 3, "wb obear" = 4)
+  d %>% 
+    mutate(riverN = recode(river, !!!level_key))
+}
+  
+`%notin%` <- Negate(`%in%`)
+```
+ 
+
+### Get data
+West Brook electrofishing data formatted for Capture-Mark-Recapture analysis for tagged individuals
+```{r CMR}
+#source('./rForSourcing/envFunctions.R')
+
+if(getNew_cdWB_CMR0) {
+  cdWB_CMR0 <- 
+    createCoreData(
+      sampleType = "electrofishing", #"stationaryAntenna","portableAntenna"),
+      whichDrainage = "west",
+      columnsToAdd =
+        c("sampleNumber",
+          "river",
+          "riverMeter",
+          "survey",
+          "pass",
+          'observedLength',
+          'observedWeight')
+    ) %>%
+    addTagProperties(
+      columnsToAdd = 
+        c("cohort",
+          "species",
+          "dateEmigrated",
+          "sex",
+          "species")
+      ) %>%
+    dplyr::filter(!is.na(tag), 
+                  area %in% c("trib","inside","below","above"), 
+                  !is.na(sampleNumber) 
+                  ) %>%
+    createCmrData(maxAgeInSamples = maxAgeInSamples + 1, # +1 so we get env data for the last interval
+                  inside = F, 
+                  censorDead = F, 
+                  censorEmigrated = F) %>% # may want to change censorEmigrated = T to = F
+    # sample 83 is the last tagging sample
+    filter(sampleNumber <= 83) %>%
+    addSampleProperties() %>%
+    addEnvironmental() %>%
+    # these functions do not work for CMR data - they separate out shock and non-shock samples
+    #addEnvironmentalDaily() %>%
+    #addEnvironmentalInterval() %>%
+    addKnownZ2() %>%
+    addFirstLast() %>%
+    fillRiver() %>%
+    addRiverTagged() %>%
+    scaleEnvData() %>%
+    addIsYOY() %>%
+    addRiverN()
+    
+  save(cdWB_CMR0, file = './data/cdWB_CMR0.RData')
+  #write.csv(cdWB_CMR0, file = './data/cdWB_CMR0.csv')
+  
+} else {
+  load(file = './data/cdWB_CMR0.RData')
+}
+str(cdWB_CMR0)
+```
+
+### Make encounter history files
+```{r enc hist}
+# https://stackoverflow.com/questions/69583424/using-tidy-eval-for-multiple-arbitrary-filter-conditions
+# Assumes LHS is the name of a variable and OP is
+# the name of a function
+op_call <- function(op, lhs, rhs) {
+  call(op, sym(lhs), rhs)
+}
+
+ehFilter <- function(data, cols, ops, vals) {
+  exprs <- purrr::pmap(list(ops, cols, vals), op_call)
+  data %>% dplyr::filter(!!!exprs)
+}
+
+
+# var is the variable to put in the encounter history (e.g. 'enc' or 'temp')
+# occasionVar is now fixed to ageInSamples
+# maxOccasionValue is the maximum value for occasion columns, in units of 'occasionVar'
+getEHDataWide_AIS <- function(d, cols, ops, vals, var, maxOccasionValue, valuesFill = 0){   
+  d %>%
+    ehFilter(cols, ops, vals) %>% 
+    #filter(ageInSamples > 0, ageInSamples <= maxOccasionValue) %>%
+    arrange(ageInSamples) %>% #need this to get correct order of columns. 
+    pivot_wider(
+      id_cols = tag,
+      names_from = ageInSamples,
+      names_prefix = "ais_",
+      values_from = eval(substitute(var)),
+      values_fill = valuesFill
+    )
+}
+
+getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort = 1E10){
+
+  d <- dIn %>% 
+    #filter(ageInSamples > 0, ageInSamples <= maxOccasionValue)
+    filter(ageInSamples %in% 1:maxOccasionValue)
+  
+  # Fish with no observed occasions
+  neverCaptured <- getNeverCaptured(d, maxOccasionValue)
+  d <- d %>%
+    filter(tag %notin% neverCaptured$tag)
+  
+  # limit data to first 'maxIndexByCohort' individuals for each cohort
+  d <- d %>%
+    group_by(cohort) %>%
+    mutate(indexByCohort = rleid(tag)) %>%
+    filter(indexByCohort <= maxIndexByCohort) %>%
+    ungroup()
+
+
+  encWide <- getEHDataWide_AIS(d, cols, ops, vals, "enc", maxOccasionValue, valuesFill = 0)
+  eh <- as.matrix(encWide %>% dplyr::select(-tag), nrow = nrow(encWide), ncol = ncol(encWide) - 1)
+  
+  flowFill <- 0
+  flowWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanFlowScaled", maxOccasionValue, valuesFill = flowFill)
+  flowMatrix <- as.matrix(flowWide %>% dplyr::select(-tag), nrow = nrow(flowWide), ncol = ncol(flowWide) - 1)
+  flowMatrix <- ifelse(is.finite(flowMatrix), flowMatrix, flowFill)
+  
+  temperatureFill <- 0
+  temperatureWide <- getEHDataWide_AIS(d, cols, ops, vals, "meanTemperatureScaled", maxOccasionValue, valuesFill = temperatureFill)
+  temperatureMatrix <- as.matrix(temperatureWide %>% dplyr::select(-tag), nrow = nrow(temperatureWide), ncol = ncol(temperatureWide) - 1)
+  temperatureMatrix <- ifelse(is.finite(temperatureMatrix), temperatureMatrix, temperatureFill)
+  
+  riverWide <- getEHDataWide_AIS(d, cols, ops, vals, "river", maxOccasionValue, valuesFill = NA)
+  riverMatrix <- as.matrix(riverWide %>% dplyr::select(-tag), nrow = nrow(riverWide), ncol = ncol(riverWide) - 1)
+  
+  riverNWide <- getEHDataWide_AIS(d, cols, ops, vals, "riverN", maxOccasionValue, valuesFill = 0)
+  riverNMatrix <- as.matrix(riverNWide %>% dplyr::select(-tag), nrow = nrow(riverNWide), ncol = ncol(riverNWide) - 1)
+
+  isYOYWide <- getEHDataWide_AIS(d, cols, ops, vals, "isYOY", maxOccasionValue, valuesFill = 2)
+  isYOYMatrix <- as.matrix(isYOYWide %>% dplyr::select(-tag), nrow = nrow(isYOYWide), ncol = ncol(riverWide) - 1)
+  
+  tags <- encWide %>% dplyr::select(tag)
+  
+  data <- d %>%
+    ehFilter(cols, ops, vals) %>% 
+    #filter(ageInSamples > 0, ageInSamples <= maxOccasionValue) %>%
+    filter(ageInSamples %in% 1:maxOccasionValue) %>%
+    arrange(tag, ageInSamples)
+  
+  cohorts <- tags %>% left_join(data %>% dplyr::select(tag, cohort) %>% unique()) %>% dplyr::select(cohort)
+  seasons <- tags %>% left_join(data %>% dplyr::select(tag, season) %>% unique()) %>% dplyr::select(season)
+  first <- apply(eh, 1, function(x) min(which(x != 0)))
+  last <- apply(riverMatrix, 1, function(x) max(which(!is.na(x))))
+  last <- ifelse(last == maxOccasionValue, last, last - 1)
+
+  return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, river = riverMatrix,
+              riverN = riverNMatrix, isYOY = isYOYMatrix, tags = tags, cohorts = cohorts, seasons = seasons, 
+              first = first, last = last, data = data))
+}
+
+
+#if (getNew_encounterHistories) {
+
+  
+
+  #########################################
+  # all cohorts from O'Bear 2002:2014
+  cdWB_CMR0 %>% filter(river == "wb obear") %>% group_by(cohort) %>% summarize(n = n())
+
+  # read down through the cols, ops, vals variables for filter conditions
+  cols <- list("cohort",  "riverTagged")
+  ops <-  list("%in%",    "==")
+  vals <- list(2002:2014, "wb obear")
+                                                               # only include first x fish per cohort
+  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)#, maxIndexByCohort = 100)
+  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
+  save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData'))
+  
+
+  ######################################  
+  # all cohorts 2002:2014, ALL rivers
+  
+  cdWB_CMR0 %>% group_by(riverN, cohort) %>% summarize(n = n())
+
+  cols <- list("cohort")
+  ops <-  list("%in%")
+  vals <- list(2006:2008)#list(2002:2014)
+  #vals <- list(2002:2014)
+                                                               # only include first x fish per cohort
+  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)#, maxIndexByCohort = 100)
+  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
+  save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData'))
+ 
+  ######################################  
+  # all cohorts 2002:2014, ALL rivers
+  # only include first x fish per cohort
+  cols <- list("cohort")
+  ops <-  list("%in%")
+  vals <- list(2006:2008)#list(2002:2014)
+  
+  maxIndexByCohort <- 250
+  
+  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples, maxIndexByCohort = maxIndexByCohort)
+  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"), "_n", maxIndexByCohort)
+  save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData')) 
+
+
+```
+
+
+### Wrangle data
+```{r}
+
+```
+
+### Explore data
+```{r}
+
+ggplot(cdWB_CMR0 %>% filter(enc ==1), aes(year)) +
+  geom_bar() +
+  facet_grid(river + season ~ species)
+  
+
+
+```
+
+
+### CMR metadata
+#### adapted from https://github.com/Conte-Ecology/westBrookData/blob/master/getWBData/vignettes/westBrookDataIntro.Rmd
+
+#### Column explanations
+__tag__ PIT tag number, unique identifier, character
+
+__cohort__ year the fish was born, assigned based on size at initial capture and size distributions of fish of known age
+
+__detectionDate__ mostly self explanatory, but filled in for unobserved fish as the median capture date for all observed fish.
+
+__sampleName__ An ordered identifier for sampling mostly for recognition by people who did the sampling. This is not very clean because early in the study samples were not taken at strictly seasonal intervals. sampleNumber is probably more useful and intuitive.
+
+__sampleNumber__ A tidier identifier for samples that strictly increases by one for each season (4/yr)
+
+__river__ River the fish was observed in. NA if the fish was not observed.
+
+  __west brook__ The mainstem
+
+  __wb jimmy__ Larger tributary that fish can move back and forth into from WB section 31 (Open Large from Letcher et al 2015)
+
+  __wb mitchell__ Smaller tributary that fish can move back and forth into from WB section 35 (Open Small from Letcher et al 2015)
+
+  __wb obear__ Smaller tributary that has a waterfall at its mouth, so fish can only move downstream into WB section 20 (Isolated Small from Letcher et al 2015)
+
+__section__ Identifier for the 20m section that the fish was captured in. This is ordered from downstream to upstream starting at 1 within each river. 
+
+__area__ inside = section 1:47 in the west brook, trib = tributary (not west brook), below = sections below inside sections, above = sections above the inside sections
+
+__observedLength__ in mm
+
+__survey__ shock = electroshocking survey
+
+__pass__ electrofishing pass. 1 or 2 in the west brook (inside), 1 in tribs
+
+__observedWeight__ in g wet weight
+
+__species__  
+bkt = brook trout (native, self-sustained population)  
+bnt = brown trout (non-native, self-sustained population)  
+ats = atlantic salmon (stocked through 2005, no reproduction)  
+
+__dateEmigrated__ date of emigration from inside/tribs if observed to emigrate. Coded as emigrated if last observation was on PIT antenna or captured below or above 
+
+__sex__ NA = unknown, f = female, m = male, p = precocious male (salmon only)
+
+__enc__  
+Logical, was the fish observed? (1 = yes, 0 = no)
+
+__ageInSamples__ number of seasons since summer of the year of birth (1st summer = 0)
+
+__sampleIndex__ sampleNumber rescaled to start at 1 and end at length(unique(sampleNumber)) for ease of looping in JAGS
+
+__tagIndex__ ordered, unique individual identifier 1:N
+
+__year__ of sample
+
+__season__ 1 = spring, 2 = summer, 3 = fall, 4 = winter
+
+__proportionSampled__ Occasionally the sample was not complete (e.g., skipped west brook but did the tributaries). This is the proportion of sections in the river of capture that were sampled.
+
+__lagDetectionDate__ detection date lagged back one observation
+
+__meanTemperature__ mean temperature between observation dates. If individual was not observed, median observation date for the sampling occasion was used.
+
+__meanFlow__ mean flow between observation dates. If individual was not observed, median observation date for the sampling occasion was used.
+
+__knownZ__ z is alive state, so this is '1' between first and last capture, and NA otherwise, unless the fish was known to be dead (e.g. tagging mortality or observed dead) in which case the value is set to '2'. There is also an option in the addKnownZ() function to useAntenna. This is useAntenna = FALSE by default, but could be set to TRUE to set knownZ to 1 up to the last antenna observation.
+
+
+
+
+<!--chapter:end:00-dataCMR.Rmd-->
+
+## Wanding data {#dataWanding}
+
+```{r globalGetDataWanding, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesDataWanding, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+
+```
+
+### Get data
+West Brook wanding data
+```{r wanding}
+
+if(getNew_cdWB_wanding0) {
+# from wandingDataWB project in d:/ben/github/wandingData/
+  cdWB_wanding0 <- createCoreData(
+    sampleType = "portableAntenna",
+    columnsToAdd = c("tag", 
+                     "detectionDate", 
+                     "river", 
+                     "area", 
+                     "section", 
+                     "survey", 
+                     "sampleName", 
+                     "readerId", 
+                     "aliveOrDead", 
+                     "instance", 
+                     "pass", 
+                     "quarter", 
+                     "leftOrRight", 
+                     "habitat", 
+                     "cover", 
+                     "justification", 
+                     "comment")
+    ) %>% 
+    addTagProperties() %>%
+    dplyr::filter( species %in% c( "bkt","bnt","ats" ) )
+  
+    save(cdWB_wanding0, file = './data/cdWB_wanding0.RData')
+    
+  } else {
+    load(file = './data/cdWB_wanding0.RData')
+  }
+str(cdWB_wanding0)
+```
+
+### Wrangle data
+
+### Explore data
+
+
+<!--chapter:end:00-dataWanding.Rmd-->
+
+## Antenna data {#dataAntenna}
+
+```{r globalGetDataAntenna, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesDataAntenna, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(validate)
+```
+
+### Get data
+West Brook antenna data
+Note: some pitAntenna code at https://github.com/bletcher/pitAntenna/blob/master/WB/getAndPrepareDataWB.R
+```{r stationary antenna}
+
+if(getNew_cdWB_antenna0) {
+  cdWB_antenna0 <- createCoreData(
+    sampleType=c("stationaryAntenna"), 
+    whichDrainage = "west",
+    columnsToAdd=c(
+      "river",
+      "riverMeter",
+      "survey",
+      "readerID",
+      "comment"
+      )
+  ) %>%  
+  filter(!is.na(tag)) %>% # for now
+  addTagProperties(columnsToAdd = c(
+    "cohort",
+    "species",
+    "dateEmigrated",
+    "sex",
+    "species")
+  )
+  
+  save(cdWB_antenna0, file = './data/cdWB_antenna0.RData')
+    
+} else {
+  load(file = './data/cdWB_antenna0.RData')
+}
+
+str(cdWB_antenna0)
+
+```
+
+### Wrangle data
+
+### Explore data
+
+
+<!--chapter:end:00-dataAntenna.Rmd-->
+
+# Models {#models}
+
+```{r global Models, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesModels, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(validate)
+
+# devtools::install_github('bletcher/getPrepareWBData')
+library(getPrepareWBData) # this has functions for preparing West Brook data
+```
+
+List of models will go here
+
+
+
+<!--chapter:end:01-models.Rmd-->
+
+## Young-of-year size model {#modelYOY}
+
+```{r globalModelsYOY, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesModelsYOY, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(kableExtra)
+
+```
+
+The question here is what is driving _body size variation_ across years in brook trout and brown trout in the WB?  
+
+We focus on ageInSamples == 1 (age-0 fish in the fall sample) fish for growth model. This is the first sampling occasion that most fish are big enough to tag. Not all fish are big enough, however, and there is a number of untagged fish each year. We need to include both tagged and untagged fish in our age-0 size model.
+
+Factors to include in the model are   
+1. Sample date  
+2. Cumulative temperature prior to sampling  
+3. Cumulative flow prior to sampling  
+4. Extreme flow events?? Floods, droughts?  
+5. Fish density, age-0 counts across all three salmonids  
+
+### Raw data for YOY model
+1. Environmental data (flow, temperature) are from 1, 3, or 5 months prior to date of individual capture. Also can used fixed dates: assumed spawning dates, assumed emergence dates and actual observation (sample) dates.
+2. All fish data are from age-0 in autumn.
+3. Abundance data.
+
+### Get environmental data
+
+West Brook environmental data (flow and temperature)
+```{r envDataWB, cache = TRUE}
+load(file = './data/envDataWB.RData')
+
+```
+
+
+### Get first observations
+
+1. Filter cdWB_electro for first observations in the autumn for age-0 fish (ageInsamples == 1). Including both tagged and untagged fish.
+```{r firstObs0}
+selectedVariables <- c("tag", "species", "river", "detectionDate", "sampleNumber", "n", "proportionSampled", "observedLength", "observedWeight", "area", "section", "season", "isYOY")
+
+firstObs_noTag <- cdWB_electro %>%
+  filter(is.na(tag), ageInSamples == 1) %>%
+  mutate(n = 1) %>%
+  dplyr:: select(all_of(selectedVariables)) 
+
+firstObs_tag <- cdWB_electro %>%
+  group_by(tag) %>%
+  mutate(isFirstObs = detectionDate == min(detectionDate),
+         n = n()) %>%
+  filter(isFirstObs, ageInSamples == 1) %>%
+  dplyr::select(all_of(selectedVariables)) %>%
+  ungroup()
+
+firstObs0 <- add_row(firstObs_tag, firstObs_noTag) %>%
+  mutate(date = as_date(detectionDate),
+         yday = yday(date),
+         year = year(date))
+
+```
+
+
+For each date in firstObs0 that at least one fish was captured, calculate summary stats for flow and temperature for different time periods:   
+1. Assumed spawning to capture  
+2. Assumed spawning to assumed emergence  
+3. Assumed emergence to capture  
+4. One month preceding capture  
+5. Three months preceding capture  
+5. Five months preceding capture
+
+
+Then merge results with firstObs0 to create firstObs.
+```{r firstObs}
+
+spawn_month <- "11" # spawning
+spawn_day <- "15"
+emerge_month <- "03" # emergence
+emerge_day <- "01"
+
+firstObsDates <- firstObs0 %>% distinct(date = date(detectionDate), river)
+
+# move to getPrepareWBData
+getEnvMeans <- function(riverIn, start, end) { 
+  out <- envDataWB %>% 
+    filter(river == riverIn, dateDate >= start, dateDate <= end) %>%
+    summarize(
+      sumT = sum(temperature, na.rm = TRUE),
+      meanT = mean(temperature, na.rm = TRUE),
+      sdT = sd(temperature, na.rm = TRUE), 
+      cvT = sdT/meanT,
+      
+      sumF = sum(flow, na.rm = TRUE),
+      meanF = mean(flow, na.rm = TRUE),
+      sdF = sd(flow, na.rm = TRUE),
+      cvF = sdF/meanF,
+      n = n()
+    )
+
+  #message(paste(river, start, end,tag))
+  return(out)
+}
+
+firstObs_Env <- firstObsDates %>%
+  rowwise() %>%
+  mutate(
+    year = year(date),
+    spawnDate = ymd(paste0(year,spawn_month,spawn_day)) - years(1),
+    emergeDate = ymd(paste0(year,emerge_month,emerge_day)),
+    oneMonthDate = date - days(as.integer(1 * 30.5)), #months(1), 'months gives error when prev month has 30 days and current has 31
+    threeMonthDate = date - days(as.integer(3 * 30.5)),
+    fiveMonthDate = date - days(as.integer(5 * 30.5)),
+    spawn_emerge = list(getEnvMeans(river, spawnDate, emergeDate)),
+    emerge_detect = list(getEnvMeans(river, emergeDate, date)),
+    spawn_detect = list(getEnvMeans(river, spawnDate, date)),
+    oneMonth = list(getEnvMeans(river, oneMonthDate, date)),
+    threeMonth = list(getEnvMeans(river, threeMonthDate, date)),
+    fiveMonth = list(getEnvMeans(river, fiveMonthDate, date))
+  )
+
+# merge env data into firstObs0
+firstObs <- firstObs0 %>%
+  left_join(firstObs_Env)
+
+#str(firstObs)
+```
+
+Unnest firstObs so environmental summary stats are available as data frame with the name of the time interval as the prefix to the statisticVariable name
+```{r firstObsUnnested}
+
+getScaled <- function(d){
+  (d - mean(d, na.rm = TRUE)) / sd(d, na.rm = TRUE)
+}
+
+# this scales across all individuals - I think this is ok
+firstObsUnnested <- firstObs %>% 
+  unnest(cols = c(spawn_emerge, emerge_detect, spawn_detect, oneMonth, threeMonth, fiveMonth), names_sep = "_") %>%
+  mutate(
+    emerge_detect_sumTScaled = getScaled(emerge_detect_sumT),
+    emerge_detect_sumFScaled = getScaled(emerge_detect_sumF),
+    oneMonth_sumTScaled = getScaled(oneMonth_sumT),
+    oneMonth_sumFScaled = getScaled(oneMonth_sumF),
+    threeMonth_sumTScaled = getScaled(threeMonth_sumT),
+    threeMonth_sumFScaled = getScaled(threeMonth_sumF),
+    fiveMonth_sumTScaled = getScaled(fiveMonth_sumT),
+    fiveMonth_sumFScaled = getScaled(fiveMonth_sumF),
+    ydayScaled = getScaled(yday)
+  )
+
+str(firstObsUnnested)
+#ggplot(firstObsUnnested, aes(oneMonth_sumTScaled, fiveMonth_sumTScaled)) +
+#  geom_point() +
+#  facet_wrap(~river)
+```
+
+### Counts of captured fish
+Min and max years (inclusive) for standardizing counts
+```{r minMaxYear}
+minYear <- 2000
+maxYear <- 2015
+```
+
+Counts by river and species
+```{r rawCounts}
+
+countsRSY <- firstObs %>%
+  filter(year %in% minYear:maxYear) %>%
+  group_by(river, species, year) %>%
+  summarize(
+    count = n(),
+    meanPropSampled = mean(proportionSampled, na.rm = TRUE)
+  ) %>%
+  mutate(countAdj = count / meanPropSampled) %>%
+  ungroup() %>%
+  group_by(river, species) %>%
+  mutate(meanCountRS = mean(count, na.rm = TRUE),
+         sdCountRS = sd(count, na.rm = TRUE),
+         countRS_Scaled = (count - meanCountRS) / sdCountRS) %>%
+  ungroup()
+
+ggplot(countsRSY, aes(year, countRS_Scaled, color = species)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~ river)
+```
+
+Counts by river
+```{r countsRY}
+countsRY <- firstObs %>%
+  filter(year %in% minYear:maxYear) %>%
+  group_by(river, year) %>%
+  summarize(
+    count = n(),
+    meanPropSampled = mean(proportionSampled, na.rm = TRUE)
+  ) %>%
+  mutate(countAdj = count / meanPropSampled) %>%
+  ungroup() %>%
+  group_by(river) %>%
+  mutate(meanCountR = mean(count, na.rm = TRUE),
+         sdCountR = sd(count, na.rm = TRUE),
+         countR_Scaled = (count - meanCountR) / sdCountR) %>%
+  ungroup()
+
+ggplot(countsRY, aes(year, countR_Scaled, color = river)) +
+  geom_point() +
+  geom_line()
+```
+
+Counts for the metaPopulation (WB, Jimmy, Mitchell)  
+Use these for modelling.
+```{r countsMeta}
+countsMetaY <- firstObs %>%
+  filter(river != "wb obear", year %in% minYear:maxYear) %>%
+  group_by(year) %>%
+  summarize(
+    count = n(),
+    meanPropSampled = mean(proportionSampled, na.rm = TRUE)
+  ) %>%
+  mutate(countAdj = count / meanPropSampled) %>%
+  ungroup() %>%
+  mutate(meanCount = mean(count, na.rm = TRUE),
+         sdCount = sd(count, na.rm = TRUE),
+         count_Scaled = (count - meanCount) / sdCount)
+# missing data for tribs in 2000, 2001 - may skew scaled count a bit low - should fix
+
+ggplot(countsMetaY, aes(year, count_Scaled)) +
+  geom_point() +
+  geom_line()
+```
+
+Merge metapopulation scaled counts into firstObsUnnested
+```{r mergeMeta}
+
+firstObsUnnested <- firstObsUnnested %>%
+  left_join(countsMetaY %>% dplyr::select(year, count_Scaled))
+
+firstObsUnnestedWB <- firstObsUnnested %>% filter(river == "west brook")
+```
+
+
+### Raw data plots
+
+#### Frequency plots by species and river
+
+#### Brook Trout, West brook  
+```{r raw data plots1}
+  #cd1 <- cdWB_electro %>% filter(ageInSamples == 1, species != 'ats')
+
+  plotSppRiv = function(s, r) { 
+    ggplot(firstObs %>% filter(species == s, river == r), aes(observedLength, color = is.na(tag))) +
+      geom_freqpoly() +
+      geom_vline(xintercept = 60) +
+      ggtitle(paste(s, r, sep = ', ')) +
+      xlim(c(30,125)) +
+      facet_wrap(~ year, scales = "free_y")
+  }
+  
+  species = 'bkt'
+  riverOrdered = "west brook"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brook Trout, wb jimmy 
+```{r raw data plots2, echo = FALSE}
+  species = 'bkt'
+  riverOrdered = "wb jimmy"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brook Trout, wb mitchell  
+```{r raw data plots3, echo = FALSE}
+  species = 'bkt'
+  riverOrdered = "wb mitchell"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brook Trout, wb obear  
+```{r raw data plots4, echo = FALSE}
+  species = 'bkt'
+  riverOrdered = "wb obear"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brown Trout, West brook  
+```{r raw data plots5, echo = FALSE}
+  species = 'bnt'
+  riverOrdered = "west brook"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brown Trout, wb jimmy 
+```{r raw data plots6, echo = FALSE}
+  species = 'bnt'
+  riverOrdered = "wb jimmy"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brown Trout, wb mitchell  
+```{r raw data plots7, echo = FALSE}
+  species = 'bnt'
+  riverOrdered = "wb mitchell"
+
+  plotSppRiv(species, riverOrdered)
+```  
+
+#### Brown Trout, wb obear - there are no Brown trout in O'Bear  
+
+#### Trout, in the WB mainstem only
+```{r troutWB}
+  
+  ggplot(firstObs %>% filter(species != "ats"), aes(observedLength)) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60, color = 'orange') +
+    facet_grid(species ~ year)
+  
+  ggplot(firstObs %>% filter(species != "ats"), aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60, color = 'orange') +
+    facet_grid(species ~ year)
+```
+  
+
+#### Why are there untagged fish bigger than 60mm?  
+Check 2002/bkt/WB, as an example
+Answer: because they are outside the study area (area = 'above' or 'below') or were tagging mortalities
+
+```{r 2002 untagged}
+
+  firstObs2002BKT <- firstObs %>% filter(year == 2002, species == "bkt")
+  table(is.na(firstObs2002BKT$tag))
+  
+  ggplot(firstObs2002BKT, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60)
+  
+  # looks like untagged area=inside fish wee morts, the rest were above or below
+  ggplot(firstObs2002BKT, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60) +
+    facet_grid(~area)
+  
+  # check 2003
+  ggplot(firstObs %>% filter(year == 2003, species == "bkt"), aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60) +
+    facet_grid(~area)
+  # same story as 2002
+```
+
+#### Why no untagged fish for 2000 and 2001?
+Check data logs to see if we were not recording untagged fish in 2000, 2001
+```{r untagged 2000, 2001}
+
+  cfirstObs2000_2001BKT <- firstObs %>% filter(year %in% 2000:2001, species == "bkt")
+  table(is.na(cfirstObs2000_2001BKT$tag))
+  table(cfirstObs2000_2001BKT$observedLength)
+
+  cfirstObs2000_2001BKT %>% filter(observedLength < 60)
+  
+  ggplot(cfirstObs2000_2001BKT, aes(observedLength, color = is.na(tag))) +
+    geom_freqpoly() +
+    geom_vline(xintercept = 60)
+```
+
+
+### Models based on yearly means
+
+Filter firstObsUnnestedWB for bkt, bnt and min/maxYear
+```{r filter firstObsUnnestedWB}
+d_WB_BKT_BNT <- firstObsUnnestedWB %>% filter(species != "ats", year %in% minYear:maxYear) %>%
+  mutate(species01 = ifelse(species == "bkt", 1, 0))
+
+hist(d_WB_BKT_BNT$detectionDate, breaks = 250)
+
+d_BKT_BNT <- firstObsUnnested %>% filter(species != "ats", year %in% minYear:maxYear) %>%
+  mutate(species01 = ifelse(species == "bkt", 1, 0))
+
+```
+
+Mean model functions
+```{r meanModelFunctions}
+
+getMeansData <- function(d, t, f) {
+  means <- d %>% 
+    group_by(species, year) %>% 
+    summarize(meanLength = mean(observedLength, na.rm = TRUE), 
+              meanEmerge_detect_sumTScaled = mean(emerge_detect_sumTScaled, na.rm = TRUE),
+              meanEmerge_detect_sumFScaled = mean(emerge_detect_sumTScaled, na.rm = TRUE),
+              meanTTime_sumTScaled = mean(get(t), na.rm = TRUE),
+              meanFTime_sumFScaled = mean(get(f), na.rm = TRUE),
+              meanYdayScaled = mean(ydayScaled, na.rm = TRUE),
+              meanCount_Scaled = mean(count_Scaled, na.rm = TRUE)
+              )
+  return(means)
+}
+
+getMeansDataByRiver <- function(d, t, f) {
+  means <- d %>% 
+    group_by(species, year, river) %>% 
+    summarize(meanLength = mean(observedLength, na.rm = TRUE), 
+              meanEmerge_detect_sumTScaled = mean(emerge_detect_sumTScaled, na.rm = TRUE),
+              meanEmerge_detect_sumFScaled = mean(emerge_detect_sumTScaled, na.rm = TRUE),
+              meanTTime_sumTScaled = mean(get(t), na.rm = TRUE),
+              meanFTime_sumFScaled = mean(get(f), na.rm = TRUE),
+              meanYdayScaled = mean(ydayScaled, na.rm = TRUE),
+              meanCount_Scaled = mean(count_Scaled, na.rm = TRUE)
+              )
+  return(means)
+}
+
+plotMeans <- function(means){
+  out <- list()
+  out[[1]] <- ggplot(means, aes(meanTTime_sumTScaled, meanLength, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  
+  out[[2]] <- ggplot(means, aes(meanFTime_sumFScaled, meanLength, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  
+  out[[3]] <- ggplot(means, aes(meanTTime_sumTScaled, meanFTime_sumFScaled, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  return(out)
+}
+
+runMeanModels <- function(means) {
+  modLMMeans1 <- lm(meanLength ~ (factor(species) + meanFTime_sumFScaled + meanTTime_sumTScaled + meanYdayScaled + meanCount_Scaled), data = means)
+  modLMMeans2 <- lm(meanLength ~ (factor(species) + meanFTime_sumFScaled + meanTTime_sumTScaled + meanYdayScaled + meanCount_Scaled)^2, data = means)
+  modLMMeans3 <- lm(meanLength ~ (factor(species) + meanFTime_sumFScaled + meanTTime_sumTScaled + meanYdayScaled + meanCount_Scaled)^3, data = means)
+  return(list(modLMMeans1, modLMMeans2, modLMMeans3))
+}
+```
+
+Mean lengths by river. This is information only. Using the WB data only shown here and in the next graph for the models.
+```{r meanLengthsR, echo = FALSE}
+means1R <- getMeansDataByRiver(d_BKT_BNT, "oneMonth_sumTScaled", "oneMonth_sumFScaled")
+  ggplot(means1R, aes(year, meanLength, shape = species, color = species)) + 
+    geom_point() +
+    geom_line() +
+    facet_wrap(~river)
+```
+
+Mean lengths for the mean length model.
+```{r meanLengths, echo = FALSE}    
+means1 <- getMeansData(d_WB_BKT_BNT, "oneMonth_sumTScaled", "oneMonth_sumFScaled")
+  ggplot(means1, aes(year, meanLength, color = species)) + 
+    geom_point() +
+    geom_line()
+```
+
+Graphs for variables that do not depend on number of months
+```{r staticGraphs, echo = FALSE}
+  ggplot(means1, aes(meanYdayScaled, meanLength, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  
+  ggplot(means1, aes(meanCount_Scaled, meanLength, color = species)) +
+    geom_point() + 
+    geom_smooth(method = "lm", se = FALSE)
+  
+```
+
+
+#### Models with flow and temperature from previous *one* month
+```{r means1Month, echo = FALSE}
+#means1 calculated above
+plotMeans(means1)
+mod1 <- runMeanModels(means1)
+
+AIC(mod1[[1]], mod1[[2]], mod1[[3]]) %>% arrange(AIC)
+
+summary(mod1[[1]])
+rI1 <- relaimpo::calc.relimp(mod1[[1]])
+
+save(means1, mod1, file = "models/mod1LMMeans.Rdata")
+```
+
+Relative importance for main effects model
+```{r rI1, echo = FALSE}
+rI1$lmg
+```
+
+
+#### Models with flow and temperature from previous *three* months
+```{r means3Month, echo = FALSE}
+means3 <- getMeansData(d_WB_BKT_BNT, "threeMonth_sumTScaled", "threeMonth_sumFScaled")
+plotMeans(means3)
+mod3 <- runMeanModels(means3)
+
+AIC(mod3[[1]], mod3[[2]], mod3[[3]]) %>% arrange(AIC)
+
+summary(mod3[[1]])
+
+rI3 <- relaimpo::calc.relimp(mod3[[1]])
+
+save(means3, mod3, file = "models/mod3LMMeans.Rdata")
+```
+
+Relative importance for main effects model
+```{r rI3, echo = FALSE}
+rI3$lmg
+```
+
+
+#### Models with flow and temperature from previous *five* months
+```{r means5Month, echo = FALSE}
+means5 <- getMeansData(d_WB_BKT_BNT, "fiveMonth_sumTScaled", "fiveMonth_sumFScaled")
+plotMeans(means5)
+mod5 <- runMeanModels(means5)
+
+AIC(mod5[[1]], mod5[[2]], mod5[[3]]) %>% arrange(AIC)
+
+summary(mod5[[1]])
+
+rI5 <- relaimpo::calc.relimp(mod5[[1]])
+
+save(means5, mod5, file = "models/mod5LMMeans.Rdata")
+```
+
+Relative importance for main effects model
+```{r rI5, echo = FALSE}
+rI5$lmg
+```
+
+
+r-squared values and AICs for 1st, 2nd (2-way interactions) and 3rd (3-way interactions) order models
+```{r r2, echo = FALSE}
+knitr::kable(
+ tibble(Order = c(1,2,3),r2 = c(summary(mod1[[1]])$r.squared, summary(mod1[[2]])$r.squared, summary(mod1[[3]])$r.squared)) %>% add_column(numMonths = 1),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+ tibble(Order = c(1,2,3),r2 = c(summary(mod3[[1]])$r.squared, summary(mod3[[2]])$r.squared, summary(mod3[[3]])$r.squared)) %>% add_column(numMonths = 3),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+ tibble(Order = c(1,2,3),r2 = c(summary(mod5[[1]])$r.squared, summary(mod5[[2]])$r.squared, summary(mod5[[3]])$r.squared)) %>% add_column(numMonths = 5),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+# AIC
+knitr::kable(
+  format = 'html',
+  AIC(mod1[[1]], mod1[[2]], mod1[[3]]) %>% arrange(AIC) %>% add_column(numMonths = 1),
+  digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+  AIC(mod3[[1]], mod3[[2]], mod3[[3]]) %>% arrange(AIC) %>% add_column(numMonths = 3),
+  digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+  AIC(mod5[[1]], mod5[[2]], mod5[[3]]) %>% arrange(AIC) %>% add_column(numMonths = 5),
+  digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+```
+
+Relative importance of main effects models (repeat of above, but all in one place here)
+```{r rIKable, echo = FALSE}
+library("kableExtra")
+
+# Relative Importance
+knitr::kable(
+ tibble(var = names(rI1$lmg), relImp = rI1$lmg) %>% add_column(numMonths = 1),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+ tibble(var = names(rI3$lmg), relImp = rI3$lmg) %>% add_column(numMonths = 3),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+
+knitr::kable(
+ tibble(var = names(rI5$lmg), relImp = rI5$lmg) %>% add_column(numMonths = 5),
+ digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
+```
+
+### Models with extreme flow events (droughts)
+We get negative cumulFlows because we have some negative flows from the flow extension model
+```{r drought}
+# put some of these calculations into envDataWB
+envDataWBFlow = envDataWB %>%
+  mutate(year = year(dateDate),
+         yday = yday(dateDate),
+         flowNoNAs = ifelse(is.na(flow), 0, flow),
+         tempNoNAs = ifelse(is.na(temperature), 0, temperature)) %>%
+  filter(year %in% minYear:maxYear, 
+         yday > 100, yday < 300,
+         river == "west brook") %>%
+  group_by(year) %>%
+  mutate(cumulFlow = cumsum(flowNoNAs),
+         cumulFlow01 = cumulFlow / max(cumulFlow),
+         cumulTemp = cumsum(tempNoNAs)) %>%
+  ungroup()
+
+firstObsYears <- firstObs %>%
+    filter(year %in% minYear:maxYear, 
+           yday > 100, yday < 300)
+
+ggplot(envDataWBFlow, aes(yday, flow)) +
+  geom_point(aes(yday, observedLength/20), size = 0.75, alpha = 0.2, color = 'lightblue', data = firstObsYears) +
+  geom_point(size = 0.5) +
+  scale_x_continuous(breaks = seq(0,300, 30)) +
+  facet_wrap(~year)
+
+ggplot(envDataWBFlow, aes(yday, cumulFlow / 10)) +
+  geom_point(aes(yday, observedLength / 20), size = 0.75, alpha = 0.2, color = 'lightblue', data = firstObsYears) +
+  geom_point(size = 0.5, color = 'darkgrey') +
+  geom_point(aes(yday, cumulTemp / 800), size = 0.5, color = "orange", data = envDataWBFlow) +
+  geom_point(aes(yday, flow), size = 0.5, data = envDataWBFlow) +
+  scale_x_continuous(breaks = seq(0, 300, 30)) +
+  #theme_publication() +
+  facet_wrap(~year)
+
+ggplot(envDataWBFlow, aes(yday, cumulFlow, color = (year))) +
+  geom_point() +
+  scale_x_continuous(breaks = seq(0, 300, 30)) 
+
+ggplot(envDataWBFlow, aes(yday, cumulTemp, color = (year))) +
+  geom_point() +
+  #geom_point(aes(yday, cumulTemp / 800, color = factor(year)), data = tmp) +
+  scale_x_continuous(breaks = seq(0, 300, 30))
+
+```
+
+Is there a sampling section effect?
+
+Note: there are fish in sections > 50 for years 2002 and 2003, need to filter out early
+```{r}
+ggplot(d_WB_BKT_BNT %>% filter( section <= 47), aes(factor(section), observedLength)) +
+  geom_boxplot() +
+  geom_smooth() +
+  facet_wrap(~year)
+
+ggplot(d_WB_BKT_BNT %>% filter( section <= 47), aes(factor(year), observedLength)) +
+  geom_boxplot() +
+  geom_smooth() +
+  facet_wrap(~section)
+```
+
+### Models based on individual observations
+Probably not use these, too much individual variation
+
+
+#### Are flow and temperature correlated for individual observations?
+```{r flowTempCor, cache = TRUE}
+
+ggplot(firstObsUnnestedWB, aes(oneMonth_sumTScaled, oneMonth_sumFScaled)) +
+  geom_point(aes(color = (year))) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ species)
+
+ggplot(firstObsUnnestedWB, aes(threeMonth_sumTScaled, threeMonth_sumFScaled)) +
+  geom_point(aes(color = (year))) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ species)
+
+ggplot(firstObsUnnestedWB, aes(fiveMonth_sumTScaled, fiveMonth_sumFScaled)) +
+  geom_point(aes(color = (year))) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ species)
+
+# water getting warmer during a sample
+ggplot(firstObsUnnestedWB, aes(fiveMonth_sumTScaled, fiveMonth_sumFScaled)) +
+  geom_point(aes(color = (yday))) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ species)
+
+cor(firstObsUnnestedWB$oneMonth_sumTScaled, firstObsUnnestedWB$oneMonth_sumFScaled)
+cor(firstObsUnnestedWB$threeMonth_sumTScaled, firstObsUnnestedWB$threeMonth_sumFScaled)
+cor(firstObsUnnestedWB$fiveMonth_sumTScaled, firstObsUnnestedWB$fiveMonth_sumFScaled)
+# brook trout
+firstObsUnnestedWB_BKT <- firstObsUnnestedWB %>% filter(species == "bkt")
+cor(firstObsUnnestedWB_BKT$oneMonth_sumTScaled, firstObsUnnestedWB_BKT$oneMonth_sumFScaled)
+cor(firstObsUnnestedWB_BKT$threeMonth_sumTScaled, firstObsUnnestedWB_BKT$threeMonth_sumFScaled)
+cor(firstObsUnnestedWB_BKT$fiveMonth_sumTScaled, firstObsUnnestedWB_BKT$fiveMonth_sumFScaled)
+
+# brown trout
+firstObsUnnestedWB_BNT <- firstObsUnnestedWB %>% filter(species == "bnt")
+cor(firstObsUnnestedWB_BNT$oneMonth_sumTScaled, firstObsUnnestedWB_BNT$oneMonth_sumFScaled)
+cor(firstObsUnnestedWB_BNT$threeMonth_sumTScaled, firstObsUnnestedWB_BNT$threeMonth_sumFScaled)
+cor(firstObsUnnestedWB_BNT$fiveMonth_sumTScaled, firstObsUnnestedWB_BNT$fiveMonth_sumFScaled)
+```
+
+Do fish from long samples get bigger over time?  
+No clear evidence.
+```{r}
+ggplot(firstObsUnnestedWB, aes(yday, observedLength)) +
+  geom_point(alpha = 0.05) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~year)
+```
+
+
+Assign the month interval (one, three, five) for flow and temperature variables. The variable will be accessed using e.g. `get(tTime)` in formulas and filters
+```{r time}
+tTime <- "threeMonth_sumTScaled"
+fTime <- "threeMonth_sumFScaled" #"fiveMonth_sumFScaled"
+
+```
+
+
+```{r rI_LM}
+library(lme4)
+library(relaimpo)
+
+
+modLM1 <- lm(observedLength ~ (factor(species) * get(tTime) * get(fTime) * ydayScaled * count_Scaled), data = d_WB_BKT_BNT)
+
+modLM2 <- lm(observedLength ~ (factor(species) + get(tTime) + get(fTime) + ydayScaled + count_Scaled), data = d_WB_BKT_BNT)
+
+modLM3 <- lm(observedLength ~ (factor(species) + get(tTime) + get(fTime) + ydayScaled + count_Scaled)^2, data = d_WB_BKT_BNT)
+
+modLM1a <- lm(observedLength ~ (factor(species)), data = d_WB_BKT_BNT)
+modLM1b <- lm(observedLength ~ (factor(species) * get(tTime)), data = d_WB_BKT_BNT)
+modLM1c <- lm(observedLength ~ (factor(species) * get(fTime)), data = d_WB_BKT_BNT)
+modLM1d <- lm(observedLength ~ (factor(species) * ydayScaled), data = d_WB_BKT_BNT)
+modLM1e <- lm(observedLength ~ (factor(species) * count_Scaled), data = d_WB_BKT_BNT)
+
+AIC(modLM1, modLM2, modLM3, modLM1a, modLM1b, modLM1c, modLM1d, modLM1e) %>% arrange(AIC)
+
+#relaimpo::calc.relimp(modLM2) # slow for bigger models
+
+
+# get 'boundary (singular)' error with model without 2-way interaction
+#modLMER2 <- lmer(observedLength ~ (factor(species) + emerge_detect_sumTScaled + emerge_detect_sumFScaled + ydayScaled +count_Scaled)^2 + 1|year, data = d_WB_BKT_BNT)
+```
+
+```{r calcrelipmm}
+#https://gist.github.com/BERENZ/e9b581a4b7160357934e
+calc.relip.mm <- function(model,type='lmg') {
+  if (!isLMM(model) & !isGLMM(model)) {
+    stop('Currently supports only lmer/glmer objects', call. = FALSE)
+  }
+  require(lme4)
+  X <- getME(model,'X')
+  X <- X[,-1]
+  Y <- getME(model,'y')
+  s_resid <- sigma(model)
+  s_effect <- getME(model,'theta')*s_resid
+  s2 <- sum(s_resid^2,s_effect^2)
+  V <- Diagonal(x = s2,n=nrow(X))
+  YX <- cbind(Y,X)
+  cov_XY <- solve( t(YX) %*% solve(V) %*% as.matrix(YX))
+  colnames(cov_XY) <- rownames(cov_XY) <- colnames(YX)
+  importances <- calc.relimp(as.matrix(cov_XY),rela=T,type=type)
+  return(importances)
+}
+```
+
+
+```{r lmer, cache = TRUE}
+
+#modLMER1 <- lmer(observedLength ~ (factor(species) + get(tTime)|year + get(fTime)|year + ydayScaled|year + count_Scaled|year), data = d_WB_BKT_BNT)
+
+modLMER1 <- lmer(observedLength ~ (factor(species) * get(tTime) * get(fTime) * ydayScaled * count_Scaled) + (1|year), data = d_WB_BKT_BNT)
+
+modLMER2 <- lmer(observedLength ~ (factor(species) + get(tTime) + get(fTime) + ydayScaled + count_Scaled) + (1|year), data = d_WB_BKT_BNT)
+
+modLMER3 <- lmer(observedLength ~ (factor(species) + get(tTime) + get(fTime) + ydayScaled + count_Scaled)^2 + (1|year), data = d_WB_BKT_BNT)
+
+# one-by-one
+modLMER1a <- lmer(observedLength ~ (factor(species))  + (1|year), data = d_WB_BKT_BNT)
+modLMER1b <- lmer(observedLength ~ (factor(species) * get(tTime))  + (1|year), data = d_WB_BKT_BNT)
+modLMER1c <- lmer(observedLength ~ (factor(species) * get(fTime)) + (1|year), data = d_WB_BKT_BNT)
+modLMER1d <- lmer(observedLength ~ (factor(species) * ydayScaled) + (1|year), data = d_WB_BKT_BNT)
+modLMER1e <- lmer(observedLength ~ (factor(species) * count_Scaled) + (1|year), data = d_WB_BKT_BNT)
+
+AIC(modLMER1, modLMER2, modLMER3, modLMER1a, modLMER1b, modLMER1c, modLMER1d, modLMER1e) %>% arrange(AIC)
+
+calc.relip.mm(modLMER3)
+library(MuMIn)
+r.squaredGLMM(modLMER1)
+
+summary(modLMER1)
+ranef(modLMER1)
+```
+
+
+
+Raw data exploration following the models  
+
+relaimpo::calc.relimp(modLM2) - other models are too big
+                                 lmg
+factor(species)          0.005339423
+emerge_detect_sumTScaled 0.006883496
+emerge_detect_sumFScaled 0.063450197
+ydayScaled               0.012116064
+count_Scaled             0.028031531
+```{r plotRawInd}
+
+ggplot(d_WB_BKT_BNT, aes(get(fTime), observedLength)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~species)
+
+ggplot(d_WB_BKT_BNT, aes(count_Scaled, observedLength)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~species)
+
+ggplot(d_WB_BKT_BNT, aes(ydayScaled, observedLength)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~species)
+
+ggplot(d_WB_BKT_BNT, aes(get(tTime), observedLength)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~species)
+
+```
+
+<!--chapter:end:01-modelsYOY.Rmd-->
+
+## Flow model {#modelFlow}
+
+```{r globalModelsFlow, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesModelsFlow, echo = FALSE}
+library(getWBData)
+library(tidyverse)
+library(lubridate)
+library(kableExtra)
+library(GGally)
+library(lme4)
+```
+
+```{r readInFlowData}
+dataFlow <- read.csv("./dataIn/wbFlow/EcoDrought_Continuous_MA.csv")
+```
+
+```{r filterDataFlow}
+tibble(dataFlow)
+table(dataFlow$Site_Name)
+
+d <- dataFlow %>%
+  filter(Site_Name %in% c("Jimmy Brook", "Mitchell Brook", "Obear Brook Lower", "West Brook 0")) %>%
+  mutate(date = mdy_hm(DateTime_EST),
+         site = recode(Site_Name, "Jimmy Brook" = "OL", "Mitchell Brook" = "OS", "Obear Brook Lower" = "IS", "West Brook 0" = "WB"),
+         dischargeLog = log(Discharge_Hobo_cfs + 0.01))
+  
+  
+d %>% filter(is.infinite(dischargeLog))
+
+scaleCol <- function(d){
+  return (d - mean(d, na.rm = TRUE)) / sd(d, na.rm = TRUE)
+}
+# hard-coded for now
+dWide <- d %>% 
+  pivot_wider(id_cols = date, 
+              values_from = dischargeLog, 
+              names_from = site
+             ) %>%
+  mutate(
+         OLScaled = scaleCol(OL),
+         ISScaled = scaleCol(IS),
+         OSScaled = scaleCol(OS),
+         WBScaled = scaleCol(WB),
+         yday = yday(date),
+         year = year(date)
+        )
+
+
+
+```
+
+```{r flowPlots, cache = TRUE}
+
+ggplot(d, aes(date, dischargeLog, color = Site_Name)) +
+  geom_point(size = 0.02) +
+  facet_wrap(~Site_Name)
+
+ggpairs(dWide,
+          columns = 6:9,
+          mapping = ggplot2::aes(color = as.factor(year), alpha = 0.7),
+          #diag = list(continuous = myDens),
+          lower = list(continuous = wrap("points", alpha = 0.3, size=0.1), 
+                       combo = wrap("dot", alpha = 0.4, size=0.2))
+        )
+
+ggpairs(dWide %>% filter(yday > 90, yday < 300),
+          columns = 6:9,
+          mapping = ggplot2::aes(color = as.factor(year)),
+          lower = list(continuous = wrap("points", alpha = 0.3, size=0.1), 
+                       combo = wrap("dot", alpha = 0.4, size=0.2))
+        )
+
+ggpairs(dWide %>% filter(yday == 110),
+          columns = 8:11,
+          mapping = ggplot2::aes(color = as.factor(year)),
+          lower = list(continuous = wrap("points", alpha = 0.3, size=0.2), 
+                       combo = wrap("dot", alpha = 0.4, size=0.2))
+        )
+```
+
+```{r flowModels}
+
+#mod0 <- lmer(OL ~ WB * yday + as.factor(year) + 1|yday, data = dWide)
+
+```
+
+
+<!--chapter:end:01-modelsFlow.Rmd-->
+
+## Flow effects on survival (phi) models - O'Bear only {#modelCMR_Flow_River_OBear}
+
+The goal of this modelling exercise is to evaluate the effect of new tributary-specific stream flow estimates on survival of brook trout and brown trout. We will compare survival across the WB and tributaries with flow input data as 1) single flow estimate for all locations (historical approach) and 2) hindcasted flows for each tributary based on new tributary-specific flows which are available since 2000.
+
+The goal is to find the best structure for the survival model, then compare survival estimates with tributary-specific flow to estimates with common flow across locations.
+
+Structure options include
+[species, cohort, season, isYOY, flow, flow^2]
+
+
+```{r globalModelsNimbleRiver, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesModelsNimbleRiver, echo = FALSE}
+library(getWBData)
+library(lubridate)
+library(kableExtra)
+library(GGally)
+library(nimble)
+library(nimbleEcology)
+library(MCMCvis)
+library(tidyverse)
+```
+
+```{r}
+rerunSurivalModels <- FALSE
+plotMCMCOutput <- TRUE
+```
+
+
+```{r}
+load('./models/cmrFlowOB/dataOut/eh_2002200320042005200620072008200920102011201220132014_wb obear.RData')
+```
+
+### Model phi_p 
+Single estimates of phi and p (across, time, cohorts, flow)  
+
+#### Set up and run model
+```{r phi_p}
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
+
+if (rerunSurivalModels) {
+  y <- eh$eh
+  
+  nSeasons <- nrow(unique(eh$seasons))
+  nCohorts <- nrow(unique(eh$cohorts))
+  
+  hmm.phi_p <- nimbleCode({
+    phi ~ dunif(0, 1) # prior survival
+    p ~ dunif(0, 1) # prior detection
+    # likelihood
+    gamma[1,1] <- phi      # Pr(alive t -> alive t+1)
+    gamma[1,2] <- 1 - phi  # Pr(alive t -> dead t+1)
+    gamma[2,1] <- 0        # Pr(dead t -> alive t+1)
+    gamma[2,2] <- 1        # Pr(dead t -> dead t+1)
+    delta[1] <- 1          # Pr(alive t = 1) = 1
+    delta[2] <- 0          # Pr(dead t = 1) = 0
+    omega[1,1] <- 1 - p    # Pr(alive t -> non-detected t)
+    omega[1,2] <- p        # Pr(alive t -> detected t)
+    omega[2,1] <- 1        # Pr(dead t -> non-detected t)
+    omega[2,2] <- 0        # Pr(dead t -> detected t)
+    
+    for (i in 1:N){
+      z[i,first[i]] ~ dcat(delta[1:2])
+      for (j in (first[i]+1):last[i]){
+        z[i,j] ~ dcat(gamma[z[i,j-1], 1:2])
+        y[i,j] ~ dcat(omega[z[i,j], 1:2])
+      }
+    }
+  })
+    
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  
+  myConstants <- list(N = nrow(y), 
+                       T = ncol(y), 
+                       first = first,
+                       last = last)
+  
+  myData <- list(y = y + 1)
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  initialValues <- function() list(phi = runif(1,0,1),
+                                    p = runif(1,0,1),
+                                    z = zinits
+                                    )
+  
+  
+  parametersToSave <- c("phi", "p")  
+  nIter <- 5000
+  nBurnin <- 1000
+  nChains <- 2
+  thinRate = 5
+  
+  start <- Sys.time()
+  
+  Rmodel <- nimbleModel(
+    code = hmm.phi_p, 
+    constants = myConstants,
+    data = myData,              
+    inits = initialValues(),
+    calculate = FALSE
+  )
+  conf <- configureMCMC(
+    Rmodel,
+    monitors = parametersToSave
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phi_p <- runMCMC(
+    Cmcmc, 
+    niter = nIter, 
+    nburnin = nBurnin, 
+    thin = thinRate, 
+    nchains = nChains
+  )
+  
+  end <- Sys.time()
+  elapsed_phi_p <- end - start
+  toSave <- list(
+    mcmc = mcmc.phi_p, 
+    elapsed = elapsed_phi_p,
+    name = "phi_p",
+    myConstants = myConstants, 
+    nIter = nIter, 
+    nBurnin = nBurnin,
+    thinRate = thinRate, 
+    nSeasons = nSeasons, 
+    nCohorts = nCohorts,
+    nChains = nChains
+  )
+  save(toSave, file = paste0('./models/cmrFlowOB/runsOut/mcmc_phi_p_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowOB/runsOut/mcmc_phi_p_mostRecent.RData')
+  
+  # output for Xioawei
+  for (i in seq_along(toSave)){
+    write.csv(toSave[[i]], file = paste0('./models/cmrFlowOB/runsOut/phi_p/', 
+                                     names(toSave)[i], 
+                                     ".csv"), 
+              row.names = F)
+  }
+  write.csv(MCMCsummary(toSave$mcmc), file = './models/cmrFlowOB/runsOut/phi_p/mcmcSummary.csv')
+  
+} else {
+  load('./models/cmrFlowOB/runsOut/mcmc_phi_p_mostRecent.RData')
+}
+
+if(plotMCMCOutput) {
+  MCMCplot(object = toSave$mcmc)
+  MCMCsummary(object = toSave$mcmc, round = 3)
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            ISB = FALSE,
+            exact = TRUE, 
+            params = c("phi", "p"),
+            pdf = FALSE, 
+            priors = priors)
+}
+```
+
+### Model phiT_pT  
+Phi and p vary by sampling occasion (time)  
+
+#### Set up and run model
+```{r phiT_pT}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
+if (rerunSurivalModels) {
+
+  y <- eh$eh
+  nSeasons <- nrow(unique(eh$seasons))
+  nCohorts <- nrow(unique(eh$cohorts))
+  
+  hmm.phiT_pT <- nimbleCode({
+    delta[1] <- 1                    # Pr(alive t = 1) = 1
+    delta[2] <- 0                    # Pr(dead t = 1) = 0
+    for (t in 1:(T-1)){ # loop over time
+      phi[t] ~ dunif(0, 1)           # prior survival
+      gamma[1,1,t] <- phi[t]         # Pr(alive t -> alive t+1)
+      gamma[1,2,t] <- 1 - phi[t]     # Pr(alive t -> dead t+1)
+      gamma[2,1,t] <- 0              # Pr(dead t -> alive t+1)
+      gamma[2,2,t] <- 1              # Pr(dead t -> dead t+1)
+      p[t] ~ dunif(0, 1)             # prior detection
+      omega[1,1,t] <- 1 - p[t]       # Pr(alive t -> non-detected t)
+      omega[1,2,t] <- p[t]           # Pr(alive t -> detected t)
+      omega[2,1,t] <- 1              # Pr(dead t -> non-detected t)
+      omega[2,2,t] <- 0              # Pr(dead t -> detected t)
+    }
+    # likelihood
+    for (i in 1:N){
+      z[i,first[i]] ~ dcat(delta[1:2])
+      for (j in (first[i]+1):last[i]){
+        z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1])
+        y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1])
+      }
+    }
+  })
+    
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  
+  myConstants <- list(N = nrow(y), 
+                       T = ncol(y), 
+                       first = first,
+                       last = last)
+  
+  myData <- list(y = y + 1)
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  
+  initialValues <- function() list(phi = runif(myConstants$T - 1, 0, 1),
+                                    p = runif(myConstants$T - 1, 0, 1),
+                                    z = zinits)
+  
+  parametersToSave <- c("phi", "p", "z")  
+  nIter <- 5000
+  nBurnin <- 1000
+  nChains <- 2
+  thinRate <- 5
+  
+  start <- Sys.time()
+  
+  Rmodel <- nimbleModel(
+    code = hmm.phiT_pT, 
+    constants = myConstants,
+    data = myData,              
+    inits = initialValues(),
+    calculate = FALSE
+  )
+  conf <- configureMCMC(
+    Rmodel,
+    monitors = parametersToSave
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT <- runMCMC(
+    Cmcmc, 
+    niter = nIter, 
+    nburnin = nBurnin, 
+    thin = thinRate, 
+    nchains = nChains
+  )
+  
+  
+  
+  end <- Sys.time()
+  elapsed_phiT_pT <- end - start
+    toSave <- list(
+      mcmc = mcmc.phiT_pT, 
+      elapsed = elapsed_phiT_pT,
+      name = "phiT_pT",
+      myConstants = myConstants, 
+      nIter = nIter, 
+      nBurnin = nBurnin,
+      thinRate = thinRate, 
+      nSeasons = nSeasons, 
+      nCohorts = nCohorts,
+      nChains = nChains
+    )
+  save(toSave, file = paste0('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowOB/runsOut/mcmc_phiT_pT_mostRecent.RData')
+  
+  # output for Xioawei
+  for (i in seq_along(toSave)){
+    write.csv(toSave[[i]], file = paste0('./models/cmrFlowOB/runsOut/phiT_pT/', 
+                                     names(toSave)[i], 
+                                     ".csv"), 
+              row.names = F)
+  }
+  write.csv(MCMCsummary(toSave$mcmc), file = './models/cmrFlowOB/runsOut/phiT_pT/mcmcSummary.csv')
+  
+} else {
+  load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_mostRecent.RData')
+}
+  
+if (plotMCMCOutput) {  
+  MCMCplot(object = toSave$mcmc)
+  MCMCsummary(object = toSave$mcmc, round = 3)
+
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            #params = c("phi[1]", "phi[2]", "phi[3]", "phi[4]", "phi[5]", "phi[9]", "phi[10]",
+            #           "p[1]", "p[2]", "p[3]", "p[4]", "p[5]"),
+            params = c("phi"),
+            pdf = FALSE, 
+            priors = priors)
+}
+
+```
+
+```{r}
+#meanPost <- MCMCpstr(toSave$mcmc)
+#sdPost <- MCMCpstr(toSave$mcmc, func = sd)
+
+```
+
+
+### Model phiT_pT_cohort  
+Phi and p vary by time and there is a cohort effect on phi  
+
+#### Set up and run model
+```{r phiT_pT_cohort}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
+if (rerunSurivalModels) {
+
+  y <- eh$eh
+  nCohorts <- nrow(unique(eh$cohorts))
+  
+  hmm.phiT_pT_cohort <- nimbleCode({
+    delta[1] <- 1                    # Pr(alive t = 1) = 1
+    delta[2] <- 0                    # Pr(dead t = 1) = 0
+    
+    for (i in 1:N){
+      for (t in 1:(T-1)){ # loop over time
+        logit(phi[t,i]) <- betaPhi[t,cohort[i]]           # prior survival
+        gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
+        gamma[1,2,t,i] <- 1 - phi[t,i]     # Pr(alive t -> dead t+1)
+        gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1)
+        gamma[2,2,t,i] <- 1              # Pr(dead t -> dead t+1)
+        
+        logit(p[t,i]) <- betaP[t,cohort[i]]             # prior detection
+        omega[1,1,t,i] <- 1 - p[t,i]       # Pr(alive t -> non-detected t)
+        omega[1,2,t,i] <- p[t,i]           # Pr(alive t -> detected t)
+        omega[2,1,t,i] <- 1              # Pr(dead t -> non-detected t)
+        omega[2,2,t,i] <- 0              # Pr(dead t -> detected t)
+      }
+    }
+    
+    
+    for (c in 1:nCohorts){
+      # mean values
+      betaPhiCohort[c] ~ dnorm(0,1)
+      betaPCohort[c] ~ dnorm(0,1)
+      for (t in 1:(T-1)){ 
+        betaPhi[t,c] ~ dnorm(betaPhiCohort[c], 1)
+        betaP[t,c] ~ dnorm(betaPCohort[c], 1)
+      }
+    }
+    
+    # back-transform for examining output
+    for (c in 1:nCohorts){
+        betaPhiCohortOut[c] <- 1/(1 + exp(-betaPhiCohort[c]))
+        betaPCohortOut[c] <- 1/(1 + exp(-betaPCohort[c]))
+      for (t in 1:(T-1)){ 
+        betaPhiOut[t,c] <- 1/(1 + exp(-betaPhi[t,c]))
+        betaPOut[t,c] <- 1/(1 + exp(-betaP[t,c])) 
+      }
+    }
+    
+    # likelihood
+    for (i in 1:N){
+      z[i,first[i]] ~ dcat(delta[1:2])
+      for (j in (first[i]+1):last[i]){
+        z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
+        y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
+      }
+    }
+  })
+    
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+  
+  myConstants <- list(N = nrow(y), 
+                       T = ncol(y), 
+                       first = first,
+                       last = last,
+                       cohort = cohort, 
+                       nCohorts = nCohorts
+                       )
+  
+  myData <- list(y = y + 1)
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  
+  initialValues <- function() list(
+    phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    p = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    z = zinits,
+    betaPhi = array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+    betaP = array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+    betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
+    betaPCohort = array(runif(nCohorts, 0, 1),c(nCohorts))
+  )
+  
+  parametersToSave <- c("betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut")  
+  nIter <- 5000
+  nBurnin <- 1000
+  nChains <- 2
+  thinRate = 5
+  
+  start <- Sys.time()
+  Rmodel <- nimbleModel(
+    code = hmm.phiT_pT_cohort, 
+    constants = myConstants,
+    data = myData,              
+    inits = initialValues(),
+    calculate = FALSE
+  )
+  conf <- configureMCMC(
+    Rmodel,
+    monitors = parametersToSave
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT_cohort <- runMCMC(
+    Cmcmc, 
+    niter = nIter, 
+    nburnin = nBurnin, 
+    thin = thinRate, 
+    nchains = nChains
+  )
+  
+  end <- Sys.time()
+  elapsed_phiT_pT_cohort <- end - start
+  
+  toSave <- list(
+    mcmc = mcmc.phiT_pT_cohort, 
+    elapsed = elapsed_phiT_pT_cohort,
+    name = "phiT_pT_cohort",
+    myConstants = myConstants, 
+    nIter = nIter, 
+    nBurnin = nBurnin,
+    thinRate = thinRate, 
+    nSeasons = nSeasons, 
+    nCohorts = nCohorts,
+    nChains = nChains
+  )
+  
+  save(toSave, file = paste0('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_mostRecent.RData')
+} else {
+  load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_mostRecent.RData')
+}
+  
+if(plotMCMCOutput) { 
+
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiOut"))
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = c("betaPCohortOut"))
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiCohortOut", "betaPCohortOut"),
+            pdf = FALSE, 
+            priors = priors)
+}
+
+```
+
+#### Plot phi against flow data phiT_pT_cohort
+```{r plot phi and raw flow}
+phiOut <- MCMCsummary(toSave$mcmc, params = 'betaPhiOut')
+
+
+```
+
+
+### Model phiT_pT_cohort_flow  
+Add mean flow over the interval as a survival effect  
+
+#### Set up and run model
+```{r phiT_pT_cohort_flow}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
+if (rerunSurivalModels) {
+
+  y <- eh$eh
+  nCohorts <- nrow(unique(eh$cohorts))
+  nSeasons <- nrow(unique(eh$seasons))
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
+  
+  hmm.phiT_pT_cohort_flow <- nimbleCode({
+    delta[1] <- 1                    # Pr(alive t = 1) = 1
+    delta[2] <- 0                    # Pr(dead t = 1) = 0
+    
+    for (i in 1:N){
+      for (t in 1:(T-1)){ # loop over time
+        logit(phi[t,i]) <- 
+          betaInt +
+          betaPhi[t,cohort[i]] + 
+          betaFlow[1,season[t]] * flow[i,t] +
+          betaFlow[2,season[t]] * flow[i,t] * flow[i,t]
+           # prior survival
+        
+        gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
+        gamma[1,2,t,i] <- 1 - phi[t,i]     # Pr(alive t -> dead t+1)
+        gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1)
+        gamma[2,2,t,i] <- 1              # Pr(dead t -> dead t+1)
+        
+        logit(p[t,i]) <- betaP[t,cohort[i]]             # prior detection
+        omega[1,1,t,i] <- 1 - p[t,i]       # Pr(alive t -> non-detected t)
+        omega[1,2,t,i] <- p[t,i]           # Pr(alive t -> detected t)
+        omega[2,1,t,i] <- 1              # Pr(dead t -> non-detected t)
+        omega[2,2,t,i] <- 0              # Pr(dead t -> detected t)
+      }
+    }
+    
+    betaInt ~ dnorm(0,1)
+    
+    for (c in 1:nCohorts){
+      # mean values
+      betaPhiCohort[c] ~ dnorm(0,1) #1
+      betaPCohort[c] ~ dnorm(0,1) #1
+      for (t in 1:(T-1)){ 
+        betaPhi[t,c] ~ dnorm(betaPhiCohort[c], 1)
+        betaP[t,c] ~ dnorm(betaPCohort[c], 1)
+      }
+    }
+    
+    # back-transform for examining output
+    for (c in 1:nCohorts){
+        betaPhiCohortOut[c] <- 1/(1 + exp(-betaPhiCohort[c]))
+        betaPCohortOut[c] <- 1/(1 + exp(-betaPCohort[c]))
+      for (t in 1:(T-1)){ 
+        betaPhiOut[t,c] <- 1/(1 + exp(-betaPhi[t,c]))
+        betaPOut[t,c] <- 1/(1 + exp(-betaP[t,c])) 
+      }
+    }
+    
+    for (s in 1:nSeasons){
+      betaFlow[1,s] ~ dnorm(0, 1)
+      betaFlow[2,s] ~ dnorm(0, 1)
+    }    
+    
+    # likelihood
+    for (i in 1:N){
+      z[i,first[i]] ~ dcat(delta[1:2])
+      for (j in (first[i]+1):(last[i])){
+        z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
+        y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
+      }
+    }
+  })
+    
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+  
+  myConstants <- list(N = nrow(y), 
+                       T = ncol(y), 
+                       first = first,
+                       last = last,
+                       cohort = cohort, 
+                       nCohorts = nCohorts,
+                       season = seasonArray, #eh$seasons$season,
+                       flow = eh$flow
+                       )
+  
+  myData <- list(y = y + 1)
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  
+  zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
+  
+  initialValues <- function() list(
+    betaInt = rnorm(1, 0, 1),
+    phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    p =   array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    z = zInitsNA,
+    betaPhi = array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+    betaP =   array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+    betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
+    betaPCohort =   array(runif(nCohorts, 0, 1),c(nCohorts)),
+    betaFlow = array(rnorm(2 * 4, 0, 1), c(2, 4))
+  )
+  
+  parametersToSave <- c("betaInt", 
+                        "betaPhi", "betaP", 
+                        "betaPhiCohort", "betaPCohort",
+                        "betaPhiOut", "betaPOut", 
+                        "betaPhiCohortOut", "betaPCohortOut", 
+                        "betaFlow")  
+  nIter <- 20000
+  nBurnin <- 10000
+  nChains <- 2
+  thinRate <- 5
+  
+  start = Sys.time()
+  
+  Rmodel <- nimbleModel(
+    code = hmm.phiT_pT_cohort_flow, 
+    constants = myConstants,
+    data = myData,              
+    inits = initialValues(),
+    calculate = FALSE
+  )
+  conf <- configureMCMC(
+    Rmodel,
+    monitors = parametersToSave
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT_cohort_flow <- runMCMC(
+    Cmcmc, 
+    niter = nIter, 
+    nburnin = nBurnin, 
+    thin = thinRate, 
+    nchains = nChains
+  )
+  
+  end <- Sys.time()
+  
+  elapsed_phiT_pT_cohort_flow <- end - start
+  toSave <- list(
+    mcmc = mcmc.phiT_pT_cohort_flow, 
+    elapsed = elapsed_phiT_pT_cohort_flow,
+    name = "phiT_pT_cohort_flow",
+    myConstants = myConstants, 
+    nIter = nIter, 
+    nBurnin = nBurnin,
+    thinRate = thinRate, 
+    nSeasons = nSeasons, 
+    nCohorts = nCohorts,
+    nChains = nChains
+  )
+  save(toSave, file = paste0('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flow_', substr(end,1,13), '.RData'))
+    save(toSave, file = './models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flow_mostRecent.RData')
+} else {
+  load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flow_mostRecent.RData')
+}
+# could consider forward algo to speed up convergence (https://oliviergimenez.github.io/banana-book/hmmcapturerecapture.html#nimble-implementation-1)
+
+if(plotMCMCOutput) {
+  #MCMCsummary(object = toSave$mcmc, round = 2)
+  #MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaFlow")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = c("betaPCohortOut"))
+  
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohort"))
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+    MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiCohortOut"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaFlow"),
+            pdf = FALSE, 
+            priors = priors)
+}
+# run more iterations, if necessary
+# nIterAdd <- 5000
+# Cmcmc$run(nIterAdd, reset = FALSE)
+# more_samples <- as.matrix(Cmcmc$mvSamples)
+# 
+# MCMCtrace(object = more_samples,
+#           #ISB = FALSE,
+#           #exact = TRUE, 
+#           params = c("betaFlow"),
+#           pdf = FALSE, 
+#           priors = priors)
+
+```
+
+#### Get flow effect estimates  
+Flow effects fixed across cohorts
+```{r}
+   #     betaInt +
+   #     betaPhi[t,cohort[i]] + 
+   #     betaFlow[1,season[t]] * flow[i,t] +
+   #     betaFlow[2,season[t]] * flow[i,t] * flow[i,t]
+
+
+getPredictionsFlow <- function(mcmc, everyNIters = 10, flowStep = 0.5){
+
+  ## betaInt
+  predictorsBetaInt <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters)
+  )
+  for(i in 1:nrow(predictorsBetaInt)){
+    predictorsBetaInt$betaInt[i] <- mcmc$chain1[[ predictorsBetaInt[i, "iter"], "betaInt" ]]
+  }
+  
+  
+  ## betaFlow
+  predictorsBetaFlow <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    season = 1:toSave$nSeasons
+  )
+  
+  for(i in 1:nrow(predictorsBetaFlow)){
+    predictorsBetaFlow$betaFlow1[i] <- mcmc$chain1[[predictorsBetaFlow[i, "iter"], 
+                                                   paste0("betaFlow[1, ", predictorsBetaFlow[i, "season"],
+                                                          "]")
+                                                  ]]
+    predictorsBetaFlow$betaFlow2[i] <- mcmc$chain1[[predictorsBetaFlow[i, "iter"], 
+                                                   paste0("betaFlow[2, ", predictorsBetaFlow[i, "season"],
+                                                          "]")
+                                                  ]]
+  }
+  
+  ## betaPhi
+  predictorsBetaPhi <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    cohort = 1:toSave$nCohorts
+  )
+  for(i in 1:nrow(predictorsBetaPhi)){
+    predictorsBetaPhi$betaPhi[i] <- mcmc$chain1[[predictorsBetaPhi[i, "iter"], 
+                                                   paste0("betaPhiCohort[", predictorsBetaPhi[i, "cohort"],
+                                                          "]")
+                                                ]]
+  }
+
+  predictorsAll <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    cohort = 1:toSave$nCohorts,
+    season = 1:toSave$nSeasons,
+    flow = seq(-1.5, 1.5, flowStep)
+  )
+  
+  preds <- predictorsAll %>%
+    left_join(predictorsBetaInt) %>%
+    left_join(predictorsBetaFlow) %>%
+    left_join(predictorsBetaPhi) %>%
+    mutate(predPhi = plogis(betaInt + betaPhi + betaFlow1 * flow + betaFlow2 * flow^2))
+  
+  return(preds)
+}
+
+predFlow <- getPredictionsFlow(toSave$mcmc, everyNIters = 2)
+
+```
+
+#### Plot flow predictions phiT_pT_cohort_flow
+```{r}
+ggplot(predFlow, aes(flow, predPhi, group = iter)) +
+  geom_line(alpha = 0.025) +
+  facet_grid(season ~ cohort)
+
+# ggplot(predFlow %>% filter(season ==1, cohort == 6), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.5) +
+#   facet_grid(cohort ~ season)
+# 
+# ggplot(predFlow %>% filter(cohort == 3), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.1) +
+#   facet_wrap( ~ season)
+# 
+# ggplot(predFlow %>% filter(season ==1), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.1) +
+#   facet_wrap(~ cohort)
+
+```
+
+### Model phiT_pT_cohort_flowCohort
+Flow effects vary by cohort  
+
+#### Set up and run model
+```{r phiT_pT_cohort_flowCohort}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
+if (rerunSurivalModels) {
+
+  y <- eh$eh
+  nCohorts <- nrow(unique(eh$cohorts))
+  nSeasons <- nrow(unique(eh$seasons))
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
+  
+  hmm.phiT_pT_cohort_flowCohort <- nimbleCode({
+    delta[1] <- 1                    # Pr(alive t = 1) = 1
+    delta[2] <- 0                    # Pr(dead t = 1) = 0
+    
+    for (i in 1:N){
+      for (t in 1:(T-1)){ # loop over time
+        logit(phi[t,i]) <- 
+          betaInt +
+          betaPhi[t,cohort[i]] + 
+          betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+          betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
+           # prior survival
+        
+        gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
+        gamma[1,2,t,i] <- 1 - phi[t,i]     # Pr(alive t -> dead t+1)
+        gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1)
+        gamma[2,2,t,i] <- 1              # Pr(dead t -> dead t+1)
+        
+        logit(p[t,i]) <- betaP[t,cohort[i]]             # prior detection
+        omega[1,1,t,i] <- 1 - p[t,i]       # Pr(alive t -> non-detected t)
+        omega[1,2,t,i] <- p[t,i]           # Pr(alive t -> detected t)
+        omega[2,1,t,i] <- 1              # Pr(dead t -> non-detected t)
+        omega[2,2,t,i] <- 0              # Pr(dead t -> detected t)
+      }
+    }
+    
+    betaInt ~ dnorm(0,1)
+    
+    for (c in 1:nCohorts){
+      # mean values
+      betaPhiCohort[c] ~ dnorm(0,1)
+      betaPCohort[c] ~ dnorm(0,1)
+      for (t in 1:(T-1)){ 
+        betaPhi[t,c] ~ dnorm(betaPhiCohort[c], 1)
+        betaP[t,c] ~ dnorm(betaPCohort[c], 1)
+      }
+    }
+    
+    # back-transform for examining output
+    for (c in 1:nCohorts){
+        betaPhiCohortOut[c] <- 1/(1 + exp(-betaPhiCohort[c]))
+        betaPCohortOut[c] <- 1/(1 + exp(-betaPCohort[c]))
+      for (t in 1:(T-1)){ 
+        betaPhiOut[t,c] <- 1/(1 + exp(-betaPhi[t,c]))
+        betaPOut[t,c] <- 1/(1 + exp(-betaP[t,c])) 
+      }
+    }
+    
+    for (s in 1:nSeasons){
+      for (c in 1:nCohorts){
+        betaFlow[1,s,c] ~ dnorm(0, 1)
+        betaFlow[2,s,c] ~ dnorm(0, 1)
+      }   
+    }
+    
+    # likelihood
+    for (i in 1:N){
+      z[i,first[i]] ~ dcat(delta[1:2])
+      for (j in (first[i]+1):(last[i])){
+        z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
+        y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
+      }
+    }
+  })
+    
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+  
+  myConstants <- list(N = nrow(y), 
+                       T = ncol(y), 
+                       first = first,
+                       last = last,
+                       cohort = cohort, 
+                       nCohorts = nCohorts,
+                       season = seasonArray, #eh$seasons$season,
+                       flow = eh$flow
+                       )
+  
+  myData <- list(y = y + 1)
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  
+  zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
+  
+  initialValues <- function() list(
+    betaInt = rnorm(1, 0, 1),
+    phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    p =   array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    z = zInitsNA,
+    betaPhi = array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+    betaP =   array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+    betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
+    betaPCohort =   array(runif(nCohorts, 0, 1),c(nCohorts)),
+    betaFlow = array(rnorm(2 * 4 * nCohorts, 0, 1), c(2, 4, nCohorts))
+  )
+  
+  parametersToSave <- c("betaInt", 
+                        "betaPhi", "betaP", "betaPhiCohort", "betaPCohort",
+                        "betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", 
+                        "betaFlow")  
+  nIter <- 20000
+  nBurnin <- 10000
+  nChains <- 2
+  thinRate <- 5
+  
+  start = Sys.time()
+  
+  Rmodel <- nimbleModel(
+    code = hmm.phiT_pT_cohort_flowCohort, 
+    constants = myConstants,
+    data = myData,              
+    inits = initialValues(),
+    calculate = FALSE
+  )
+  conf <- configureMCMC(
+    Rmodel,
+    monitors = parametersToSave
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT_cohort_flowCohort <- runMCMC(
+    Cmcmc, 
+    niter = nIter, 
+    nburnin = nBurnin, 
+    thin = thinRate, 
+    nchains = nChains
+  )
+  
+  end <- Sys.time()
+  
+  elapsed_phiT_pT_cohort_flowCohort <- end - start
+  toSave <- list(
+    mcmc = mcmc.phiT_pT_cohort_flowCohort, 
+    elapsed = elapsed_phiT_pT_cohort_flowCohort,
+    name = "phiT_pT_cohort_flowCohort",
+    myConstants = myConstants, 
+    nIter = nIter, 
+    nBurnin = nBurnin,
+    thinRate = thinRate, 
+    nSeasons = nSeasons, 
+    nCohorts = nCohorts,
+    nChains = nChains
+  )
+  save(toSave, file = paste0('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohort_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohort_mostRecent.RData')
+} else {
+  load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohort_mostRecent.RData')
+}
+# could consider forward algo to speed up convergence (https://oliviergimenez.github.io/banana-book/hmmcapturerecapture.html#nimble-implementation-1)
+
+if(plotMCMCOutput) {
+
+  #MCMCsummary(object = mcmc.phiT_pT_cohort_flow, round = 2)
+  #MCMCplot(object = mcmc.phiT_pT_cohort_flow, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaFlow")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = c("betaPCohortOut"))
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiCohortOut"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaFlow"),
+            pdf = FALSE, 
+            priors = priors)
+}
+
+# run more iterations, if necessary
+# nIterAdd <- 5000
+# Cmcmc$run(nIterAdd, reset = FALSE)
+# more_samples <- as.matrix(Cmcmc$mvSamples)
+# 
+# MCMCtrace(object = more_samples,
+#           #ISB = FALSE,
+#           #exact = TRUE, 
+#           params = c("betaFlow"),
+#           pdf = FALSE, 
+#           priors = priors)
+
+```
+
+#### Get flow effect estimates
+Flow effects vary across cohorts
+```{r}
+   #     betaInt +
+   #     betaPhi[t,cohort[i]] + 
+   #     betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+   #     betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
+
+# load current flow model
+#load("C:/Users/bletcher/OneDrive - DOI/projects/westBrook-book/models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flow_2022-05-12 10.RData")
+
+getPredictionsFlowCohort <- function(toSave, everyNIters = 10, flowStep = 0.5){
+
+  mcmc <- toSave$mcmc
+  ## betaInt
+  predictorsBetaInt <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters)
+  )
+  for(i in 1:nrow(predictorsBetaInt)){
+    predictorsBetaInt$betaInt[i] <- mcmc$chain1[[ predictorsBetaInt[i, "iter"], "betaInt" ]]
+  }
+  
+  
+  ## betaFlow
+  predictorsBetaFlow <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    season = 1:toSave$nSeasons,
+    cohort = 1:toSave$nCohorts
+  )
+  
+  for(i in 1:nrow(predictorsBetaFlow)){
+    predictorsBetaFlow$betaFlow1[i] <- mcmc$chain1[[predictorsBetaFlow[i, "iter"], 
+                                                   paste0("betaFlow[1, ", predictorsBetaFlow[i, "season"],
+                                                          ", ",           predictorsBetaFlow[i, "cohort"],
+                                                          "]")
+                                                  ]]
+    predictorsBetaFlow$betaFlow2[i] <- mcmc$chain1[[predictorsBetaFlow[i, "iter"], 
+                                                   paste0("betaFlow[2, ", predictorsBetaFlow[i, "season"],
+                                                          ", ",           predictorsBetaFlow[i, "cohort"],
+                                                          "]")
+                                                  ]]
+  }
+  
+  ## betaPhi
+  predictorsBetaPhi <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    cohort = 1:toSave$nCohorts
+  )
+  
+  # this step is very slow for some reason......
+  for(i in 1:nrow(predictorsBetaPhi)){
+    predictorsBetaPhi$betaPhi[i] <- mcmc$chain1[[predictorsBetaPhi[i, "iter"], 
+                                                   paste0("betaPhiCohort[", predictorsBetaPhi[i, "cohort"],
+                                                          "]")
+                                                ]]
+  }
+
+  predictorsAll <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    cohort = 1:toSave$nCohorts,
+    season = 1:toSave$nSeasons,
+    flow = seq(-1.5, 1.5, flowStep)
+  )
+  
+  preds <- predictorsAll %>%
+    left_join(predictorsBetaInt) %>%
+    left_join(predictorsBetaFlow) %>%
+    left_join(predictorsBetaPhi) %>%
+    mutate(predPhi = plogis(betaInt + betaPhi + betaFlow1 * flow + betaFlow2 * flow^2))
+  
+  return(preds)
+}
+
+predFlowCohort <- getPredictionsFlowCohort(toSave, everyNIters = 2)
+
+```
+
+#### Plot flow predictions phiT_pT_cohort_flowCohort
+```{r}
+ggplot(predFlowCohort, aes(flow, predPhi, group = iter)) +
+  geom_line(alpha = 0.025) +
+  facet_grid(season ~ cohort)
+
+# ggplot(predFlowCohort %>% filter(season ==1, cohort == 6), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.5) +
+#   facet_grid(cohort ~ season)
+# 
+# ggplot(predFlowCohort %>% filter(cohort == 3), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.1) +
+#   facet_wrap( ~ season)
+# 
+# ggplot(predFlowCohort %>% filter(season ==1), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.1) +
+#   facet_wrap(~ cohort)
+
+```
+
+### Model phiT_pT_cohort_flowCohortHier
+Flow effects vary by cohort, hierarchical across cohorts  
+
+#### Set up and run model
+```{r phiT_pT_cohort_flowCohortHier}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html
+if (rerunSurivalModels) {
+
+  y <- eh$eh
+  nCohorts <- nrow(unique(eh$cohorts))
+  nSeasons <- nrow(unique(eh$seasons))
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
+  
+  hmm.phiT_pT_cohort_flowCohortHier <- nimbleCode({
+    delta[1] <- 1                    # Pr(alive t = 1) = 1
+    delta[2] <- 0                    # Pr(dead t = 1) = 0
+    
+    for (i in 1:N){
+      for (t in 1:(T-1)){ # loop over time
+        logit(phi[t,i]) <- 
+          betaInt +
+          betaPhi[t,cohort[i]] + 
+          betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+          betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
+           # prior survival
+        
+        gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
+        gamma[1,2,t,i] <- 1 - phi[t,i]     # Pr(alive t -> dead t+1)
+        gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1)
+        gamma[2,2,t,i] <- 1              # Pr(dead t -> dead t+1)
+        
+        logit(p[t,i]) <- betaP[t,cohort[i]]             # prior detection
+        omega[1,1,t,i] <- 1 - p[t,i]       # Pr(alive t -> non-detected t)
+        omega[1,2,t,i] <- p[t,i]           # Pr(alive t -> detected t)
+        omega[2,1,t,i] <- 1              # Pr(dead t -> non-detected t)
+        omega[2,2,t,i] <- 0              # Pr(dead t -> detected t)
+      }
+    }
+    
+    betaInt ~ dnorm(0,1)
+    betaFlowTop[1] ~ dnorm(0,0.1) # to 0.1
+    betaFlowTop[2] ~ dnorm(0,0.1)
+    
+    for (c in 1:nCohorts){
+      # mean values
+      betaPhiCohort[c] ~ dnorm(0,1)
+      betaPCohort[c] ~ dnorm(0,1)
+      betaFlowCohort[1,c] ~ dnorm(betaFlowTop[1],1)
+      betaFlowCohort[2,c] ~ dnorm(betaFlowTop[2],1)
+      for (t in 1:(T-1)){ 
+        betaPhi[t,c] ~ dnorm(betaPhiCohort[c],1)
+        betaP[t,c] ~ dnorm(betaPCohort[c],1)
+      }
+    }
+    
+    # back-transform for examining output
+    for (c in 1:nCohorts){
+        betaPhiCohortOut[c] <- 1/(1 + exp(-betaPhiCohort[c]))
+        betaPCohortOut[c] <- 1/(1 + exp(-betaPCohort[c]))
+      for (t in 1:(T-1)){ 
+        betaPhiOut[t,c] <- 1/(1 + exp(-betaPhi[t,c]))
+        betaPOut[t,c] <- 1/(1 + exp(-betaP[t,c])) 
+      }
+    }
+    
+    for (s in 1:nSeasons){
+      for (c in 1:nCohorts){
+        betaFlow[1,s,c] ~ dnorm(betaFlowCohort[1,c],1)
+        betaFlow[2,s,c] ~ dnorm(betaFlowCohort[2,c],1)
+      }   
+    }
+    
+    # likelihood
+    for (i in 1:N){
+      z[i,first[i]] ~ dcat(delta[1:2])
+      for (j in (first[i]+1):(last[i])){
+        z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
+        y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
+      }
+    }
+  })
+    
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+  
+  myConstants <- list(N = nrow(y), 
+                       T = ncol(y), 
+                       first = first,
+                       last = last,
+                       cohort = cohort, 
+                       nCohorts = nCohorts,
+                       season = seasonArray, #eh$seasons$season,
+                       flow = eh$flow
+                       )
+  
+  myData <- list(y = y + 1)
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  
+  zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
+  
+  initialValues <- function() list(
+    betaInt = rnorm(1, 0, 1),
+    phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    p =   array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+    z = zInitsNA,
+    betaPhi = array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+    betaP =   array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+    betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
+    betaPCohort =   array(runif(nCohorts, 0, 1),c(nCohorts)),
+    betaFlow = array(rnorm(2 * 4 * nCohorts, 0, 1), c(2, 4, nCohorts)),
+    betaFlowCohort = array(rnorm(2 * nCohorts, 0, 1), c(2, nCohorts)),
+    betaFlowTop = rnorm(2, 0, 1)
+  )
+  
+  parametersToSave <- c("betaInt", 
+                        "betaPhi", "betaP", "betaPhiCohort", "betaPCohort",
+                        "betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", 
+                        "betaFlow",
+                        "betaFlowCohort", "betaFlowTop")  
+  nIter <- 20000 #30000
+  nBurnin <- 10000 #15000
+  nChains <- 2
+  thinRate <- 5
+  
+  start = Sys.time()
+  
+  Rmodel <- nimbleModel(
+    code = hmm.phiT_pT_cohort_flowCohortHier, 
+    constants = myConstants,
+    data = myData,              
+    inits = initialValues(),
+    calculate = FALSE
+  )
+  conf <- configureMCMC(
+    Rmodel,
+    monitors = parametersToSave
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT_cohort_flowCohortHier <- runMCMC(
+    Cmcmc, 
+    niter = nIter, 
+    nburnin = nBurnin, 
+    thin = thinRate, 
+    nchains = nChains
+  )
+  
+  end <- Sys.time()
+  
+  elapsed_phiT_pT_cohort_flowCohortHier <- end - start
+  toSave <- list(
+    mcmc = mcmc.phiT_pT_cohort_flowCohortHier, 
+    elapsed = elapsed_phiT_pT_cohort_flowCohortHier,
+    name = "phiT_pT_cohort_flowCohortHier",
+    myConstants = myConstants, 
+    nIter = nIter, 
+    nBurnin = nBurnin,
+    thinRate = thinRate, 
+    nSeasons = nSeasons, 
+    nCohorts = nCohorts,
+    nChains = nChains
+  )
+  save(toSave, file = paste0('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHier_', substr(end,1,13), '.RData'))
+  save(toSave, file = './models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHier_mostRecent.RData')
+} else {
+  load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHier_mostRecent.RData')
+}
+# could consider forward algo to speed up convergence (https://oliviergimenez.github.io/banana-book/hmmcapturerecapture.html#nimble-implementation-1)
+
+if(plotMCMCOutput) {
+
+  #MCMCsummary(object = mcmc.phiT_pT_cohort_flowHier, round = 2)
+  #MCMCplot(object = mcmc.phiT_pT_cohort_flowHier, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaFlowTop")
+  MCMCplot(object = toSave$mcmc, params = "betaFlow")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohort"))
+  MCMCplot(object = toSave$mcmc, params = c("betaPCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = c("betaFlowCohort"))
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaFlowTop"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiCohortOut"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaFlow"),
+            pdf = FALSE, 
+            priors = priors)
+}
+
+# run more iterations, if necessary
+# nIterAdd <- 5000
+# Cmcmc$run(nIterAdd, reset = FALSE)
+# more_samples <- as.matrix(Cmcmc$mvSamples)
+# 
+# MCMCtrace(object = more_samples,
+#           #ISB = FALSE,
+#           #exact = TRUE, 
+#           params = c("betaFlow"),
+#           pdf = FALSE, 
+#           priors = priors)
+
+```
+
+#### Get flow effect estimates
+Flow effects vary across cohorts - hierarchical
+```{r}
+   #     betaInt +
+   #     betaPhi[t,cohort[i]] + 
+   #     betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+   #     betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
+
+load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHier_mostRecent.RData')
+predFlowCohortHier <- getPredictionsFlowCohort(toSave, everyNIters = 2)
+
+```
+
+#### Plot predictions
+```{r}
+ggplot(predFlowCohortHier, aes(flow, predPhi, group = iter)) +
+  geom_line(alpha = 0.025) +
+  facet_grid(season ~ cohort)
+
+# ggplot(predFlowCohortHier %>% filter(season ==1, cohort == 6), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.5) +
+#   facet_grid(cohort ~ season)
+# 
+# ggplot(predFlowCohortHier %>% filter(cohort == 3), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.1) +
+#   facet_wrap( ~ season)
+# 
+# ggplot(predFlowCohortHier %>% filter(season ==3), aes(flow, predPhi, group = iter)) +
+  # geom_line(alpha = 0.1) +
+  # facet_wrap(~ cohort)
+
+```
+
+#### BetaflowTop predictions
+```{r}
+
+getPredictionsFlowTop <- function(toSave, everyNIters = 10, flowStep = 0.5){
+
+  mcmc <- toSave$mcmc
+  
+  ## betaFlow
+  predictorsBetaFlowTop <- expand.grid(
+    iter = seq(1, dim(mcmc$chain1)[1], everyNIters),
+    var = 1:2,
+     flow = seq(-1.5, 1.5, flowStep)
+  )
+  
+  for(i in 1:nrow(predictorsBetaFlowTop)){
+    predictorsBetaFlowTop$betaFlowTop1[i] <- mcmc$chain1[[predictorsBetaFlowTop[i, "iter"], 
+                                                         1
+                                                        ]]
+    predictorsBetaFlowTop$betaFlowTop2[i] <- mcmc$chain1[[predictorsBetaFlowTop[i, "iter"], 
+                                                         2
+                                                        ]]
+  }
+
+  preds <- predictorsBetaFlowTop %>%
+    mutate(predPhi = plogis(betaFlowTop1 * flow + betaFlowTop2 * flow * flow))
+  
+  return(preds)
+}
+
+predBetaFlowTop <- getPredictionsFlowTop(toSave, everyNIters = 10)
+
+ggplot(predBetaFlowTop, aes(flow, predPhi, group = iter)) +
+  geom_line() #+
+  #facet_wrap(~iter)
+
+ggplot(predBetaFlowTop, aes(betaFlowTop1, betaFlowTop2)) +
+  geom_point()
+```
+
+### Model phiT_pT_cohort_flowCohortHierCJS
+Flow effects vary by cohort, hierarchical across cohorts 
+Same as previous model, but using nimble Ecology to run models  
+
+#### Set up and run model
+```{r phiT_pT_cohort_flowCohortHierCJS}
+if (rerunSurivalModels) {
+  
+  y <- eh$eh
+  (nCohorts <- nrow(unique(eh$cohorts)))
+  (nSeasons <- nrow(unique(eh$seasons)))
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
+  
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
+  
+  myConstants <- list(N = nrow(y), 
+                      T = ncol(y), 
+                      first = first,
+                      last = last,
+                      cohort = cohort, 
+                      nCohorts = nCohorts,
+                      season = seasonArray, #eh$seasons$season,
+                      flow = eh$flow,
+                      ## DT changes:
+                      ## this is used by both the dCJS and dDHMM distributions
+                      length = last - first + 1
+                      )
+  
+  ## DT changes:
+  myData <- list(yCJS = y,    ## data for CJS distribution
+                 y = y + 1)   ## data for DHMM distribution
+  
+  
+  initialValues <- function() list(
+                                  betaInt = rnorm(1, 0, 1),
+                                  ## DT change:
+                                  ## don't give phi and p initial values;
+                                  ## they're deterministic nodes, so they'll be calculated
+                                  ## in terms of other variables.  Also, when I made changes to these
+                                  ## in the code, these (unnecessary) initial values were the wrong sizes
+                                  ##phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+                                  ##p =   array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+                                  z = zInitsNA,
+                                  betaPhi = array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+                                  betaP =   array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+                                  betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
+                                  betaPCohort =   array(runif(nCohorts, 0, 1),c(nCohorts)),
+                                  betaFlow = array(rnorm(2 * 4 * nCohorts, 0, 1), c(2, 4, nCohorts)),
+                                  betaFlowCohort = array(rnorm(2 * nCohorts, 0, 1), c(2, nCohorts)),
+                                  betaFlowTop = rnorm(2, 0, 1)
+                              )
+  
+  
+  ## if you change this FALSE to TRUE
+  ## this makes the dataset smaller - only 200 observations,
+  ## for quicker testing
+  if(FALSE) {
+      newN <- 200
+      oldN <- dim(y)[1]
+      set.seed(0)
+      indToKeep <- sample(1:oldN, size = newN, replace = FALSE)
+  }
+  
+  ## this removes the very last observation,
+  ## since first[2376] = T = 12, which is not allowed
+  ## to have the first observation occur on the final sampling period
+  ## for either CJS or DHMM distributions
+  if(TRUE) {
+      indToKeep <- which(first < 12)
+      newN <- length(indToKeep)
+  }
+  
+  myConstants <- list(
+      N = newN,
+      T = myConstants$T,
+      first = myConstants$first[indToKeep],
+      last = myConstants$last[indToKeep],
+      cohort = myConstants$cohort[indToKeep],
+      nCohorts = myConstants$nCohorts,
+      season = myConstants$season,
+      flow = myConstants$flow[indToKeep,],
+      length = myConstants$length[indToKeep]
+  )
+  
+  myData <- list(
+      yCJS = myData$yCJS[indToKeep,],
+      y = myData$y[indToKeep,]
+  )
+  
+  zInitsNA <- zInitsNA[indToKeep,]
+  
+  
+  ## code using CJS distribution
+  hmm.phiT_pT_cohort_flowCohortHierCJS <- nimbleCode({
+      ## DT changes:
+      ##delta[1] <- 1                    # Pr(alive t = 1) = 1
+      ##delta[2] <- 0                    # Pr(dead t = 1) = 0
+      ##
+      for (i in 1:N){
+          for (t in 1:(T-1)){ # loop over time
+              logit(phi[t,i]) <- 
+                  betaInt +
+                  betaPhi[t,cohort[i]] + 
+                  betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+                  betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
+          }
+          ## DT changes:
+          ## time t = first[i]:
+          ## note this first value of p[] is not acually used by the dCJS distribution,
+          ## but we include it for correctness
+          p[first[i],i] <- 1
+          ## time t > first[i]:
+          for(t in (first[i]+1):last[i]) {
+              ## DT changes:
+              ## note the indexing on betaP:
+              logit(p[t,i]) <- betaP[t-1,cohort[i]]             # prior detection
+          }
+      }
+      ##    
+      betaInt ~ dnorm(0,1)
+      betaFlowTop[1] ~ dnorm(0,1)
+      betaFlowTop[2] ~ dnorm(0,1)
+      ##    
+      for (c in 1:nCohorts){
+          # mean values
+          betaPhiCohort[c] ~ dnorm(0,1)
+          betaPCohort[c] ~ dnorm(0,1)
+          betaFlowCohort[1,c] ~ dnorm(betaFlowTop[1],1)
+          betaFlowCohort[2,c] ~ dnorm(betaFlowTop[2],1)
+          for (t in 1:(T-1)){ 
+              betaPhi[t,c] ~ dnorm(betaPhiCohort[c],1)
+              betaP[t,c] ~ dnorm(betaPCohort[c],1)
+          }
+      }
+      ##    
+      # back-transform for examining output
+      for (c in 1:nCohorts){
+          betaPhiCohortOut[c] <- 1/(1 + exp(-betaPhiCohort[c]))
+          betaPCohortOut[c] <- 1/(1 + exp(-betaPCohort[c]))
+          for (t in 1:(T-1)){ 
+              betaPhiOut[t,c] <- 1/(1 + exp(-betaPhi[t,c]))
+              betaPOut[t,c] <- 1/(1 + exp(-betaP[t,c])) 
+          }
+      }
+      ##    
+      for (s in 1:nSeasons){
+          for (c in 1:nCohorts){
+              betaFlow[1,s,c] ~ dnorm(betaFlowCohort[1,c],1)
+              betaFlow[2,s,c] ~ dnorm(betaFlowCohort[2,c],1)
+          }   
+      }
+      ##    
+      # likelihood
+      for (i in 1:N){
+          ## DT changes:
+          ##z[i,first[i]] ~ dcat(delta[1:2])
+          ##for (j in (first[i]+1):(last[i])){
+          ##    z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
+          ##    y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
+          ##}
+          yCJS[i,first[i]:last[i]] ~ dCJS_vv(probSurvive = phi[first[i]:last[i], i],
+                                             probCapture = p[first[i]:last[i], i],
+                                             len = length[i])
+      }
+  })
+  
+  set.seed(0)
+  
+  system.time(
+      Rmodel <- nimbleModel(
+          code = hmm.phiT_pT_cohort_flowCohortHierCJS,
+          constants = myConstants,
+          data = myData,              
+          inits = initialValues(),
+          calculate = FALSE
+      )
+  )
+  
+  Rmodel$calculate()
+  ## latent state (200 ind): -2847.746
+  ## dCJS_vv (200 individuals): -1199.098
+  ## dCJS_vv (all but last observation): -1217.127
+  
+  
+  parametersToSave <- c("betaInt", 
+                        "betaPhi", "betaP", "betaPhiCohort", "betaPCohort",
+                        "betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", 
+                        "betaFlow",
+                        "betaFlowCohort", "betaFlowTop")  
+  
+  nIter <- 20000 #30000
+  nBurnin <- 10000 #15000
+  nChains <- 2
+  thinRate <- 5
+  
+  start = Sys.time()
+  
+  system.time(
+      conf <- configureMCMC(
+          Rmodel,
+          monitors = parametersToSave
+      )
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT_cohort_flowCohortHierCJS <- runMCMC(
+      Cmcmc, 
+      niter = nIter, 
+      nburnin = nBurnin, 
+      thin = thinRate, 
+      nchains = nChains
+  )
+  
+  end <- Sys.time()
+  
+  elapsed_phiT_pT_cohort_flowCohortHierCJS <- end - start
+  toSave <- list(
+      mcmc = mcmc.phiT_pT_cohort_flowCohortHierCJS, 
+      elapsed = elapsed_phiT_pT_cohort_flowCohortHierCJS,
+      name = "phiT_pT_cohort_flowCohortHierCJS",
+      myConstants = myConstants, 
+      nIter = nIter, 
+      nBurnin = nBurnin,
+      thinRate = thinRate, 
+      nSeasons = nSeasons, 
+      nCohorts = nCohorts,
+      nChains = nChains
+  )
+  
+    save(toSave, file = paste0('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHierCJS_', substr(end,1,13), '.RData'))
+    save(toSave, file = './models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHierCJS_mostRecent.RData')
+} else {
+  load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHierCJS_mostRecent.RData')
+}
+
+if(plotMCMCOutput) {
+
+  #MCMCsummary(object = mcmc.phiT_pT_cohort_flowHier, round = 2)
+  #MCMCplot(object = mcmc.phiT_pT_cohort_flowHier, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaFlowTop")
+  MCMCplot(object = toSave$mcmc, params = "betaFlow")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohort"))
+  MCMCplot(object = toSave$mcmc, params = c("betaPCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = c("betaFlowCohort"))
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaFlowTop"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiCohortOut"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaFlow"),
+            pdf = FALSE, 
+            priors = priors)
+}
+
+```
+
+#### Get flow effect estimates
+Flow effects vary across cohorts - hierarchical
+```{r}
+   #     betaInt +
+   #     betaPhi[t,cohort[i]] + 
+   #     betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+   #     betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
+
+load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHierCJS_mostRecent.RData')
+predFlowCohortHierCJS <- getPredictionsFlowCohort(toSave, everyNIters = 2)
+
+```
+
+#### Plot predictions
+```{r}
+ggplot(predFlowCohortHierCJS, aes(flow, predPhi, group = iter)) +
+  geom_line(alpha = 0.025) +
+  facet_grid(season ~ cohort)
+
+# ggplot(predFlowCohortHier %>% filter(season ==1, cohort == 6), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.5) +
+#   facet_grid(cohort ~ season)
+# 
+# ggplot(predFlowCohortHier %>% filter(cohort == 3), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.1) +
+#   facet_wrap( ~ season)
+# 
+# ggplot(predFlowCohortHier %>% filter(season ==3), aes(flow, predPhi, group = iter)) +
+  # geom_line(alpha = 0.1) +
+  # facet_wrap(~ cohort)
+
+```
+
+#### BetaflowTop predictions
+```{r}
+
+predBetaFlowTopCJS <- getPredictionsFlowTop(toSave, everyNIters = 10)
+
+ggplot(predBetaFlowTopCJS, aes(flow, predPhi, group = iter)) +
+  geom_line() #+
+  #facet_wrap(~iter)
+
+ggplot(predBetaFlowTopCJS, aes(betaFlowTop1, betaFlowTop2)) +
+  geom_point()
+```
+
+### Model phiT_pT_cohort_flowCohortHierDHMM
+Flow effects vary by cohort, hierarchical across cohorts 
+Using nimble Ecology to run multistate models  
+
+#### Set up and run model
+```{r phiT_pT_cohort_flowCohortHierDHMM}
+if (rerunSurivalModels) {
+  
+  y <- eh$eh
+  (nCohorts <- nrow(unique(eh$cohorts)))
+  (nSeasons <- nrow(unique(eh$seasons)))
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
+  
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
+  
+  myConstants <- list(N = nrow(y), 
+                      T = ncol(y), 
+                      first = first,
+                      last = last,
+                      cohort = cohort, 
+                      nCohorts = nCohorts,
+                      season = seasonArray, #eh$seasons$season,
+                      flow = eh$flow,
+                      ## DT changes:
+                      ## this is used by both the dCJS and dDHMM distributions
+                      length = last - first + 1
+                      )
+  
+  ## DT changes:
+  myData <- list(yCJS = y,    ## data for CJS distribution
+                 y = y + 1)   ## data for DHMM distribution
+  
+  
+  initialValues <- function() list(
+                                  betaInt = rnorm(1, 0, 1),
+                                  ## DT change:
+                                  ## don't give phi and p initial values;
+                                  ## they're deterministic nodes, so they'll be calculated
+                                  ## in terms of other variables.  Also, when I made changes to these
+                                  ## in the code, these (unnecessary) initial values were the wrong sizes
+                                  ##phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+                                  ##p =   array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)),
+                                  z = zInitsNA,
+                                  betaPhi = array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+                                  betaP =   array(runif((myConstants$T - 1) * nCohorts, 0, 1),c((myConstants$T - 1), nCohorts)),
+                                  betaPhiCohort = array(runif(nCohorts, 0, 1),c(nCohorts)),
+                                  betaPCohort =   array(runif(nCohorts, 0, 1),c(nCohorts)),
+                                  betaFlow = array(rnorm(2 * 4 * nCohorts, 0, 1), c(2, 4, nCohorts)),
+                                  betaFlowCohort = array(rnorm(2 * nCohorts, 0, 1), c(2, nCohorts)),
+                                  betaFlowTop = rnorm(2, 0, 1)
+                              )
+  
+  
+  ## if you change this FALSE to TRUE
+  ## this makes the dataset smaller - only 200 observations,
+  ## for quicker testing
+  if(FALSE) {
+      newN <- 200
+      oldN <- dim(y)[1]
+      set.seed(0)
+      indToKeep <- sample(1:oldN, size = newN, replace = FALSE)
+  }
+  
+  ## this removes the very last observation,
+  ## since first[2376] = T = 12, which is not allowed
+  ## to have the first observation occur on the final sampling period
+  ## for either CJS or DHMM distributions
+  if(TRUE) {
+      indToKeep <- which(first < 12)
+      newN <- length(indToKeep)
+  }
+  
+  myConstants <- list(
+      N = newN,
+      T = myConstants$T,
+      first = myConstants$first[indToKeep],
+      last = myConstants$last[indToKeep],
+      cohort = myConstants$cohort[indToKeep],
+      nCohorts = myConstants$nCohorts,
+      season = myConstants$season,
+      flow = myConstants$flow[indToKeep,],
+      length = myConstants$length[indToKeep]
+  )
+  
+  myData <- list(
+      yCJS = myData$yCJS[indToKeep,],
+      y = myData$y[indToKeep,]
+  )
+  
+  zInitsNA <- zInitsNA[indToKeep,]
+  
+  ## model code using DHMMo distribution
+  hmm.phiT_pT_cohort_flowCohortHierDHMM <- nimbleCode({
+      delta[1] <- 1                    # Pr(alive t = 1) = 1
+      delta[2] <- 0                    # Pr(dead t = 1) = 0
+      ##
+      for (i in 1:N){
+          for (t in 1:(T-1)){ # loop over time
+              logit(phi[t,i]) <- 
+                  betaInt +
+                  betaPhi[t,cohort[i]] + 
+                  betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+                  betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
+              # prior survival
+              ##
+              gamma[1,1,t,i] <- phi[t,i]         # Pr(alive t -> alive t+1)
+              gamma[1,2,t,i] <- 1 - phi[t,i]     # Pr(alive t -> dead t+1)
+              gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1)
+              gamma[2,2,t,i] <- 1              # Pr(dead t -> dead t+1)
+              ##            
+              ## DT changes:
+              ## definition of omega is moved below, to make it
+              ## correctly condition on the first (positive) observation
+              ##logit(p[t,i]) <- betaP[t,cohort[i]]             # prior detection
+              ##omega[1,1,t,i] <- 1 - p[t,i]       # Pr(alive t -> non-detected t)
+              ##omega[1,2,t,i] <- p[t,i]           # Pr(alive t -> detected t)
+              ##omega[2,1,t,i] <- 1              # Pr(dead t -> non-detected t)
+              ##omega[2,2,t,i] <- 0              # Pr(dead t -> detected t)
+          }
+          ## DT changes:
+          ## need to pad the gamma matrix with an extra t=T row, to ensure it's
+          ## always a matrix.  This values are never actually used (except maybe for internal checking of row sums = 1),
+          ## but defining them is necessary.
+          gamma[1,1,T,i] <- 0
+          gamma[1,2,T,i] <- 1
+          gamma[2,1,T,i] <- 0
+          gamma[2,2,T,i] <- 1
+          ## DT changes:
+          ## time period t = first[i]: guaranteed detection:
+          omega[1,1,first[i],i] <- 0       # Pr(alive t -> non-detected t)
+          omega[1,2,first[i],i] <- 1           # Pr(alive t -> detected t)
+          omega[2,1,first[i],i] <- 1              # Pr(dead t -> non-detected t)
+          omega[2,2,first[i],i] <- 0              # Pr(dead t -> detected t)
+          ## DT changes:
+          ## time t > first[i]:
+          for(t in (first[i]+1):last[i]) {
+              logit(p[t,i]) <- betaP[t-1,cohort[i]]             # prior detection
+              omega[1,1,t,i] <- 1 - p[t,i]       # Pr(alive t -> non-detected t)
+              omega[1,2,t,i] <- p[t,i]           # Pr(alive t -> detected t)
+              omega[2,1,t,i] <- 1              # Pr(dead t -> non-detected t)
+              omega[2,2,t,i] <- 0              # Pr(dead t -> detected t)
+          }
+      }
+      ##    
+      betaInt ~ dnorm(0,1)
+      betaFlowTop[1] ~ dnorm(0,1)
+      betaFlowTop[2] ~ dnorm(0,1)
+      ##    
+      for (c in 1:nCohorts){
+          # mean values
+          betaPhiCohort[c] ~ dnorm(0,1)
+          betaPCohort[c] ~ dnorm(0,1)
+          betaFlowCohort[1,c] ~ dnorm(betaFlowTop[1],1)
+          betaFlowCohort[2,c] ~ dnorm(betaFlowTop[2],1)
+          for (t in 1:(T-1)){ 
+              betaPhi[t,c] ~ dnorm(betaPhiCohort[c],1)
+              betaP[t,c] ~ dnorm(betaPCohort[c],1)
+          }
+      }
+      ##    
+      # back-transform for examining output
+      for (c in 1:nCohorts){
+          betaPhiCohortOut[c] <- 1/(1 + exp(-betaPhiCohort[c]))
+          betaPCohortOut[c] <- 1/(1 + exp(-betaPCohort[c]))
+          for (t in 1:(T-1)){ 
+              betaPhiOut[t,c] <- 1/(1 + exp(-betaPhi[t,c]))
+              betaPOut[t,c] <- 1/(1 + exp(-betaP[t,c])) 
+          }
+      }
+      ##    
+      for (s in 1:nSeasons){
+          for (c in 1:nCohorts){
+              betaFlow[1,s,c] ~ dnorm(betaFlowCohort[1,c],1)
+              betaFlow[2,s,c] ~ dnorm(betaFlowCohort[2,c],1)
+          }   
+      }
+      ##    
+      # likelihood
+      for (i in 1:N){
+          ## DT changes:
+          ##z[i,first[i]] ~ dcat(delta[1:2])
+          ##for (j in (first[i]+1):(last[i])){
+          ##    z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i])
+          ##    y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i])
+          ##}
+          y[i,first[i]:last[i]] ~ dDHMMo(init = delta[1:2],
+                                         probTrans = gamma[1:2, 1:2, first[i]:last[i], i],
+                                         probObs = omega[1:2, 1:2, first[i]:last[i], i],
+                                         len = length[i],
+                                         checkRowSums = 1)
+      }
+  })
+  
+  set.seed(0)
+
+  ## you'll get warnings that the data 'yCJS' is not used, and the 'z' initial
+  ## values are not in the model.  Those don't cause any problems,
+  ## and let us use the same myData and initialValue() for both models.
+  system.time(
+      Rmodel <- nimbleModel(
+          code = hmm.phiT_pT_cohort_flowCohortHierDHMM,
+          constants = myConstants,
+          data = myData,              
+          inits = initialValues(),
+          calculate = FALSE
+      )
+  )
+  
+  Rmodel$calculate()
+  ## latent state: -29141.62
+  ## latent state (200 ind): -2847.746
+  ## dDHMMo (200 ind): -1199.098 (same as CJS)
+  ## dDHMMo (all but last observation): -1217.127 (same as CJS)
+  
+  parametersToSave <- c("betaInt", 
+                        "betaPhi", "betaP", "betaPhiCohort", "betaPCohort",
+                        "betaPhiOut", "betaPOut", "betaPhiCohortOut", "betaPCohortOut", 
+                        "betaFlow",
+                        "betaFlowCohort", "betaFlowTop")  
+  
+  nIter <- 20000 #30000
+  nBurnin <- 10000 #15000
+  nChains <- 2
+  thinRate <- 5
+  
+  start = Sys.time()
+  
+  system.time(
+      conf <- configureMCMC(
+          Rmodel,
+          monitors = parametersToSave
+      )
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT_cohort_flowCohortHierDHMM <- runMCMC(
+      Cmcmc, 
+      niter = nIter, 
+      nburnin = nBurnin, 
+      thin = thinRate, 
+      nchains = nChains
+  )
+  
+  end <- Sys.time()
+  elapsed_phiT_pT_cohort_flowCohortHierDHMM <- end - start
+  toSave <- list(
+      mcmc = mcmc.phiT_pT_cohort_flowCohortHierDHMM, 
+      elapsed = elapsed_phiT_pT_cohort_flowCohortHierDHMM,
+      name = "phiT_pT_cohort_flowCohortHierDHMM",
+      myConstants = myConstants, 
+      nIter = nIter, 
+      nBurnin = nBurnin,
+      thinRate = thinRate, 
+      nSeasons = nSeasons, 
+      nCohorts = nCohorts,
+      nChains = nChains
+  )
+  
+    save(toSave, file = paste0('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHierDHMM_', substr(end,1,13), '.RData'))
+    save(toSave, file = './models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHierDHMM_mostRecent.RData')
+} else {
+  load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHierDHMM_mostRecent.RData')
+}
+
+if(plotMCMCOutput) {
+
+  #MCMCsummary(object = mcmc.phiT_pT_cohort_flowHier, round = 2)
+  #MCMCplot(object = mcmc.phiT_pT_cohort_flowHier, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaFlowTop")
+  MCMCplot(object = toSave$mcmc, params = "betaFlow")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiCohort"))
+  MCMCplot(object = toSave$mcmc, params = c("betaPCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = c("betaFlowCohort"))
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaFlowTop"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiCohortOut"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaFlow"),
+            pdf = FALSE, 
+            priors = priors)
+}
+
+```
+
+#### Get flow effect estimates
+Flow effects vary across cohorts - hierarchical
+```{r}
+   #     betaInt +
+   #     betaPhi[t,cohort[i]] + 
+   #     betaFlow[1,season[t],cohort[i]] * flow[i,t] +
+   #     betaFlow[2,season[t],cohort[i]] * flow[i,t] * flow[i,t]
+
+load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_cohort_flowCohortHierDHMM_mostRecent.RData')
+predFlowCohortHierDHMM <- getPredictionsFlowCohort(toSave, everyNIters = 2)
+
+```
+
+#### Plot predictions
+```{r}
+ggplot(predFlowCohortHierDHMM, aes(flow, predPhi, group = iter)) +
+  geom_line(alpha = 0.025) +
+  facet_grid(season ~ cohort)
+
+# ggplot(predFlowCohortHier %>% filter(season ==1, cohort == 6), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.5) +
+#   facet_grid(cohort ~ season)
+# 
+# ggplot(predFlowCohortHier %>% filter(cohort == 3), aes(flow, predPhi, group = iter)) +
+#   geom_line(alpha = 0.1) +
+#   facet_wrap( ~ season)
+# 
+# ggplot(predFlowCohortHier %>% filter(season ==3), aes(flow, predPhi, group = iter)) +
+  # geom_line(alpha = 0.1) +
+  # facet_wrap(~ cohort)
+
+```
+
+#### BetaflowTop predictions
+```{r}
+
+predBetaFlowTopDHMM <- getPredictionsFlowTop(toSave, everyNIters = 10)
+
+ggplot(predBetaFlowTopDHMM, aes(flow, predPhi, group = iter)) +
+  geom_line() #+
+  #facet_wrap(~iter)
+
+ggplot(predBetaFlowTopDHMM, aes(betaFlowTop1, betaFlowTop2)) +
+  geom_point()
+```
+
+
+
+### Compare models
+```{r compare models}
+
+#data.frame(model = c("(phi,p)",
+#                     "(phit,pt)"),
+#           WAIC = c(mcmc.phi_p, 
+#                    mcmc.phiT_pT))
+
+
+```
+
+
+<!-- ### Model phiT_pT_isYOY -->
+<!-- Add structure for isYOY. This was important for the integrated growth/survival model, but probably not relevant here since we are estimating phi and p for each ageInSamples -->
+<!-- ```{r phiT_pT_cohortisYOY} -->
+
+<!-- # Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/4_demo.html -->
+<!-- if (rerunSurivalModels) { -->
+
+<!--   y <- eh$eh -->
+<!--   nSeasons <- nrow(unique(eh$seasons)) -->
+<!--   nCohorts <- nrow(unique(eh$cohorts)) -->
+
+<!--   hmm.phiT_pT_isYOY <- nimbleCode({ -->
+<!--     delta[1] <- 1                    # Pr(alive t = 1) = 1 -->
+<!--     delta[2] <- 0                    # Pr(dead t = 1) = 0 -->
+
+<!--     for (i in 1:N){ -->
+<!--       for (t in 1:(T-1)){ # loop over time -->
+<!--         #logit(phi[t,i]) <- betaPhi[t,isYOY[i,t]]           # prior survival -->
+<!--         logit(phi[t,i]) <- betaPhi[t]    # prior survival -->
+<!--         gamma[1,1,t,i] <- phi[t,i]       # Pr(alive t -> alive t+1) -->
+<!--         gamma[1,2,t,i] <- 1 - phi[t,i]   # Pr(alive t -> dead t+1) -->
+<!--         gamma[2,1,t,i] <- 0              # Pr(dead t -> alive t+1) -->
+<!--         gamma[2,2,t,i] <- 1              # Pr(dead t -> dead t+1) -->
+
+<!--         logit(p[t,i]) <- betaP[t]        # prior detection -->
+<!--         omega[1,1,t,i] <- 1 - p[t,i]     # Pr(alive t -> non-detected t) -->
+<!--         omega[1,2,t,i] <- p[t,i]         # Pr(alive t -> detected t) -->
+<!--         omega[2,1,t,i] <- 1              # Pr(dead t -> non-detected t) -->
+<!--         omega[2,2,t,i] <- 0              # Pr(dead t -> detected t) -->
+<!--       } -->
+<!--     } -->
+
+<!--     for (y in 1:2){ -->
+<!--       # mean values -->
+<!--       betaPhiIsYOY[y] ~ dnorm(0,1) -->
+<!--       betaPIsYOY[y] ~ dnorm(0,1) -->
+<!--     } -->
+
+<!--     # isYOY = 1 -->
+<!--     for (t in 1:3){  -->
+<!--       betaPhi[t] ~ dnorm(betaPhiIsYOY[1], 1) -->
+<!--       betaP[t] ~ dnorm(betaPIsYOY[1], 1) -->
+<!--     } -->
+<!--     # isYOY = 2, older fish -->
+<!--     for (t in 4:(T-1)){  -->
+<!--       betaPhi[t] ~ dnorm(betaPhiIsYOY[2], 1) -->
+<!--       betaP[t] ~ dnorm(betaPIsYOY[2], 1) -->
+<!--     } -->
+
+<!--     # Backtransform for output -->
+<!--     for (y in 1:2){ -->
+<!--         betaPhiIsYOYOut[y] <- 1/(1 + exp(-betaPhiIsYOY[y])) -->
+<!--         betaPIsYOYOut[y] <- 1/(1 + exp(-betaPIsYOY[y])) -->
+<!--     } -->
+<!--     for (t in 1:(T-1)){  -->
+<!--       betaPhiOut[t] <- 1/(1 + exp(-betaPhi[t])) -->
+<!--       betaPOut[t] <- 1/(1 + exp(-betaP[t]))  -->
+<!--     } -->
+
+
+<!--     # likelihood -->
+<!--     for (i in 1:N){ -->
+<!--       z[i,first[i]] ~ dcat(delta[1:2]) -->
+<!--       for (j in (first[i]+1):last[i]){ -->
+<!--         z[i,j] ~ dcat(gamma[z[i,j-1], 1:2, j-1, i]) -->
+<!--         y[i,j] ~ dcat(omega[z[i,j], 1:2, j-1, i]) -->
+<!--       } -->
+<!--     } -->
+<!--   }) -->
+
+<!--   first <- eh$first #apply(y, 1, function(x) min(which(x !=0))) -->
+<!--   last <- eh$last -->
+
+<!--   myConstants <- list(N = nrow(y), -->
+<!--                       T = ncol(y), -->
+<!--                       first = first, -->
+<!--                       last = last, -->
+<!--                       isYOY = eh$isYOY -->
+<!--                       ) -->
+
+<!--   myData <- list(y = y + 1) -->
+
+<!--   zinits <- y + 1 # non-detection -> alive -->
+<!--   zinits[zinits == 2] <- 1 # dead -> alive -->
+<!--   zInitsNA <- ifelse(is.na(eh$isYOY), NA, 1) -->
+
+<!--   initialValues <- function() list( -->
+<!--     phi = array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)), -->
+<!--     p =   array(runif((myConstants$T - 1) * myConstants$N, 0, 1),c((myConstants$T - 1), myConstants$N)), -->
+<!--     z = zInitsNA, -->
+<!--     betaPhi = array(runif((myConstants$T - 1), 0, 1),c((myConstants$T - 1))), -->
+<!--     betaP = array(runif((myConstants$T - 1), 0, 1),c((myConstants$T - 1))), -->
+<!--     betaPhiIsYOY = array(runif(2, 0, 1),c(2)), -->
+<!--     betaPIsYOY = array(runif(2, 0, 1),c(2)) -->
+<!--   ) -->
+
+<!--   parametersToSave <- c("betaPhiOut", "betaPOut", "betaPIsYOYOut", "betaPhiIsYOYOut") -->
+<!--   nIter <- 5000 -->
+<!--   nBurnin <- 1000 -->
+<!--   nChains <- 2 -->
+<!--   thinRate <- 5 -->
+
+<!--   start <- Sys.time() -->
+<!--   Rmodel <- nimbleModel( -->
+<!--     code = hmm.phiT_pT_isYOY, -->
+<!--     constants = myConstants, -->
+<!--     data = myData, -->
+<!--     inits = initialValues(), -->
+<!--     calculate = FALSE -->
+<!--   ) -->
+<!--   conf <- configureMCMC( -->
+<!--     Rmodel, -->
+<!--     monitors = parametersToSave -->
+<!--   ) -->
+
+<!--   Rmcmc <- buildMCMC(conf, useConjugacy = FALSE) -->
+<!--   Cmodel <- compileNimble(Rmodel) -->
+<!--   Cmcmc <- compileNimble(Rmcmc, project = Rmodel) -->
+
+<!--   mcmc.phiT_pT_isYOY <- runMCMC( -->
+<!--     Cmcmc, -->
+<!--     niter = nIter, -->
+<!--     nburnin = nBurnin, -->
+<!--     thin = thinRate, -->
+<!--     nchains = nChains -->
+<!--   ) -->
+
+<!--   end <- Sys.time() -->
+<!--   elapsed_phiT_pT_isYOY <- end - start -->
+
+<!--     toSave <- list( -->
+<!--       mcmc = mcmc.phiT_pT_isYOY, -->
+<!--       elapsed = elapsed_phiT_pT_isYOY, -->
+<!--       myConstants = myConstants, -->
+<!--       nIter = nIter, -->
+<!--       nBurnin = nBurnin, -->
+<!--       thinRate = thinRate, -->
+<!--       nSeasons = nSeasons, -->
+<!--       nCohorts = nCohorts, -->
+<!--       nChains = nChains -->
+<!--     ) -->
+<!--   save(toSave, file = paste0('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_isYOY_', substr(end,1,13), '.RData')) -->
+<!--   save(toSave, file = './models/cmrFlowOB/runsOut/mcmc_phiT_pT_isYOY_mostRecent.RData') -->
+<!-- } else { -->
+<!--   load('./models/cmrFlowOB/runsOut/mcmc_phiT_pT_isYOY_mostRecent.RData') -->
+<!-- } -->
+
+<!-- if(plotMCMCOutput) { -->
+<!--   MCMCsummary(object = toSave$mcmc, round = 2) -->
+
+<!--   MCMCplot(object = toSave$mcmc, params = "betaPhiIsYOYOut") -->
+<!--   MCMCplot(object = toSave$mcmc, params = "betaPhiOut") -->
+<!--   MCMCplot(object = toSave$mcmc, params = "betaPOut")# -->
+
+<!--   priors <-  runif(toSave$nIter * toSave$nChains, 0, 1) -->
+<!--   MCMCtrace(object = toSave$mcmc, -->
+<!--             #ISB = FALSE, -->
+<!--             #exact = TRUE, -->
+<!--             params = c("betaPhiOut"), -->
+<!--             pdf = FALSE, -->
+<!--             priors = priors) -->
+
+<!-- } -->
+
+<!-- ``` -->
+
+<!--chapter:end:01-modelsCMR_Flow_OB.Rmd-->
+
+## Flow effects on survival (phi) models {#modelCMR_Flow_4rivers}
+
+The goal of this modelling exercise is to evaluate the effect of new tributary-specific stream flow estimates on survival of brook trout and brown trout. We will compare survival across the WB and tributaries with flow input data as 1) single flow estimate for all locations (historical approach) and 2) hindcasted flows for each tributary based on new tributary-specific flows which are available since 2000.
+
+The goal is to find the best structure for the survival model, then compare survival estimates with tributary-specific flow to estimates with common flow across locations.
+
+Structure options include
+[species, cohort, season, isYOY, flow, flow^2]
+
+
+```{r globalModelsNimble, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r librariesModelsNimble, echo = FALSE}
+library(getWBData)
+library(lubridate)
+library(kableExtra)
+library(GGally)
+library(nimble)
+library(nimbleEcology)
+library(MCMCvis)
+library(tidyverse)
+```
+
+```{r}
+rerunSurivalModels <- FALSE
+plotMCMCOutput <- TRUE
+plotTraces <- TRUE
+outputFileForXiaowei <- FALSE
+```
+
+
+```{r}
+#all the data
+#load('./models/cmrFlow4rivers/dataOut/eh_2002200320042005200620072008200920102011201220132014.RData')
+load('./models/cmrFlow4rivers/dataOut/eh_200620072008.RData')
+
+#250 fish from each cohort
+#load('./models/cmrFlow4rivers/dataOut/eh_2002200320042005200620072008200920102011201220132014_n250.RData')
+#250 fish from each of 3 cohorts
+#load('./models/cmrFlow4rivers/dataOut/eh_200620072008_n250.RData')
+
+table(eh$data$cohort, eh$data$river)
+
+if (outputFileForXiaowei){
+  # output for Xiaowei
+  for (i in seq_along(eh)){
+    write.csv(eh[[i]], file = paste0('./models/cmrFlow4rivers/dataOut/', 
+                                     names(eh)[i], 
+                                     ".csv"), 
+              row.names = F)
+  }
+}
+```
+
+
+### Model phiT_pT_psiT  
+Phi and p and psi vary by time    
+Includes transition probabilities among rivers  
+Added cohort (c) indexing to psi's  
+Fixed c,t indexing, change to t,c  
+Added ilogis() to betaPhi  
+Added hier vars on psi  
+
+#### Set up and run model
+```{r phiT_pT_psiT_River2}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/5_demo.html
+if (rerunSurivalModels) {
+  
+  y <- eh$eh * eh$riverN
+  (nCohorts <- nrow(unique(eh$cohorts)))
+  (nSeasons <- nrow(unique(eh$seasons)))
+  (nRivers <- length(unique(eh$data$riverN)))# rivers 1:4
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
+             
+
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
+  
+  #  For 3 states, we are using 4
+  # -------------------------------------------------
+  # Parameters for 3 sites (A, B, C):
+  # phiA: survival probability site A
+  # phiB: survival probability site B
+  # phiC: survival probability site B
+  # psiAA: movement probability from site A to site A (reference)
+  # psiAB = psiA[1]: movement probability from site A to site B
+  # psiAC = psiA[2]: movement probability from site A to site C 
+  # psiBA = psiB[1]: movement probability from site B to site A
+  # psiBB: movement probability from site B to site B (reference)
+  # psiBC = psiB[2]: movement probability from site B to site C
+  # psiCA = psiC[1]: movement probability from site C to site A
+  # psiCB = psiC[2]: movement probability from site C to site B
+  # psiCC: movement probability from site C to site C (reference)
+  # pA: recapture probability site A
+  # pB: recapture probability site B
+  # pC: recapture probability site C
+  # -------------------------------------------------
+  # States (z):
+  # 1 alive at A
+  # 2 alive at B
+  # 3 alive at C
+  # 4 alive at D
+  # 5 dead
+  # Observations (y):  
+  # 1 not seen
+  # 2 seen at A 
+  # 3 seen at B
+  # 4 seen at C
+  # 5 seen at D
+  # river names: c("west brook" = 1, "wb jimmy" = 2, "wb mitchell" = 3, "wb obear" = 4)
+  # -------------------------------------------------
+  
+  ## model code using DHMMo distribution
+  hmm.phiT_pT_psiT_DHMM <- nimbleCode({
+      delta[1] <- 0.4                  # Pr(alive t = 1 and in river 1) = 0.4
+      delta[2] <- 0.2
+      delta[3] <- 0.2
+      delta[4] <- 0.2
+      delta[5] <- 0                    # Pr(dead t = 1) = 0
+  
+      for (r in 1:nRivers){
+          betaPhiRiver[r] ~ dnorm(0,1)
+          betaPRiver[r] ~ dnorm(0,1)
+          
+          betaPsiRiverA[r] ~ dnorm(0,1)
+          betaPsiRiverB[r] ~ dnorm(0,1)
+          betaPsiRiverC[r] ~ dnorm(0,1)
+          betaPsiRiverD[r] ~ dnorm(0,1)
+          
+          betaPhiRiverOut[r] <- 1/(1 + exp(-betaPhiRiver[r]))
+          betaPRiverOut[r] <- 1/(1 + exp(-betaPRiver[r]))
+          
+          betaPsiRiverOutA[r] <- 1/(1 + exp(-betaPsiRiverA[r]))
+          betaPsiRiverOutB[r] <- 1/(1 + exp(-betaPsiRiverB[r]))
+          betaPsiRiverOutC[r] <- 1/(1 + exp(-betaPsiRiverC[r]))
+          betaPsiRiverOutD[r] <- 1/(1 + exp(-betaPsiRiverD[r]))
+          for (c in 1:nCohorts){
+              betaPhiRiverCohort[r,c] ~ dnorm(betaPhiRiver[r],1)
+              betaPRiverCohort[r,c] ~ dnorm(betaPRiver[r],1)
+              
+              betaPsiRiverCohortA[r,c] ~ dnorm(betaPsiRiverA[r],1)
+              betaPsiRiverCohortB[r,c] ~ dnorm(betaPsiRiverB[r],1)
+              betaPsiRiverCohortC[r,c] ~ dnorm(betaPsiRiverC[r],1)
+              betaPsiRiverCohortD[r,c] ~ dnorm(betaPsiRiverD[r],1)
+              
+              betaPhiRiverCohortOut[r,c] <- 1/(1 + exp(-betaPhiRiverCohort[r,c]))
+              betaPRiverCohortOut[r,c] <- 1/(1 + exp(-betaPRiverCohort[r,c]))
+              
+              betaPsiRiverCohortOutA[r,c] <- 1/(1 + exp(-betaPsiRiverCohortA[r,c]))
+              betaPsiRiverCohortOutB[r,c] <- 1/(1 + exp(-betaPsiRiverCohortB[r,c]))
+              betaPsiRiverCohortOutC[r,c] <- 1/(1 + exp(-betaPsiRiverCohortC[r,c]))
+              betaPsiRiverCohortOutD[r,c] <- 1/(1 + exp(-betaPsiRiverCohortD[r,c]))
+              for (t in 1:(T-1)){
+                  betaPhi[r,t,c] ~ dnorm(betaPhiRiverCohort[r,c],1)
+                  betaP[r,t,c] ~ dnorm(betaPRiverCohort[r,c],1)
+                  betaPhiOut[r,t,c] <- 1/(1 + exp(-betaPhi[r,t,c]))
+                  betaPOut[r,t,c] <- 1/(1 + exp(-betaP[r,t,c]))
+              }
+          }
+      }
+  
+      for (t in 1:(T-1)){ # loop over time
+        for (c in 1:nCohorts){
+          for (r in 1:(nRivers - 1)){
+              lpsiA[r,t,c] ~ dnorm(betaPsiRiverCohortA[r,c], sd = 1000) # sd too big??? could group by season
+              lpsiB[r,t,c] ~ dnorm(betaPsiRiverCohortB[r,c], sd = 1000)
+              lpsiC[r,t,c] ~ dnorm(betaPsiRiverCohortC[r,c], sd = 1000)
+              lpsiD[r,t,c] ~ dnorm(betaPsiRiverCohortD[r,c], sd = 1000)
+             
+              # constrain the transitions such that their sum is < 1
+              psiA[r,t,c] <- exp(lpsiA[r,t,c]) / (1 + exp(lpsiA[1,t,c]) + exp(lpsiA[2,t,c]) + exp(lpsiA[3,t,c]))
+              psiB[r,t,c] <- exp(lpsiB[r,t,c]) / (1 + exp(lpsiB[1,t,c]) + exp(lpsiB[2,t,c]) + exp(lpsiB[3,t,c]))
+              psiC[r,t,c] <- exp(lpsiC[r,t,c]) / (1 + exp(lpsiC[1,t,c]) + exp(lpsiC[2,t,c]) + exp(lpsiC[3,t,c]))
+              psiD[r,t,c] <- exp(lpsiD[r,t,c]) / (1 + exp(lpsiD[1,t,c]) + exp(lpsiD[2,t,c]) + exp(lpsiD[3,t,c]))
+          }
+         
+          # last transition probability
+          psiA[4,t,c] <- 1 - psiA[1,t,c] - psiA[2,t,c] - psiA[3,t,c]
+          psiB[4,t,c] <- 1 - psiB[1,t,c] - psiB[2,t,c] - psiB[3,t,c]
+          psiC[4,t,c] <- 1 - psiC[1,t,c] - psiC[2,t,c] - psiC[3,t,c]
+          psiD[4,t,c] <- 1 - psiD[1,t,c] - psiD[2,t,c] - psiD[3,t,c]
+       
+          
+          gamma[1,1,t,c] <- ilogit(betaPhi[1,t,c]) * psiA[1,t,c]
+          gamma[1,2,t,c] <- ilogit(betaPhi[1,t,c]) * psiA[2,t,c]
+          gamma[1,3,t,c] <- ilogit(betaPhi[1,t,c]) * psiA[3,t,c]
+          gamma[1,4,t,c] <- ilogit(betaPhi[1,t,c]) * psiA[4,t,c]
+          gamma[1,5,t,c] <- 1 - ilogit(betaPhi[1,t,c])
+          gamma[2,1,t,c] <- ilogit(betaPhi[2,t,c]) * psiB[1,t,c]
+          gamma[2,2,t,c] <- ilogit(betaPhi[2,t,c]) * psiB[2,t,c]
+          gamma[2,3,t,c] <- ilogit(betaPhi[2,t,c]) * psiB[3,t,c]
+          gamma[2,4,t,c] <- ilogit(betaPhi[2,t,c]) * psiB[4,t,c]
+          gamma[2,5,t,c] <- 1 - ilogit(betaPhi[2,t,c])
+          gamma[3,1,t,c] <- ilogit(betaPhi[3,t,c]) * psiC[1,t,c]
+          gamma[3,2,t,c] <- ilogit(betaPhi[3,t,c]) * psiC[2,t,c]
+          gamma[3,3,t,c] <- ilogit(betaPhi[3,t,c]) * psiC[3,t,c]
+          gamma[3,4,t,c] <- ilogit(betaPhi[3,t,c]) * psiC[4,t,c]
+          gamma[3,5,t,c] <- 1 - ilogit(betaPhi[3,t,c])
+          gamma[4,1,t,c] <- ilogit(betaPhi[4,t,c]) * psiD[1,t,c]
+          gamma[4,2,t,c] <- ilogit(betaPhi[4,t,c]) * psiD[2,t,c]
+          gamma[4,3,t,c] <- ilogit(betaPhi[4,t,c]) * psiD[3,t,c]
+          gamma[4,4,t,c] <- ilogit(betaPhi[4,t,c]) * psiD[4,t,c]
+          gamma[4,5,t,c] <- 1 - ilogit(betaPhi[4,t,c])
+          gamma[5,1,t,c] <- 0
+          gamma[5,2,t,c] <- 0
+          gamma[5,3,t,c] <- 0
+          gamma[5,4,t,c] <- 0
+          gamma[5,5,t,c] <- 1
+        }
+      }
+       
+      # gamma for the last occasion  
+      for (c in 1:nCohorts){
+          for (a in 1:(nRivers+1)){
+              for (b in 1:nRivers){
+                  gamma[a,b,T,c] <- 0
+              }  
+              gamma[a,5,T,c] <- 1
+          }
+      }
+       
+       
+      for (i in 1:N){ # loop over individuals
+          # omega for first obs      
+          omega[1,1,first[i],i] <- 0          # Pr(alive A t -> non-detected t)
+          omega[1,2,first[i],i] <- 1          # Pr(alive A t -> detected A t)
+          omega[1,3,first[i],i] <- 0          # Pr(alive A t -> detected B t)
+          omega[1,4,first[i],i] <- 0          # Pr(alive A t -> detected C t)
+          omega[1,5,first[i],i] <- 0          # Pr(alive A t -> detected D t)
+          omega[2,1,first[i],i] <- 0          # Pr(alive B t -> non-detected t)
+          omega[2,2,first[i],i] <- 0          # Pr(alive B t -> detected A t)
+          omega[2,3,first[i],i] <- 1          # Pr(alive B t -> detected B t)
+          omega[2,4,first[i],i] <- 0          # Pr(alive B t -> detected C t)
+          omega[2,5,first[i],i] <- 0          # Pr(alive B t -> detected C t)
+          omega[3,1,first[i],i] <- 0          # Pr(alive C t -> non-detected t)
+          omega[3,2,first[i],i] <- 0          # Pr(alive C t -> detected A t)
+          omega[3,3,first[i],i] <- 0          # Pr(alive C t -> detected B t)
+          omega[3,4,first[i],i] <- 1          # Pr(alive C t -> detected C t)
+          omega[3,5,first[i],i] <- 0          # Pr(alive C t -> detected C t)
+          omega[4,1,first[i],i] <- 0          # Pr(dead t -> non-detected t)
+          omega[4,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
+          omega[4,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
+          omega[4,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
+          omega[4,5,first[i],i] <- 1          # Pr(dead t -> detected C t)
+          omega[5,1,first[i],i] <- 1          # Pr(dead t -> non-detected t)
+          omega[5,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
+          omega[5,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
+          omega[5,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
+          omega[5,5,first[i],i] <- 0          # Pr(dead t -> detected D t)
+       
+         
+          ## DT changes:
+          ## time t > first[i]:
+          for(t in (first[i]+1):last[i]) {
+              logit(pA[t,i]) <- betaP[1,t-1,cohort[i]]
+              logit(pB[t,i]) <- betaP[2,t-1,cohort[i]]
+              logit(pC[t,i]) <- betaP[3,t-1,cohort[i]]
+              logit(pD[t,i]) <- betaP[4,t-1,cohort[i]]
+             
+              # probabilities of y(t) given z(t)
+              # omega[z, y, t, i]
+              
+              # z=1 = alive in River 1, z=2 = alive in River 2...z=5 = dead
+              # y=1 = unobserved, y=2 = observed in River 1, y=3 = observed in River 2, etc
+              
+              omega[1,1,t,i] <- 1 - pA[t,i]     # Pr(alive A t -> non-detected t)
+              omega[1,2,t,i] <- pA[t,i]         # Pr(alive A t -> detected A t)
+              omega[1,3,t,i] <- 0               # Pr(alive A t -> detected B t)
+              omega[1,4,t,i] <- 0               # Pr(alive A t -> detected C t)
+              omega[1,5,t,i] <- 0               # Pr(alive A t -> detected D t)
+              omega[2,1,t,i] <- 1 - pB[t,i]     # Pr(alive B t -> non-detected t)
+              omega[2,2,t,i] <- 0               # Pr(alive B t -> detected A t)
+              omega[2,3,t,i] <- pB[t,i]         # Pr(alive B t -> detected B t)
+              omega[2,4,t,i] <- 0               # Pr(alive B t -> detected C t)
+              omega[2,5,t,i] <- 0               # Pr(alive B t -> detected C t)
+              omega[3,1,t,i] <- 1 - pC[t,i]     # Pr(alive C t -> non-detected t)
+              omega[3,2,t,i] <- 0               # Pr(alive C t -> detected A t)
+              omega[3,3,t,i] <- 0               # Pr(alive C t -> detected B t)
+              omega[3,4,t,i] <- pC[t,i]         # Pr(alive C t -> detected C t)
+              omega[3,5,t,i] <- 0               # Pr(alive C t -> detected C t)
+              omega[4,1,t,i] <- 1 - pD[t,i]     # Pr(alive D t -> non-detected t))
+              omega[4,2,t,i] <- 0               # Pr(dead D t -> detected A t)
+              omega[4,3,t,i] <- 0               # Pr(dead D t -> detected B t)
+              omega[4,4,t,i] <- 0               # Pr(dead D t -> detected C t)
+              omega[4,5,t,i] <- pD[t,i]         # Pr(alive D t -> detected D t)
+              omega[5,1,t,i] <- 1               # Pr(dead t -> non-detected t)
+              omega[5,2,t,i] <- 0               # Pr(dead t -> detected A t)
+              omega[5,3,t,i] <- 0               # Pr(dead t -> detected B t)
+              omega[5,4,t,i] <- 0               # Pr(dead t -> detected C t)
+              omega[5,5,t,i] <- 0               # Pr(dead t -> detected D t)
+          }
+         
+      } # i loop
+  
+      for (i in 1:N){
+          y[i,first[i]:last[i]] ~ dDHMMo(init = delta[1:5],
+                                         probTrans = gamma[1:5, 1:5, first[i]:last[i], cohort[i]],
+                                         probObs =   omega[1:5, 1:5, first[i]:last[i], i],
+                                         len = length[i],
+                                         checkRowSums = 1)
+      }
+  
+  })
+  
+  ##
+  myConstants0 <- list(N = nrow(y),
+                       T = ncol(y),
+                       first = first,
+                       last = last,
+                       cohort = cohort,
+                       nCohorts = nCohorts,
+                       nRivers = nRivers,
+                       season = seasonArray,
+                       #                     flow = eh$flow,
+                       length = last - first + 1
+                       )
+  
+  ## DT changes:
+  myData0 <- list(###yCJS = eh$eh, #y,    ## data for CJS distribution
+      y = y + 1
+  )   ## data for DHMM distribution
+  
+    ## if you change this FALSE to TRUE
+  ## this makes the dataset smaller - only 200 observations,
+  ## for quicker testing
+  if(FALSE) {
+      newN <- 20
+      oldN <- dim(y)[1]
+      set.seed(0)
+      indToKeep <- sample(1:oldN, size = newN, replace = FALSE)
+  }
+  
+  ## this removes fish that were only observed on the very last observation
+  if(TRUE) {
+      indToKeep <- which(first < ncol(y))
+      newN <- length(indToKeep)
+  }
+  
+  myConstants <- list(
+      N = newN,
+      T = myConstants0$T,
+      first = myConstants0$first[indToKeep],
+      last = myConstants0$last[indToKeep],
+      nRivers = myConstants0$nRivers,
+      cohort = myConstants0$cohort[indToKeep],
+      nCohorts = myConstants0$nCohorts,
+      #      season = myConstants$season,
+      #      flow = myConstants$flow[indToKeep,],
+      length = myConstants0$length[indToKeep]
+  )
+  
+  myData <- list(
+      ##yCJS = myData0$yCJS[indToKeep,],
+      y = myData0$y[indToKeep,]
+  )
+  
+    initialValues <- function(){
+      list(
+          betaPhiRiver = array(runif(nRivers, 0, 1), c(nRivers)),
+          betaPhiRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
+          betaPhi = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
+          betaPRiver = array(runif(nRivers, 0, 1), c(nRivers)),
+          betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
+          betaP = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
+          lpsiA = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
+          lpsiB = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
+          lpsiC = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts)),
+          lpsiD = array(rnorm((nRivers - 1) * (myConstants$T - 1) * nCohorts, 0, 1), c((nRivers - 1), (myConstants$T - 1), nCohorts))
+          ####z = zInitsNA
+      )
+  }
+  
+  ###zInitsNA <- zInitsNA[indToKeep,]
+  
+  set.seed(0)
+  start = Sys.time()
+  ## you'll get warnings that the data 'yCJS' is not used, and the 'z' initial
+  ## values are not in the model.  Those don't cause any problems,
+  ## and let us use the same myData and initialValue() for both models.
+  system.time(
+      Rmodel <- nimbleModel(
+          code = hmm.phiT_pT_psiT_DHMM,
+          constants = myConstants,
+          data = myData,              
+          inits = initialValues(),
+          calculate = FALSE
+      )
+  )
+  
+  #Rmodel$calculate()
+  
+  parametersToSave <- c("betaPhi", "betaPhiRiver", "betaPhiRiverCohort", 
+                        "betaP",   "betaPRiver",   "betaPRiverCohort",
+                        "betaPhiOut", "betaPhiRiverOut", "betaPhiRiverCohortOut", 
+                        "betaPOut",   "betaPRiverOut",   "betaPRiverCohortOut",
+                        
+                        "psiA", "psiB", "psiC", "psiD",
+                        "betaPsiRiverOutA", "betaPsiRiverOutB", "betaPsiRiverOutC", "betaPsiRiverOutD",   
+                        "betaPsiRiverCohortOutA","betaPsiRiverCohortOutB","betaPsiRiverCohortOutC","betaPsiRiverCohortOutD"
+                        )
+  
+  nIter <- 10000 #30000
+  nBurnin <- 5000 #15000
+  nChains <- 2
+  thinRate <- 5
+  
+  system.time(
+      conf <- configureMCMC(
+          Rmodel,
+          monitors = parametersToSave
+      )
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT_psiT_DHMM <- runMCMC(
+      Cmcmc, 
+      niter = nIter, 
+      nburnin = nBurnin, 
+      thin = thinRate, 
+      nchains = nChains
+  )
+  
+  end <- Sys.time()
+  elapsed_phiT_pT_psiT_DHMM <- end - start
+  toSave <- list(
+      mcmc = mcmc.phiT_pT_psiT_DHMM, 
+      elapsed = elapsed_phiT_pT_psiT_DHMM,
+      name = "phiT_pT_psiT_DHMM",
+      myConstants = myConstants, 
+      nIter = nIter, 
+      nBurnin = nBurnin,
+      thinRate = thinRate, 
+      nSeasons = nSeasons, 
+      nCohorts = nCohorts,
+      nChains = nChains
+  )
+  
+    save(toSave, file = paste0('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_', substr(end,1,13), '.RData'))
+    save(toSave, file = './models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
+} else {
+  load('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_mostRecent.RData')
+}
+
+if(FALSE) {
+
+  #MCMCsummary(object = mcmc.phiT_pT_cohort_flowHier, round = 2)
+  #MCMCplot(object = mcmc.phiT_pT_cohort_flowHier, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPhiRiverOut")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiRiverCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = "betaPOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPRiverOut")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPRiverCohortOut"))
+  
+  #MCMCplot(object = toSave$mcmc, params = "betaPsiRiverOutA")# 
+  #MCMCplot(object = toSave$mcmc, params = c("betaPsiRiverCohortOutA"))
+  
+  #MCMCplot(object = toSave$mcmc, params = c("psiA"))
+  
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiRiverOut"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiRiverCohortOut"),
+            pdf = FALSE, 
+            priors = priors)
+
+}
+
+
+```
+
+### Model phiT_pT_psiT_dirch  
+Phi and p and psi vary by time    
+Includes transition probabilities among rivers  
+Added cohort (c) indexing to psi's  
+Fixed c,t indexing, change to t,c  
+Added ilogis() to betaPhi  
+Added hier vars on psi  
+Used dirchlet prior  
+
+#### Set up and run model
+```{r phiT_pT_psiT_River2_dirch}
+
+# Following https://oliviergimenez.github.io/bayesian-cr-workshop/worksheets/5_demo.html
+if (rerunSurivalModels) {
+  
+  y <- eh$eh * eh$riverN
+  (nCohorts <- nrow(unique(eh$cohorts)))
+  (nSeasons <- nrow(unique(eh$seasons)))
+  (nRivers <- length(unique(eh$data$riverN)))# rivers 1:4
+  seasonArray <- c(3,4,1,2,3,4,1,2,3,4,1,2)
+             
+
+  first <- eh$first #apply(y, 1, function(x) min(which(x !=0)))
+  last <- eh$last
+  cohort = ((eh$cohorts) - min(eh$cohorts) + 1)$cohort #can't be a data frame or tibble
+  
+  zinits <- y + 1 # non-detection -> alive
+  zinits[zinits == 2] <- 1 # dead -> alive
+  zInitsNA <- ifelse(is.na(eh$flow), NA, 1)
+  
+  # Proportion of fish in each river on the first observation
+  y1 <- y[,1]
+  deltaProps <- table(y1[y1>0]) / length(y1[y1>0])
+  
+  # alpha for the dirchlet prior
+  alpha <- c(1,1,1,1)
+
+  # fill in entries for dirchlet priors where a[r,,t,c] sums to 1 for any r,t,c combo
+  getDirchPriors <- function(nRivers,myConstants, nCohorts, alpha){
+    a = array(rep(0, nRivers * nRivers * (myConstants$T - 1) * nCohorts) , c(nRivers, nRivers, (myConstants$T - 1), nCohorts ))
+    for(r in 1:nRivers){
+      for(t in 1:(myConstants$T - 1)){
+        for (c in 1:nCohorts){
+          dirch <- rdirch(1, alpha)
+          for (r2 in 1:nRivers){
+            a[r,r2,t,c] <- dirch[r2]
+          }
+        }
+      }
+    }
+    return(a)
+  }
+  
+  #  For 3 states, we are using 4
+  # -------------------------------------------------
+  # Parameters for 3 sites (A, B, C):
+  # phiA: survival probability site A
+  # phiB: survival probability site B
+  # phiC: survival probability site B
+  # psiAA: movement probability from site A to site A (reference)
+  # psiAB = psiA[1]: movement probability from site A to site B
+  # psiAC = psiA[2]: movement probability from site A to site C 
+  # psiBA = psiB[1]: movement probability from site B to site A
+  # psiBB: movement probability from site B to site B (reference)
+  # psiBC = psiB[2]: movement probability from site B to site C
+  # psiCA = psiC[1]: movement probability from site C to site A
+  # psiCB = psiC[2]: movement probability from site C to site B
+  # psiCC: movement probability from site C to site C (reference)
+  # pA: recapture probability site A
+  # pB: recapture probability site B
+  # pC: recapture probability site C
+  # -------------------------------------------------
+  # States (z):
+  # 1 alive at A
+  # 2 alive at B
+  # 3 alive at C
+  # 4 alive at D
+  # 5 dead
+  # Observations (y):  
+  # 1 not seen
+  # 2 seen at A 
+  # 3 seen at B
+  # 4 seen at C
+  # 5 seen at D
+  # river names: c("west brook" = 1, "wb jimmy" = 2, "wb mitchell" = 3, "wb obear" = 4)
+  # -------------------------------------------------
+  
+  ## model code using DHMMo distribution
+  hmm.phiT_pT_psiT_DHMM_dirch <- nimbleCode({
+      # Initial distribution among rivers
+      delta[1] <- deltaProps[1]                  # Pr(alive t = 1 and in river 1) = 0.4
+      delta[2] <- deltaProps[2]
+      delta[3] <- deltaProps[3]
+      delta[4] <- deltaProps[4]
+      delta[5] <- 0                    # Pr(dead t = 1) = 0
+  
+      for (r in 1:nRivers){
+          betaPhiRiver[r] ~ dnorm(0,1)
+          betaPRiver[r] ~ dnorm(0,1)
+          
+          betaPhiRiverOut[r] <- ilogit(betaPhiRiver[r])
+          betaPRiverOut[r] <- ilogit(betaPRiver[r])
+          
+          for (c in 1:nCohorts){
+              betaPhiRiverCohort[r,c] ~ dnorm(betaPhiRiver[r],1)
+              betaPRiverCohort[r,c] ~ dnorm(betaPRiver[r],1)
+ 
+              betaPhiRiverCohortOut[r,c] <- ilogit(betaPhiRiverCohort[r,c])
+              betaPRiverCohortOut[r,c] <- ilogit(betaPRiverCohort[r,c])
+              for (t in 1:(T-1)){
+                  betaPhi[r,t,c] ~ dnorm(betaPhiRiverCohort[r,c],1)
+                  betaP[r,t,c] ~ dnorm(betaPRiverCohort[r,c],1)
+                  
+                  betaPhiOut[r,t,c] <- ilogit(betaPhi[r,t,c])
+                  betaPOut[r,t,c] <- ilogit(betaP[r,t,c])
+                  
+                  # move from river 'r' to one of river 1:nRivers
+                  # Nice description of effect of 'alpha' on probabilities:
+                  # https://stats.stackexchange.com/questions/244917/what-exactly-is-the-alpha-in-the-dirichlet-distribution
+                  psi[r,1:nRivers,t,c] ~ ddirch(alpha[1:nRivers])
+              }
+          }
+      }
+  
+      for (t in 1:(T-1)){ # loop over time
+        for (c in 1:nCohorts){
+
+          gamma[1,1,t,c] <- ilogit(betaPhi[1,t,c]) * psi[1,1,t,c]
+          gamma[1,2,t,c] <- ilogit(betaPhi[1,t,c]) * psi[1,2,t,c]
+          gamma[1,3,t,c] <- ilogit(betaPhi[1,t,c]) * psi[1,3,t,c]
+          gamma[1,4,t,c] <- ilogit(betaPhi[1,t,c]) * psi[1,4,t,c]
+          gamma[1,5,t,c] <- 1 - ilogit(betaPhi[1,t,c])
+          gamma[2,1,t,c] <- ilogit(betaPhi[2,t,c]) * psi[2,1,t,c]
+          gamma[2,2,t,c] <- ilogit(betaPhi[2,t,c]) * psi[2,2,t,c]
+          gamma[2,3,t,c] <- ilogit(betaPhi[2,t,c]) * psi[2,3,t,c]
+          gamma[2,4,t,c] <- ilogit(betaPhi[2,t,c]) * psi[2,4,t,c]
+          gamma[2,5,t,c] <- 1 - ilogit(betaPhi[2,t,c])
+          gamma[3,1,t,c] <- ilogit(betaPhi[3,t,c]) * psi[3,1,t,c]
+          gamma[3,2,t,c] <- ilogit(betaPhi[3,t,c]) * psi[3,2,t,c]
+          gamma[3,3,t,c] <- ilogit(betaPhi[3,t,c]) * psi[3,3,t,c]
+          gamma[3,4,t,c] <- ilogit(betaPhi[3,t,c]) * psi[3,4,t,c]
+          gamma[3,5,t,c] <- 1 - ilogit(betaPhi[3,t,c])
+          gamma[4,1,t,c] <- ilogit(betaPhi[4,t,c]) * psi[4,1,t,c]
+          gamma[4,2,t,c] <- ilogit(betaPhi[4,t,c]) * psi[4,2,t,c]
+          gamma[4,3,t,c] <- ilogit(betaPhi[4,t,c]) * psi[4,3,t,c]
+          gamma[4,4,t,c] <- ilogit(betaPhi[4,t,c]) * psi[4,4,t,c]
+          gamma[4,5,t,c] <- 1 - ilogit(betaPhi[4,t,c])
+          gamma[5,1,t,c] <- 0
+          gamma[5,2,t,c] <- 0
+          gamma[5,3,t,c] <- 0
+          gamma[5,4,t,c] <- 0
+          gamma[5,5,t,c] <- 1
+        }
+      }
+       
+      # gamma for the last occasion  
+      for (c in 1:nCohorts){
+          for (a in 1:(nRivers+1)){
+              for (b in 1:nRivers){
+                  gamma[a,b,T,c] <- 0
+              }  
+              gamma[a,5,T,c] <- 1
+          }
+      }
+       
+       
+      for (i in 1:N){ # loop over individuals
+          # omega for first obs      
+          omega[1,1,first[i],i] <- 0          # Pr(alive A t -> non-detected t)
+          omega[1,2,first[i],i] <- 1          # Pr(alive A t -> detected A t)
+          omega[1,3,first[i],i] <- 0          # Pr(alive A t -> detected B t)
+          omega[1,4,first[i],i] <- 0          # Pr(alive A t -> detected C t)
+          omega[1,5,first[i],i] <- 0          # Pr(alive A t -> detected D t)
+          omega[2,1,first[i],i] <- 0          # Pr(alive B t -> non-detected t)
+          omega[2,2,first[i],i] <- 0          # Pr(alive B t -> detected A t)
+          omega[2,3,first[i],i] <- 1          # Pr(alive B t -> detected B t)
+          omega[2,4,first[i],i] <- 0          # Pr(alive B t -> detected C t)
+          omega[2,5,first[i],i] <- 0          # Pr(alive B t -> detected C t)
+          omega[3,1,first[i],i] <- 0          # Pr(alive C t -> non-detected t)
+          omega[3,2,first[i],i] <- 0          # Pr(alive C t -> detected A t)
+          omega[3,3,first[i],i] <- 0          # Pr(alive C t -> detected B t)
+          omega[3,4,first[i],i] <- 1          # Pr(alive C t -> detected C t)
+          omega[3,5,first[i],i] <- 0          # Pr(alive C t -> detected C t)
+          omega[4,1,first[i],i] <- 0          # Pr(dead t -> non-detected t)
+          omega[4,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
+          omega[4,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
+          omega[4,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
+          omega[4,5,first[i],i] <- 1          # Pr(dead t -> detected C t)
+          omega[5,1,first[i],i] <- 1          # Pr(dead t -> non-detected t)
+          omega[5,2,first[i],i] <- 0          # Pr(dead t -> detected A t)
+          omega[5,3,first[i],i] <- 0          # Pr(dead t -> detected B t)
+          omega[5,4,first[i],i] <- 0          # Pr(dead t -> detected C t)
+          omega[5,5,first[i],i] <- 0          # Pr(dead t -> detected D t)
+       
+         
+          ## DT changes:
+          ## time t > first[i]:
+          for(t in (first[i]+1):last[i]) {
+              logit(pA[t,i]) <- betaP[1,t-1,cohort[i]]
+              logit(pB[t,i]) <- betaP[2,t-1,cohort[i]]
+              logit(pC[t,i]) <- betaP[3,t-1,cohort[i]]
+              logit(pD[t,i]) <- betaP[4,t-1,cohort[i]]
+             
+              # probabilities of y(t) given z(t)
+              # omega[z, y, t, i]
+              
+              # z=1 = alive in River 1, z=2 = alive in River 2...z=5 = dead
+              # y=1 = unobserved, y=2 = observed in River 1, y=3 = observed in River 2, etc
+              
+              omega[1,1,t,i] <- 1 - pA[t,i]     # Pr(alive A t -> non-detected t)
+              omega[1,2,t,i] <- pA[t,i]         # Pr(alive A t -> detected A t)
+              omega[1,3,t,i] <- 0               # Pr(alive A t -> detected B t)
+              omega[1,4,t,i] <- 0               # Pr(alive A t -> detected C t)
+              omega[1,5,t,i] <- 0               # Pr(alive A t -> detected D t)
+              omega[2,1,t,i] <- 1 - pB[t,i]     # Pr(alive B t -> non-detected t)
+              omega[2,2,t,i] <- 0               # Pr(alive B t -> detected A t)
+              omega[2,3,t,i] <- pB[t,i]         # Pr(alive B t -> detected B t)
+              omega[2,4,t,i] <- 0               # Pr(alive B t -> detected C t)
+              omega[2,5,t,i] <- 0               # Pr(alive B t -> detected C t)
+              omega[3,1,t,i] <- 1 - pC[t,i]     # Pr(alive C t -> non-detected t)
+              omega[3,2,t,i] <- 0               # Pr(alive C t -> detected A t)
+              omega[3,3,t,i] <- 0               # Pr(alive C t -> detected B t)
+              omega[3,4,t,i] <- pC[t,i]         # Pr(alive C t -> detected C t)
+              omega[3,5,t,i] <- 0               # Pr(alive C t -> detected C t)
+              omega[4,1,t,i] <- 1 - pD[t,i]     # Pr(alive D t -> non-detected t))
+              omega[4,2,t,i] <- 0               # Pr(dead D t -> detected A t)
+              omega[4,3,t,i] <- 0               # Pr(dead D t -> detected B t)
+              omega[4,4,t,i] <- 0               # Pr(dead D t -> detected C t)
+              omega[4,5,t,i] <- pD[t,i]         # Pr(alive D t -> detected D t)
+              omega[5,1,t,i] <- 1               # Pr(dead t -> non-detected t)
+              omega[5,2,t,i] <- 0               # Pr(dead t -> detected A t)
+              omega[5,3,t,i] <- 0               # Pr(dead t -> detected B t)
+              omega[5,4,t,i] <- 0               # Pr(dead t -> detected C t)
+              omega[5,5,t,i] <- 0               # Pr(dead t -> detected D t)
+          }
+         
+      } # i loop
+  
+      for (i in 1:N){
+          y[i,first[i]:last[i]] ~ dDHMMo(init = delta[1:5],
+                                         probTrans = gamma[1:5, 1:5, first[i]:last[i], cohort[i]],
+                                         probObs =   omega[1:5, 1:5, first[i]:last[i], i],
+                                         len = length[i],
+                                         checkRowSums = 1)
+      }
+  
+  })
+  
+  ##
+  myConstants0 <- list(N = nrow(y),
+                       T = ncol(y),
+                       first = first,
+                       last = last,
+                       cohort = cohort,
+                       nCohorts = nCohorts,
+                       nRivers = nRivers,
+                       season = seasonArray,
+                       #                     flow = eh$flow,
+                       length = last - first + 1,
+                       alpha = alpha,
+                       deltaProps = deltaProps
+                       )
+  
+  ## DT changes:
+  myData0 <- list(###yCJS = eh$eh, #y,    ## data for CJS distribution
+      y = y + 1
+  )   ## data for DHMM distribution
+  
+    ## if you change this FALSE to TRUE
+  ## this makes the dataset smaller - only 200 observations,
+  ## for quicker testing
+  if(FALSE) {
+      newN <- 20
+      oldN <- dim(y)[1]
+      set.seed(0)
+      indToKeep <- sample(1:oldN, size = newN, replace = FALSE)
+  }
+  
+  ## this removes fish that were only observed on the very last observation
+  if(TRUE) {
+      indToKeep <- which(first < ncol(y))
+      newN <- length(indToKeep)
+  }
+  
+  myConstants <- list(
+      N = newN,
+      T = myConstants0$T,
+      first = myConstants0$first[indToKeep],
+      last = myConstants0$last[indToKeep],
+      nRivers = myConstants0$nRivers,
+      cohort = myConstants0$cohort[indToKeep],
+      nCohorts = myConstants0$nCohorts,
+      #      season = myConstants$season,
+      #      flow = myConstants$flow[indToKeep,],
+      length = myConstants0$length[indToKeep],
+      alpha = myConstants0$alpha,
+      deltaProps = deltaProps
+  )
+  
+  myData <- list(
+      ##yCJS = myData0$yCJS[indToKeep,],
+      y = myData0$y[indToKeep,]
+  )
+  
+    initialValues <- function(){
+      list(
+          betaPhiRiver = array(runif(nRivers, 0, 1), c(nRivers)),
+          betaPhiRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
+          betaPhi = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
+          
+          betaPRiver = array(runif(nRivers, 0, 1), c(nRivers)),
+          betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
+          betaP = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
+          
+          psi = getDirchPriors(nRivers,myConstants, nCohorts, alpha)
+      )
+  }
+
+  set.seed(0)
+  start = Sys.time()
+  
+  ## you'll get warnings that the data 'yCJS' is not used, and the 'z' initial
+  ## values are not in the model.  Those don't cause any problems,
+  ## and let us use the same myData and initialValue() for both models.
+  system.time(
+      Rmodel <- nimbleModel(
+          code = hmm.phiT_pT_psiT_DHMM_dirch,
+          constants = myConstants,
+          data = myData,              
+          inits = initialValues(),
+          calculate = FALSE
+      )
+  )
+  
+  #Rmodel$calculate()
+  
+  parametersToSave <- c("betaPhi", "betaPhiRiver", "betaPhiRiverCohort", 
+                        "betaP",   "betaPRiver",   "betaPRiverCohort",
+                        "betaPhiOut", "betaPhiRiverOut", "betaPhiRiverCohortOut", 
+                        "betaPOut",   "betaPRiverOut",   "betaPRiverCohortOut",
+                        
+                        "psi"
+                        )
+  
+  nIter <- 5000 #30000
+  nBurnin <- 2500 #15000
+  nChains <- 2
+  thinRate <- 5
+  
+  rm(conf, Rmcmc, Cmodel, Cmcmc) # so old versions don't run if there is an error in an earlier step
+  system.time(
+      conf <- configureMCMC(
+          Rmodel,
+          monitors = parametersToSave
+      )
+  )
+  
+  Rmcmc <- buildMCMC(conf, useConjugacy = FALSE)
+  Cmodel <- compileNimble(Rmodel)
+  Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+  
+  mcmc.phiT_pT_psiT_DHMM_dirch <- runMCMC(
+      Cmcmc, 
+      niter = nIter, 
+      nburnin = nBurnin, 
+      thin = thinRate, 
+      nchains = nChains
+  )
+  
+  end <- Sys.time()
+  elapsed_phiT_pT_psiT_DHMM_dirch <- end - start
+  toSave <- list(
+      mcmc = mcmc.phiT_pT_psiT_DHMM_dirch, 
+      elapsed = elapsed_phiT_pT_psiT_DHMM_dirch,
+      name = "phiT_pT_psiT_DHMM_dirch",
+      myConstants = myConstants, 
+      nIter = nIter, 
+      nBurnin = nBurnin,
+      thinRate = thinRate, 
+      nSeasons = nSeasons, 
+      nCohorts = nCohorts,
+      nChains = nChains
+  )
+  
+    save(toSave, file = paste0('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_dirch_', substr(end,1,13), '.RData'))
+    save(toSave, file = './models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_dirch_mostRecent.RData')
+} else {
+  load('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_dirch_mostRecent.RData')
+}
+
+if(plotMCMCOutput) {
+
+  #MCMCsummary(object = mcmc.phiT_pT_cohort_flowHier, round = 2)
+  #MCMCplot(object = mcmc.phiT_pT_cohort_flowHier, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPhiOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPhiRiverOut")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPhiRiverCohortOut"))
+  MCMCplot(object = toSave$mcmc, params = "betaPOut")
+  MCMCplot(object = toSave$mcmc, params = "betaPRiverOut")# 
+  MCMCplot(object = toSave$mcmc, params = c("betaPRiverCohortOut"))
+  
+  MCMCplot(object = toSave$mcmc, params = c("psi"))
+}
+
+if(plotTraces) {
+  priors <- rnorm(toSave$nIter * toSave$nChains, 0, 1/sqrt(.1))
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiRiverOut"),
+            pdf = FALSE, 
+            priors = priors)
+  
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE, 
+            params = c("betaPhiRiverCohortOut"),
+            pdf = FALSE, 
+            priors = priors)
+
+  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  MCMCtrace(object = toSave$mcmc,
+            #ISB = FALSE,
+            #exact = TRUE,
+            params = c("psi[1,1,1,1]"),
+            pdf = FALSE,
+            priors = priors)
+  
+}
+
+
+```
+
+
+
+
+
+
+
+
+
+<!--chapter:end:01-modelsCMR_Flow_4Rivers.Rmd-->
+
+# Final Words
+
+We have finished a nice book.
+
+<!--chapter:end:06-summary.Rmd-->
+
+`r if (knitr::is_html_output()) '
+# References {-}
+
+Some references related to the West Brook study. Will need to update and sort. (From Bens Mendelay, searched for "West brook" and deleted a few refs).  
+
+Grader, M., and Letcher, B. 2006. Diel and seasonal gut fullness and prey composition of Atlantic salmon parr in the west brook. J. Freshw. Ecol. 21(3): 503–517.  
+
+Armstrong, J.D., and Nislow, K.H. 2012. Modelling approaches for relating effects of change in river flow to populations of Atlantic salmon and brown trout. Fish. Manag. Ecol. 19(6): 527–536. doi:10.1111/j.1365-2400.2011.00835.x.  
+
+Letcher, B.H., Dubreuil, T.L., O’Donnell, M.J., Obedzinski, M., Griswold, K., and Nislow, K.H. 2004. Long-term consequences of variation in timing and manner of fry introduction on juvenile Atlantic salmon (Salmo salar) growth, survival, and life-history expression. Can. J. Fish. Aquat. Sci. 61(12): 2288–2301. doi:10.1139/f04-214.  
+
+Letcher, B.H., and Gries, G. 2003. Effects of life history variation on size and growth in stream-dwelling Atlantic salmon. J. Fish Biol. 62(1): 97–114. doi:10.1046/j.0022-1112.2003.00009.x.  
+
+Xu, C.L., Letcher, B.H., and Nislow, K.H. 2010. Size-dependent survival of brook trout Salvelinus fontinalis in summer: effects of water temperature and stream flow. J. Fish Biol. 76(10): 2342–2369. doi:10.1111/j.1095-8649.2010.02619.x.  
+
+O’Donnell, M.J., and Letcher, B.H. 2017. Implanting 8-mm passive integrated transponder tags into small Brook Trout: Effects on growth and survival in the laboratory. North Am. J. Fish. Manag. 37(3): 605–611. Taylor & Francis. doi:10.1080/02755947.2017.1307291.  
+
+Zydlewski, G.B., Horton, G.E., Dubreuil, T.L., Letcher, B.H., Casey, S., and Zydlewski, J. 2006. Remote Monitoring of Fish in Small Streams: a unified approach using PIT tags. Fisheries 31(10): 492–502. doi:10.1577/1548-8446(2006)31[492:RMOFIS]2.0.CO;2.  
+
+Sigourney, D.B., Letcher, B.H., Obedzinski, M., and Cunjak, R. a. 2013. Interactive effects of life history and season on size-dependent growth in juvenile Atlantic salmon. Ecol. Freshw. Fish 22(4): 495–507. doi:10.1111/eff.12042.  
+
+Letcher, B.H., Hocking, D.J., O’Neil, K., Whiteley, A.R., Nislow, K.H., and O’Donnell, M.J. 2016. A hierarchical model of daily stream temperature using air-water temperature synchronization, autocorrelation, and time lags. PeerJ 4: e1727. doi:10.7717/peerj.1727.  
+
+Horton, G.E., Dubreuil, T.L., and Letcher, B.H. 2007. A Model for Estimating Passive Integrated Transponder (PIT) Tag Antenna Efficiencies for Interval-Specific Emigration Rates. Trans. Am. Fish. Soc. 136(5): 1165–1176. doi:10.1577/T06-053.1.  
+
+Bassar, R.D., Letcher, B.H., Nislow, K.H., and Whiteley, A.R. 2016. Changes in seasonal climate outpace compensatory density-dependence in eastern brook trout. Glob. Chang. Biol.: 577–593. doi:10.1111/gcb.13135.  
+
+Letcher, B.H., Nislow, K.H., O’Donnell, M.J., Whiteley, A.R., Coombs, J.A., and Dubreuil, T.L. 2022. Cohort strength and body size in co-occurring salmonids in a small stream network: variation in space and time. Can. J. Fish. Aquat. Sci. 79(1): 133–147. doi:10.1139/cjfas-2020-0418.  
+
+Letcher, B.H., Coombs, J. a., and Nislow, K.H. 2011. Maintenance of phenotypic variation: repeatability, heritability and size-dependent processes in a wild brook trout population. Evol. Appl. 4(4): 602–615. doi:10.1111/j.1752-4571.2011.00184.x.  
+
+Letcher, B.H., Gries, G., and Juanes, F. 2002. Survival of Stream-Dwelling Atlantic Salmon: Effects of Life History Variation, Season, and Age. Trans. Am. Fish. Soc. 131(5): 838–854. doi:10.1577/1548-8659(2002)131<0838:SOSDAS>2.0.CO;2.  
+
+Letcher, B.H. 2003. Life history dependent morphometric variation in stream-dwelling Atlantic salmon. Oecologia 137(4): 533–40. doi:10.1007/s00442-003-1387-0.  
+
+Sigourney, D.B., Letcher, B.H., Obedzinski, M., and Cunjak, R.A. 2008. Size-independent growth in fishes: patterns, models and metrics. J. Fish Biol. 72(10): 2435–2455. doi:10.1111/j.1095-8649.2008.01830.x.  
+
+Davidson, R.S., Letcher, B.H., and Nislow, K.H. 2010. Drivers of growth variation in juvenile Atlantic salmon ( Salmo salar ): an elasticity analysis approach. J. Anim. Ecol. 79(5): 1113–1121. doi:10.1111/j.1365-2656.2010.01708.x.  
+
+Nislow, K.H., and Armstrong, J.D. 2012. Towards a life-history-based management framework for the effects of flow on juvenile salmonids in streams and rivers. Fish. Manag. Ecol. 19(6): 451–463. doi:10.1111/j.1365-2400.2011.00810.x.  
+
+Whiteley, A.R., Coombs, J. a., Cembrola, M., O’Donnell, M.J., Hudy, M., Nislow, K.H., and Letcher, B.H. 2015. Effective number of breeders provides a link between interannual variation in stream flow and individual reproductive contribution in a stream salmonid. Mol. Ecol.: n/a-n/a. doi:10.1111/mec.13273.  
+
+Letcher, B.H., Horton, G.E., Dubreuil, T.L., and Donnell, M.J.O. 2005. A field test of the extent of bias in selection estimates after accounting for emigration. Evol. Ecol.: 643–650.  
+
+Pearlstein, J.H., Letcher, B.H., and Obedzinski, M. 2007. Early Discrimination of Atlantic Salmon Smolt Age: Time Course of the Relative Effectiveness of Body Size and Shape. Trans. Am. Fish. Soc. 136(6): 1622–1632. doi:10.1577/T07-010.1.  
+
+Carlson, S.M., Hendry, A.P., and Letcher, B.H. 2004. Natural selection acting on body size , growth rate and compensatory growth : an empirical test in a wild trout population. Evol. Ecol.: 955–973.  
+
+Letcher, B.H., Schueller, P., Bassar, R.D., Nislow, K.H., Coombs, J.A., Sakrejda, K., Morrissey, M., Sigourney, D.B., Whiteley, A.R., O’Donnell, M.J., and Dubreuil, T.L. 2015. Robust estimates of environmental effects on population vital rates: an integrated capture-recapture model of seasonal brook trout growth, survival and movement in a stream network. J. Anim. Ecol. 84(2): 337–352. doi:10.1111/1365-2656.12308.  
+
+Carlson, S.M., Hendry, a. P., and Letcher, B.H. 2007. Growth rate differences between resident native brook trout and non-native brown trout. J. Fish Biol. 71(5): 1430–1447. doi:10.1111/j.1095-8649.2007.01615.x.  
+
+O’Donnell, M.J., Horton, G.E., and Letcher, B.H. 2010. Use of Portable Antennas to Estimate Abundance of PIT-Tagged Fish in Small Streams: Factors Affecting Detection Probability. North Am. J. Fish. Manag. 30: 323–336. doi:10.1577/M09-008.1.  
+
+Letcher, B.H., Nislow, K.H., Coombs, J., O’Donnell, M.J., and Dubreuil, T.L. 2007. Population response to habitat fragmentation in a stream-dwelling brook trout population. PLoS One 2(11): e1139. doi:10.1371/journal.pone.0001139.  
+
+Carlson, S.M., and Letcher, B.H. 2003. Variation in brook and brown trout survival within and among seasons, species, and age classes. J. Fish Biol. 63(3): 780–794. doi:10.1046/j.1095-8649.2003.00191.x.  
+
+Hendry, A.P., Letcher, B.H., and Gries, G. 2003. Estimating Natural Selection Acting on Stream-Dwelling Atlantic Salmon: Implications for the Restoration of Extirpated Populations. Conserv. Biol. 17(3): 795–805. doi:10.1046/j.1523-1739.2003.02075.x.  
+
+Letcher, B.H., Schueller, P., Bassar, R.D., Nislow, K.H., Coombs, J. a, Sakrejda, K., Morrissey, M., Sigourney, D.B., Whiteley, A.R., O’Donnell, M.J., and Dubreuil, T.L. 2015. Robust estimates of environmental effects on population vital rates: an integrated capture-recapture model of seasonal brook trout growth, survival and movement in a stream network. J. Anim. Ecol. 84(2): 337–352. doi:10.1111/1365-2656.12308.  
+
+Letcher, B.H., and Horton, G.E. 2008. Seasonal variation in size-dependent survival of juvenile Atlantic salmon (Salmo salar): performance of multistate capture-mark-recapture models. Can. J. Fish. Aquat. Sci. 65(8): 1649–1666. doi:10.1139/F08-083.  
+
+Horton, G.E., Letcher, B.H., Bailey, M.M., and Kinnison, M.T. 2009. Atlantic salmon (Salmo salar) smolt production: the relative importance of survival and body growth. Can. J. Fish. Aquat. Sci. 66(3): 471–483. doi:10.1139/F09-005.  
+
+Scace, J.G., Letcher, B.H., and Noreika, J. 2007. An Efficient Smolt Trap for Sandy and Debris-Laden Streams. North Am. J. Fish. Manag. 27(4): 1276–1286. doi:10.1577/M07-036.1.  
+
+Gries, G., and Letcher, B.H. 2002. A Night Seining Technique for Sampling Juvenile Atlantic Salmon in Streams. North Am. J. Fish. Manag. 22(2): 595–601. doi:10.1577/1548-8675(2002)022<0595:ANSTFS>2.0.CO;2.  
+
+Childress, E.S., and Letcher, B.H. 2017. Estimating thermal performance curves from repeated field observations. Ecology 98(5): 1377–1387. doi:10.1002/ecy.1801.  
+
+Aubin-Horth, N., Letcher, B.H., and Hofmann, H. a. 2009. Gene-expression signatures of Atlantic salmon’s plastic life cycle. Gen. Comp. Endocrinol. 163(3): 278–84. Elsevier Inc. doi:10.1016/j.ygcen.2009.04.021.  
+
+Childress, E.S., Nislow, K.H., Whiteley, A.R., O’Donnell, M.J., and Letcher, B.H. 2019. Daily estimates reveal fine-scale temporal and spatial variation in fish survival across a stream network. Can. J. Fish. Aquat. Sci. 76(8): 1446–1458. doi:10.1139/cjfas-2018-0191.  
+
+Kanno, Y., Letcher, B.H., Coombs, J. a., Nislow, K.H., and Whiteley, A.R. 2014. Linking movement and reproductive history of brook trout to assess habitat connectivity in a heterogeneous stream network. Freshw. Biol. 59(1): 142–154. doi:10.1111/fwb.12254.  
+
+Horton, G.E., Letcher, B.H., and Kendall, W.L. 2011. A Multistate Capture–Recapture Modeling Strategy to Separate True Survival from Permanent Emigration for a Passive Integrated Transponder Tagged Population of Stream Fish. Trans. Am. Fish. Soc. 140(2): 320–333. doi:10.1080/00028487.2011.567861.  
+
+'`
+
+<!--chapter:end:17-references.Rmd-->
+
