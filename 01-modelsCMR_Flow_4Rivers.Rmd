@@ -496,8 +496,8 @@ Includes transition probabilities among rivers
 Added cohort (c) indexing to psi's  
 Fixed c,t indexing, change to t,c  
 Added ilogis() to betaPhi  
-Added hier vars on psi  
-Used dirchlet prior  
+Need to add hier vars on psi  
+Used dirichlet prior  
 
 #### Set up and run model
 ```{r phiT_pT_psiT_River2_dirch}
@@ -524,10 +524,10 @@ if (rerunSurivalModels) {
   y1 <- y[,1]
   deltaProps <- table(y1[y1>0]) / length(y1[y1>0])
   
-  # alpha for the dirchlet prior
+  # alpha for the dirichlet prior
   alpha <- c(1,1,1,1)
 
-  # fill in entries for dirchlet priors where a[r,,t,c] sums to 1 for any r,t,c combo
+  # fill in entries for dirichlet priors where a[r,,t,c] sums to 1 for any r,t,c combo
   getDirchPriors <- function(nRivers,myConstants, nCohorts, alpha){
     a = array(rep(0, nRivers * nRivers * (myConstants$T - 1) * nCohorts) , c(nRivers, nRivers, (myConstants$T - 1), nCohorts ))
     for(r in 1:nRivers){
@@ -911,13 +911,13 @@ if(plotTraces) {
             pdf = FALSE, 
             priors = priors)
 
-  priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
-  MCMCtrace(object = toSave$mcmc,
-            #ISB = FALSE,
-            #exact = TRUE,
-            params = c("psi[1,1,1,1]"),
-            pdf = FALSE,
-            priors = priors)
+  # priors <- runif(toSave$nIter * toSave$nChains, 0, 1)
+  # MCMCtrace(object = toSave$mcmc,
+  #           #ISB = FALSE,
+  #           #exact = TRUE,
+  #           params = c(psi),
+  #           pdf = FALSE,
+  #           priors = priors)
   
 }
 
