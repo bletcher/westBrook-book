@@ -34,8 +34,8 @@ outputFileForXiaowei <- FALSE
 
 ```{r}
 #all the data
-#load('./models/cmrFlow4rivers/dataOut/eh_2002200320042005200620072008200920102011201220132014.RData')
-load('./models/cmrFlow4rivers/dataOut/eh_200620072008.RData')
+load('./models/cmrFlow4rivers/dataOut/eh_2002200320042005200620072008200920102011201220132014.RData')
+#load('./models/cmrFlow4rivers/dataOut/eh_200620072008.RData')
 
 #250 fish from each cohort
 #load('./models/cmrFlow4rivers/dataOut/eh_2002200320042005200620072008200920102011201220132014_n250.RData')
@@ -804,7 +804,7 @@ if (rerunSurivalModels) {
           betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
           betaP = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
           
-          psi = getDirchPriors(nRivers,myConstants, nCohorts, alpha)
+          psi = getDirchPriors(nRivers, myConstants, nCohorts, alpha)
       )
   }
 
@@ -834,8 +834,8 @@ if (rerunSurivalModels) {
                         "psi"
                         )
   
-  nIter <- 5000 #30000
-  nBurnin <- 2500 #15000
+  nIter <- 2500 #30000
+  nBurnin <- 2000 #15000
   nChains <- 2
   thinRate <- 5
   
@@ -876,6 +876,9 @@ if (rerunSurivalModels) {
   
     save(toSave, file = paste0('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_dirch_', substr(end,1,13), '.RData'))
     save(toSave, file = './models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_dirch_mostRecent.RData')
+  
+    Cmcmc$run(5000, reset = FALSE)  
+    
 } else {
   load('./models/cmrFlow4rivers/runsOut/mcmc_phiT_pT_psiT_DHMM_dirch_mostRecent.RData')
 }
@@ -918,7 +921,7 @@ if(plotTraces) {
   #           params = c(psi),
   #           pdf = FALSE,
   #           priors = priors)
-  
+
 }
 
 
