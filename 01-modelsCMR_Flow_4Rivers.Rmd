@@ -1003,19 +1003,19 @@ if (rerunSurivalModels) {
   
   # Priors for psi where more likely to stay than move
   alphaR <- list()
-  alphaR[[1]] <- c(10,1,1,1)
-  alphaR[[2]] <- c(1,10,1,1)
-  alphaR[[3]] <- c(1,1,10,1)
-  alphaR[[4]] <- c(1,1,1,10)
+  alphaR[[1]] <- alphaR1 <- c(0.7, 0.1, 0.1, 0.1)
+  alphaR[[2]] <- alphaR2 <- c(0.1, 0.7, 0.1, 0.1)
+  alphaR[[3]] <- alphaR3 <- c(0.1, 0.1, 0.7, 0.1)
+  alphaR[[4]] <- alphaR4 <- c(0.1, 0.1, 0.1, 0.7)
   
   getDirchPriorsR <- function(nRivers,myConstants, nCohorts, alpha){
     a = array(rep(0, nRivers * nRivers * (myConstants$T - 1) * nCohorts) , c(nRivers, nRivers, (myConstants$T - 1), nCohorts ))
     for(r in 1:nRivers){
       for(t in 1:(myConstants$T - 1)){
         for (c in 1:nCohorts){
-          #dirch <- alphaR[r]
+          dirch <- rdirch(1, alphaR[[r]])
           for (r2 in 1:nRivers){
-            a[r,r2,t,c] <- alphaR[[r]][[r2]]
+            a[r,r2,t,c] <- dirch[r2]
           }
         }
       }
@@ -1076,14 +1076,14 @@ if (rerunSurivalModels) {
           betaPRiverOut[r] <- ilogit(betaPRiver[r])
           
           for (c in 1:nCohorts){
-              betaPhiRiverCohort[r,c] ~ dnorm(betaPhiRiver[r],1)
-              betaPRiverCohort[r,c] ~ dnorm(betaPRiver[r],1)
+              betaPhiRiverCohort[r,c] ~ dnorm(betaPhiRiver[r], sd = 1)
+              betaPRiverCohort[r,c] ~ dnorm(betaPRiver[r], sd = 1)
  
               betaPhiRiverCohortOut[r,c] <- ilogit(betaPhiRiverCohort[r,c])
               betaPRiverCohortOut[r,c] <- ilogit(betaPRiverCohort[r,c])
               for (t in 1:(T-1)){
-                  betaPhi[r,t,c] ~ dnorm(betaPhiRiverCohort[r,c],1)
-                  betaP[r,t,c] ~ dnorm(betaPRiverCohort[r,c],1)
+                  betaPhi[r,t,c] ~ dnorm(betaPhiRiverCohort[r,c], sd = 1)
+                  betaP[r,t,c] ~ dnorm(betaPRiverCohort[r,c], sd = 1)
                   
                   betaPhiOut[r,t,c] <- ilogit(betaPhi[r,t,c])
                   betaPOut[r,t,c] <- ilogit(betaP[r,t,c])
@@ -1091,9 +1091,18 @@ if (rerunSurivalModels) {
                   # move from river 'r' to one of river 1:nRivers
                   # Nice description of effect of 'alpha' on probabilities:
                   # https://stats.stackexchange.com/questions/244917/what-exactly-is-the-alpha-in-the-dirichlet-distribution
-                  psi[r,1:nRivers,t,c] ~ ddirch(alpha[1:nRivers])
+                  #psi[r,1:nRivers,t,c] ~ ddirch(alpha[[r]][1:nRivers])
               }
           }
+      }
+      
+      for (t in 1:(T-1)){ # loop over time
+        for (c in 1:nCohorts){
+          psi[1,1:nRivers,t,c] ~ ddirch(alphaR1[1:nRivers])
+          psi[2,1:nRivers,t,c] ~ ddirch(alphaR2[1:nRivers])
+          psi[3,1:nRivers,t,c] ~ ddirch(alphaR3[1:nRivers])
+          psi[4,1:nRivers,t,c] ~ ddirch(alphaR4[1:nRivers])
+        }
       }
   
       for (t in 1:(T-1)){ # loop over time
@@ -1286,7 +1295,7 @@ if (rerunSurivalModels) {
           betaPRiverCohort = array(runif(nRivers * nCohorts, 0, 1), c(nRivers, nCohorts)),
           betaP = array(rnorm(nRivers * (myConstants$T - 1) * nCohorts , 0, 1), c(nRivers, (myConstants$T - 1), nCohorts)),
           
-          psi = getDirchPriorsR(nRivers, myConstants, nCohorts, alpha)
+          psi = getDirchPriorsR(nRivers, myConstants, nCohorts, alphaR)
       )
   }
 
