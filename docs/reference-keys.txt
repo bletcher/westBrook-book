@@ -13,6 +13,7 @@ get-data-1
 make-encounter-history-files
 wrangle-data-1
 explore-data-1
+section-transitions
 cmr-metadata
 adapted-from-httpsgithub.comconte-ecologywestbrookdatablobmastergetwbdatavignetteswestbrookdataintro.rmd
 column-explanations
@@ -22,6 +23,7 @@ wrangle-data-2
 explore-data-2
 dataAntenna
 get-data-3
+prepare-data
 wrangle-data-3
 explore-data-3
 models
@@ -84,8 +86,6 @@ plot-predictions-2
 betaflowtop-predictions-2
 compare-models
 modelCMR_Flow_4rivers
-model-phit_pt_psit
-set-up-and-run-model-8
 model-phit_pt_psit_dirch
-set-up-and-run-model-9
+set-up-and-run-model-8
 final-words

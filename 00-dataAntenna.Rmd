@@ -53,7 +53,7 @@ str(cdWB_antenna0)
 Sites table
 ```{r}
   # get sites table
-  #reconnect()
+  reconnect()
   sitesIn <- data.frame(tbl(conDplyr,"data_sites") )
   sites <- sitesIn %>% filter(is.na(quarter) & !is.na(quarter_length) & drainage == 'west') %>% select(-quarter)
   sites$section <- as.numeric(sites$section)
