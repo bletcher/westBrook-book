@@ -19,6 +19,8 @@ library(rlang)
 library(stringi)
 library(writexl)
 library(tidyverse)
+library(hrbrthemes)
+library(viridis)
 ```
 
 ```{r CMR_global variables}
@@ -247,6 +249,28 @@ addRiverN <- function(d){
 }
   
 `%notin%` <- Negate(`%in%`)
+
+addLaggedSection <- function(d) {
+  d0 <- d %>% 
+    group_by(tag) %>% 
+    arrange(ageInSamples) %>%
+    mutate(sectionN = as.numeric(section)) %>%
+    mutate(lagSectionN = lead(sectionN)) %>% 
+    ungroup()
+  
+  d <- left_join(d, d0)
+}
+
+addLaggedSectionRiverN <- function(d) {
+  d0 <- d %>% 
+    group_by(tag) %>% 
+    arrange(ageInSamples) %>%
+    mutate(sectionRiverN = as.numeric(sectionRiverN)) %>%
+    mutate(lagSectionRiverN = lead(sectionRiverN)) %>% 
+    ungroup()
+  
+  d <- left_join(d, d0)
+}
 ```
  
 
@@ -298,7 +322,7 @@ if(getNew_cdWB_CMR0) {
     addRiverTagged() %>%
     scaleEnvData() %>%
     addIsYOY() %>%
-    addRiverN()
+    addRiverN() 
     
   save(cdWB_CMR0, file = './data/cdWB_CMR0.RData')
   #write.csv(cdWB_CMR0, file = './data/cdWB_CMR0.csv')
@@ -359,6 +383,20 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
     filter(indexByCohort <= maxIndexByCohort) %>%
     ungroup()
 
+  # for sectionRiverN for Xioawei
+  d <- d %>%
+    mutate(
+      sectionTMP = ifelse(riverN == 3 & section < 1, 1, section),
+      sectionRiverN = case_when(
+        riverN == 1 & area == "below" ~ 0,
+        riverN == 1 & area == "inside" ~ as.numeric(sectionTMP),
+        riverN == 1 & area == "above" ~ 48,
+        riverN == 2 ~ as.numeric(sectionTMP) + 48,
+        riverN == 3 ~ as.numeric(sectionTMP) + 63,
+        riverN == 4 ~ as.numeric(sectionTMP) + 79,
+      )
+    )
+  #table(dIn2$riverN,dIn2$sectionRiverN, dIn2$area)
 
   encWide <- getEHDataWide_AIS(d, cols, ops, vals, "enc", maxOccasionValue, valuesFill = 0)
   eh <- as.matrix(encWide %>% dplyr::select(-tag), nrow = nrow(encWide), ncol = ncol(encWide) - 1)
@@ -379,6 +417,9 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   riverNWide <- getEHDataWide_AIS(d, cols, ops, vals, "riverN", maxOccasionValue, valuesFill = 0)
   riverNMatrix <- as.matrix(riverNWide %>% dplyr::select(-tag), nrow = nrow(riverNWide), ncol = ncol(riverNWide) - 1)
 
+  sectionRiverNWide <- getEHDataWide_AIS(d, cols, ops, vals, "sectionRiverN", maxOccasionValue, valuesFill = NA)
+  sectionRiverNMatrix <- as.matrix(sectionRiverNWide %>% dplyr::select(-tag), nrow = nrow(sectionRiverNWide), ncol = ncol(sectionRiverNWide) - 1)
+  
   isYOYWide <- getEHDataWide_AIS(d, cols, ops, vals, "isYOY", maxOccasionValue, valuesFill = 2)
   isYOYMatrix <- as.matrix(isYOYWide %>% dplyr::select(-tag), nrow = nrow(isYOYWide), ncol = ncol(riverWide) - 1)
   
@@ -392,12 +433,14 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
   
   cohorts <- tags %>% left_join(data %>% dplyr::select(tag, cohort) %>% unique()) %>% dplyr::select(cohort)
   seasons <- tags %>% left_join(data %>% dplyr::select(tag, season) %>% unique()) %>% dplyr::select(season)
+  species <- tags %>% left_join(data %>% dplyr::select(tag, species) %>% unique()) %>% dplyr::select(species)
+  
   first <- apply(eh, 1, function(x) min(which(x != 0)))
   last <- apply(riverMatrix, 1, function(x) max(which(!is.na(x))))
   last <- ifelse(last == maxOccasionValue, last, last - 1)
 
-  return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, river = riverMatrix,
-              riverN = riverNMatrix, isYOY = isYOYMatrix, tags = tags, cohorts = cohorts, seasons = seasons, 
+  return(list(eh = eh, flow = flowMatrix, temperature = temperatureMatrix, river = riverMatrix, section = sectionRiverNMatrix,
+              riverN = riverNMatrix, isYOY = isYOYMatrix, tags = tags, cohorts = cohorts, seasons = seasons, species = species,
               first = first, last = last, data = data))
 }
 
@@ -406,19 +449,19 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
 
   
 
-  #########################################
-  # all cohorts from O'Bear 2002:2014
-  cdWB_CMR0 %>% filter(river == "wb obear") %>% group_by(cohort) %>% summarize(n = n())
-
-  # read down through the cols, ops, vals variables for filter conditions
-  cols <- list("cohort",  "riverTagged")
-  ops <-  list("%in%",    "==")
-  vals <- list(2002:2014, "wb obear")
-                                                               # only include first x fish per cohort
-  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)#, maxIndexByCohort = 100)
-  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
-  save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData'))
-  
+  # #########################################
+  # # all cohorts from O'Bear 2002:2014
+  # cdWB_CMR0 %>% filter(river == "wb obear") %>% group_by(cohort) %>% summarize(n = n())
+  # 
+  # # read down through the cols, ops, vals variables for filter conditions
+  # cols <- list("cohort",  "riverTagged")
+  # ops <-  list("%in%",    "==")
+  # vals <- list(2002:2014, "wb obear")
+  #                                                              # only include first x fish per cohort
+  # eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)#, maxIndexByCohort = 100)
+  # fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
+  # save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData'))
+  # 
 
   ######################################  
   # all cohorts 2002:2014, ALL rivers
@@ -427,25 +470,25 @@ getEH_AIS <- function(dIn, cols, ops, vals, maxOccasionValue, maxIndexByCohort =
 
   cols <- list("cohort")
   ops <-  list("%in%")
-  vals <- list(2006:2008)#list(2002:2014)
+  vals <- list(2002:2014)#list(2002:2014)
   #vals <- list(2002:2014)
                                                                # only include first x fish per cohort
   eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples)#, maxIndexByCohort = 100)
   fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"))
   save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData'))
  
-  ######################################  
-  # all cohorts 2002:2014, ALL rivers
-  # only include first x fish per cohort
-  cols <- list("cohort")
-  ops <-  list("%in%")
-  vals <- list(2006:2008)#list(2002:2014)
-  
-  maxIndexByCohort <- 250
-  
-  eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples, maxIndexByCohort = maxIndexByCohort)
-  fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"), "_n", maxIndexByCohort)
-  save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData')) 
+  # ######################################  
+  # # all cohorts 2002:2014, ALL rivers
+  # # only include first x fish per cohort
+  # cols <- list("cohort")
+  # ops <-  list("%in%")
+  # vals <- list(2006:2008)#list(2002:2014)
+  # 
+  # maxIndexByCohort <- 250
+  # 
+  # eh <- getEH_AIS(cdWB_CMR0, cols, ops, vals, maxAgeInSamples, maxIndexByCohort = maxIndexByCohort)
+  # fileName = paste0("eh_", stri_paste_list(vals, collapse = "_"), "_n", maxIndexByCohort)
+  # save(eh, file = paste0('./models/cmrFlow4rivers/dataOut/', fileName, '.RData')) 
 
 
 ```
@@ -465,6 +508,62 @@ ggplot(cdWB_CMR0 %>% filter(enc ==1), aes(year)) +
   
 
 
+```
+
+### Section transitions
+```{r}
+
+s <- eh$section
+s[s == 0] <- NA
+  
+s2 <- data.frame(s) %>%
+  unite("all", sep = "_", na.rm = TRUE, remove = TRUE) %>%
+  #distinct() %>%
+  arrange()
+
+tableS2 <- table(s2)
+
+# of unique section histories
+length(tableS2)
+
+# Heatmap of sections - all cohorts
+dSectionRiverN <- eh$data %>%
+  filter(enc == 1) %>% #will get all transitions, not just consecutive samples
+  addLaggedSectionRiverN() %>%
+  group_by(sectionRiverN, lagSectionRiverN) %>%
+  summarise(n = n())
+
+ggplot(dSectionRiverN, aes(lagSectionRiverN, sectionRiverN, fill = log(n))) + 
+  geom_tile() +
+  scale_fill_viridis(discrete=FALSE) 
+ # theme_ipsum()
+
+
+# Heatmap of sections - by cohort
+dSectionRiverN_cohort <- eh$data %>%
+  filter(enc == 1) %>% #will get all transitions, not just consecutive samples
+  addLaggedSectionRiverN() %>%
+  group_by(cohort, sectionRiverN, lagSectionRiverN) %>%
+  summarise(n = n())
+
+ggplot(dSectionRiverN_cohort, aes(lagSectionRiverN, sectionRiverN, fill = log(n))) + 
+  geom_tile() +
+  scale_fill_viridis(discrete=FALSE) +
+  facet_wrap(~ cohort)
+ # theme_ipsum()
+
+# Heatmap of sections - by cohort and species
+dSectionRiverN_cohort_species <- eh$data %>%
+  filter(enc == 1) %>% #will get all transitions, not just consecutive samples
+  addLaggedSectionRiverN() %>%
+  group_by(species, cohort, sectionRiverN, lagSectionRiverN) %>%
+  summarise(n = n())
+
+ggplot(dSectionRiverN_cohort_species %>% filter(species != "ats"), aes(lagSectionRiverN, sectionRiverN, fill = log(n))) + 
+  geom_tile() +
+  scale_fill_viridis(discrete=FALSE) +
+  facet_grid(species~ cohort)
+ # theme_ipsum()
 ```
 
 
